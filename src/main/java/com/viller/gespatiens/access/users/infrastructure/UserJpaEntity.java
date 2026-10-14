@@ -2,10 +2,12 @@ package com.viller.gespatiens.access.users.infrastructure;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.util.UUID;
 
 @Entity
+@Table(name = "users")
 public class UserJpaEntity {
 
     // El id lo genera el dominio (UUID), no la base de datos: sin @GeneratedValue
