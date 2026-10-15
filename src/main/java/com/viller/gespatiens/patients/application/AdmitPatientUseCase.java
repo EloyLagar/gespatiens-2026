@@ -5,6 +5,7 @@ import com.viller.gespatiens.patients.domain.PatientAlreadyRegisteredException;
 import com.viller.gespatiens.patients.domain.PatientDetails;
 import com.viller.gespatiens.patients.domain.PatientRepository;
 import com.viller.gespatiens.patients.domain.ResidentNumberAssigner;
+import com.viller.gespatiens.patients.domain.VisitCodeAlreadyInUseException;
 
 import java.time.LocalDate;
 
@@ -21,6 +22,9 @@ public class AdmitPatientUseCase {
     public Patient execute(PatientDetails details, LocalDate entryDate) {
         if (patientRepository.existsByDni(details.dni())) {
             throw new PatientAlreadyRegisteredException(details.dni());
+        }
+        if (details.visitCode() != null && patientRepository.existsByVisitCode(details.visitCode())) {
+            throw new VisitCodeAlreadyInUseException(details.visitCode());
         }
         // Lanza CenterFullException si ya hay 32 residentes activos
         int number = numberAssigner.assignLowestFree(patientRepository.findOccupiedNumbers());

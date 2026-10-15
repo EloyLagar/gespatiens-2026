@@ -38,6 +38,11 @@ public class PatientRepositoryJpaAdapter implements PatientRepository {
     }
 
     @Override
+    public boolean existsByVisitCode(String visitCode) {
+        return patientJpaRepository.existsByVisitCode(visitCode);
+    }
+
+    @Override
     public Set<Integer> findOccupiedNumbers() {
         return new HashSet<>(patientJpaRepository.findOccupiedNumbers());
     }

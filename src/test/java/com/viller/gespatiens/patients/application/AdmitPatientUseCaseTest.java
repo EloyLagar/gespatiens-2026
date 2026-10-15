@@ -7,6 +7,7 @@ import com.viller.gespatiens.patients.domain.PatientAlreadyRegisteredException;
 import com.viller.gespatiens.patients.domain.PatientDetails;
 import com.viller.gespatiens.patients.domain.PatientRepository;
 import com.viller.gespatiens.patients.domain.ResidentNumberAssigner;
+import com.viller.gespatiens.patients.domain.VisitCodeAlreadyInUseException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -64,6 +65,26 @@ class AdmitPatientUseCaseTest {
     }
 
     @Test
+    void rejectsDuplicateVisitCode() {
+        useCase.execute(withVisitCode(detailsWithDni(1), "V-001"), TODAY);
+
+        assertThrows(VisitCodeAlreadyInUseException.class, () ->
+                useCase.execute(withVisitCode(detailsWithDni(2), "V-001"), TODAY));
+    }
+
+    @Test
+    void patientsWithoutVisitCodeDoNotCollide() {
+        useCase.execute(withVisitCode(detailsWithDni(1), ""), TODAY);
+
+        assertEquals(2, useCase.execute(withVisitCode(detailsWithDni(2), " "), TODAY).getNumber());
+    }
+
+    private static PatientDetails withVisitCode(PatientDetails d, String visitCode) {
+        return new PatientDetails(d.name(), d.surname(), d.dni(), d.birthDate(), d.address(), d.phoneNumber(),
+                d.sip(), visitCode, d.belongings(), d.abuseSubstances(), d.extraInfo());
+    }
+
+    @Test
     void rejectsThirtyThirdPatient() {
         for (int i = 1; i <= 32; i++) {
             useCase.execute(detailsWithDni(i), TODAY);
@@ -89,6 +110,11 @@ class AdmitPatientUseCaseTest {
         @Override
         public boolean existsByDni(Dni dni) {
             return patients.values().stream().anyMatch(p -> p.getDetails().dni().equals(dni));
+        }
+
+        @Override
+        public boolean existsByVisitCode(String visitCode) {
+            return patients.values().stream().anyMatch(p -> visitCode.equals(p.getDetails().visitCode()));
         }
 
         @Override
