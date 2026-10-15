@@ -35,6 +35,16 @@ public class UserRepositoryJpaAdapter implements UserRepository {
                 .map(this::toDomain);
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return userJpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return userJpaRepository.existsByPhoneNumber(phoneNumber);
+    }
+
     private UserJpaEntity toEntity(User user) {
         UserJpaEntity entity = new UserJpaEntity();
         entity.setId(user.getId());
@@ -42,6 +52,7 @@ public class UserRepositoryJpaAdapter implements UserRepository {
         entity.setEmail(user.getEmail());
         entity.setPhoneNumber(user.getPhoneNumber());
         entity.setSpeciality(user.getSpeciality());
+        entity.setPasswordHash(user.getPasswordHash());
         return entity;
     }
 
@@ -51,6 +62,7 @@ public class UserRepositoryJpaAdapter implements UserRepository {
                 entity.getName(),
                 entity.getEmail(),
                 entity.getPhoneNumber(),
-                entity.getSpeciality());
+                entity.getSpeciality(),
+                entity.getPasswordHash());
     }
 }
