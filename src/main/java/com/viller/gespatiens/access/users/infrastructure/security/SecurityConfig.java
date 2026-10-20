@@ -28,6 +28,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMINISTRATOR")
                         // RF9: solo la administración puede dar de baja residentes
                         .requestMatchers(HttpMethod.POST, "/api/patients/*/discharge").hasRole("ADMINISTRATOR")
+                        // El borrado definitivo es irreversible: también solo la administración
+                        .requestMatchers(HttpMethod.DELETE, "/api/patients/*").hasRole("ADMINISTRATOR")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());

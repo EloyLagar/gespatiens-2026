@@ -61,6 +61,14 @@ public class Patient {
         this.exitDate = exitDate;
     }
 
+    // Solo se borra la información de los usuarios antiguos (memoria, apartado 4.1):
+    // a un residente activo hay que darlo de baja antes
+    public void ensureCanBeDeleted() {
+        if (isActive()) {
+            throw new PatientStillActiveException(id);
+        }
+    }
+
     // Modificar la ficha. Las validaciones de cada campo ya las hace PatientDetails
     public void updateDetails(PatientDetails details) {
         if (details == null) {

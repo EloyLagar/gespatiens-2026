@@ -5,6 +5,7 @@ import com.viller.gespatiens.patients.domain.PatientAlreadyActiveException;
 import com.viller.gespatiens.patients.domain.PatientAlreadyDischargedException;
 import com.viller.gespatiens.patients.domain.PatientAlreadyRegisteredException;
 import com.viller.gespatiens.patients.domain.PatientNotFoundException;
+import com.viller.gespatiens.patients.domain.PatientStillActiveException;
 import com.viller.gespatiens.patients.domain.VisitCodeAlreadyInUseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -18,7 +19,7 @@ public class PatientExceptionHandler {
 
     @ExceptionHandler({PatientAlreadyRegisteredException.class, VisitCodeAlreadyInUseException.class,
             CenterFullException.class, PatientAlreadyDischargedException.class,
-            PatientAlreadyActiveException.class})
+            PatientAlreadyActiveException.class, PatientStillActiveException.class})
     public ProblemDetail handleConflict(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }

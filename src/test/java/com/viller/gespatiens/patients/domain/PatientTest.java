@@ -132,6 +132,13 @@ class PatientTest {
     }
 
     @Test
+    void onlyFormerPatientsCanBeDeleted() {
+        assertThrows(PatientStillActiveException.class, () ->
+                Patient.admit(details(), 5, LocalDate.of(2026, 1, 1)).ensureCanBeDeleted());
+        assertDoesNotThrow(() -> formerPatient().ensureCanBeDeleted());
+    }
+
+    @Test
     void detailsRejectFutureBirthDateAndMissingFields() {
         assertThrows(IllegalArgumentException.class, () -> new PatientDetails("Juan", "García",
                 new Dni("12345678Z"), LocalDate.now().plusDays(1), "C/ Mayor 1", "600111222",

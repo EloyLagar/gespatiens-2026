@@ -1,6 +1,7 @@
 package com.viller.gespatiens.patients.infrastructure.web;
 
 import com.viller.gespatiens.patients.application.AdmitPatientUseCase;
+import com.viller.gespatiens.patients.application.DeletePatientUseCase;
 import com.viller.gespatiens.patients.application.DischargePatientUseCase;
 import com.viller.gespatiens.patients.application.GetPatientUseCase;
 import com.viller.gespatiens.patients.application.ListPatientsUseCase;
@@ -9,6 +10,7 @@ import com.viller.gespatiens.patients.application.UpdatePatientDetailsUseCase;
 import com.viller.gespatiens.patients.domain.Patient;
 import com.viller.gespatiens.patients.domain.PatientStatus;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,19 +34,22 @@ public class PatientController {
     private final GetPatientUseCase getPatientUseCase;
     private final ListPatientsUseCase listPatientsUseCase;
     private final UpdatePatientDetailsUseCase updatePatientDetailsUseCase;
+    private final DeletePatientUseCase deletePatientUseCase;
 
     public PatientController(AdmitPatientUseCase admitPatientUseCase,
                              DischargePatientUseCase dischargePatientUseCase,
                              ReadmitPatientUseCase readmitPatientUseCase,
                              GetPatientUseCase getPatientUseCase,
                              ListPatientsUseCase listPatientsUseCase,
-                             UpdatePatientDetailsUseCase updatePatientDetailsUseCase) {
+                             UpdatePatientDetailsUseCase updatePatientDetailsUseCase,
+                             DeletePatientUseCase deletePatientUseCase) {
         this.admitPatientUseCase = admitPatientUseCase;
         this.dischargePatientUseCase = dischargePatientUseCase;
         this.readmitPatientUseCase = readmitPatientUseCase;
         this.getPatientUseCase = getPatientUseCase;
         this.listPatientsUseCase = listPatientsUseCase;
         this.updatePatientDetailsUseCase = updatePatientDetailsUseCase;
+        this.deletePatientUseCase = deletePatientUseCase;
     }
 
     // ?status=ACTIVE (por defecto) para los residentes actuales, ?status=FORMER para los antiguos
@@ -71,6 +76,13 @@ public class PatientController {
     public PatientResponse update(@PathVariable UUID id, @RequestBody UpdatePatientRequest request) {
         Patient patient = updatePatientDetailsUseCase.execute(id, request.toDetails());
         return PatientResponse.from(patient);
+    }
+
+    // Borrado definitivo de un residente antiguo. A diferencia de la baja, no se puede deshacer
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id) {
+        deletePatientUseCase.execute(id);
     }
 
     // RF9: la baja no borra al residente, cambia su estado. Por eso es un POST a una acción y no un DELETE

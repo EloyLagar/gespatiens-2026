@@ -1,6 +1,7 @@
 package com.viller.gespatiens.patients.infrastructure.config;
 
 import com.viller.gespatiens.patients.application.AdmitPatientUseCase;
+import com.viller.gespatiens.patients.application.DeletePatientUseCase;
 import com.viller.gespatiens.patients.application.DischargePatientUseCase;
 import com.viller.gespatiens.patients.application.GetPatientUseCase;
 import com.viller.gespatiens.patients.application.ListPatientsUseCase;
@@ -50,5 +51,10 @@ public class PatientBeanConfiguration {
     @Bean
     public UpdatePatientDetailsUseCase updatePatientDetailsUseCase(PatientRepository patientRepository) {
         return new UpdatePatientDetailsUseCase(patientRepository);
+    }
+
+    @Bean
+    public DeletePatientUseCase deletePatientUseCase(PatientRepository patientRepository) {
+        return new DeletePatientUseCase(patientRepository);
     }
 }

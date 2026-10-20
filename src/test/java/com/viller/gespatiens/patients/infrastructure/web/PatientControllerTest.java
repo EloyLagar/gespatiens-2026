@@ -2,6 +2,7 @@ package com.viller.gespatiens.patients.infrastructure.web;
 
 import com.viller.gespatiens.access.users.infrastructure.security.SecurityConfig;
 import com.viller.gespatiens.patients.application.AdmitPatientUseCase;
+import com.viller.gespatiens.patients.application.DeletePatientUseCase;
 import com.viller.gespatiens.patients.application.DischargePatientUseCase;
 import com.viller.gespatiens.patients.application.GetPatientUseCase;
 import com.viller.gespatiens.patients.application.ListPatientsUseCase;
@@ -16,6 +17,7 @@ import com.viller.gespatiens.patients.domain.PatientAlreadyRegisteredException;
 import com.viller.gespatiens.patients.domain.PatientDetails;
 import com.viller.gespatiens.patients.domain.PatientNotFoundException;
 import com.viller.gespatiens.patients.domain.PatientStatus;
+import com.viller.gespatiens.patients.domain.PatientStillActiveException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -32,9 +34,11 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -73,6 +77,9 @@ class PatientControllerTest {
 
     @MockitoBean
     private UpdatePatientDetailsUseCase updatePatientDetailsUseCase;
+
+    @MockitoBean
+    private DeletePatientUseCase deletePatientUseCase;
 
     @MockitoBean
     private UserDetailsService userDetailsService;
@@ -324,6 +331,31 @@ class PatientControllerTest {
                 .thenThrow(new PatientAlreadyRegisteredException(new Dni("12345678Z")));
 
         mockMvc.perform(put("/api/patients/{id}", PATIENT_ID).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void administratorDeletesFormerPatient() throws Exception {
+        mockMvc.perform(delete("/api/patients/{id}", PATIENT_ID))
+                .andExpect(status().isNoContent());
+        verify(deletePatientUseCase).execute(PATIENT_ID);
+    }
+
+    @Test
+    @WithMockUser(roles = "SOCIAL_WORKER")
+    void nonAdministratorCannotDelete() throws Exception {
+        mockMvc.perform(delete("/api/patients/{id}", PATIENT_ID))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(deletePatientUseCase);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void deletingActivePatientReturnsConflict() throws Exception {
+        doThrow(new PatientStillActiveException(PATIENT_ID)).when(deletePatientUseCase).execute(PATIENT_ID);
+
+        mockMvc.perform(delete("/api/patients/{id}", PATIENT_ID))
                 .andExpect(status().isConflict());
     }
 }
