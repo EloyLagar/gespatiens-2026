@@ -26,6 +26,11 @@ class InMemoryPatientRepository implements PatientRepository {
     }
 
     @Override
+    public void delete(Patient patient) {
+        patients.remove(patient.getId());
+    }
+
+    @Override
     public Optional<Patient> findById(UUID id) {
         return Optional.ofNullable(patients.get(id));
     }

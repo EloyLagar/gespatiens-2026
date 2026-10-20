@@ -29,6 +29,11 @@ public class PatientRepositoryJpaAdapter implements PatientRepository {
     }
 
     @Override
+    public void delete(Patient patient) {
+        patientJpaRepository.deleteById(patient.getId());
+    }
+
+    @Override
     public Optional<Patient> findById(UUID id) {
         return patientJpaRepository.findById(id)
                 .map(this::toDomain);
