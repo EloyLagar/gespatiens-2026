@@ -13,7 +13,8 @@
     "logout": "Sign out",
     "skipToContent": "Skip to content",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "notices": "Notices"
   },
   "language": {
     "label": "Language",
@@ -238,6 +239,46 @@
   "notFound": {
     "title": "This page does not exist",
     "text": "The link may be wrong or the record may have been deleted.",
-    "back": "Back to residents"
+    "back": "Back to home"
+  },
+  "notices": {
+    "title": "Notices",
+    "subtitle_one": "{{count}} staff notice · {{admin}} from administration",
+    "subtitle_other": "{{count}} staff notices · {{admin}} from administration",
+    "new": "New notice",
+    "newHelp": "All centre staff will see it when they open the application.",
+    "emptyText": "Write the notice before posting it.",
+    "publish": "Post",
+    "publishing": "Posting…",
+    "notPublished": "Not posted",
+    "listTitle": "Posted",
+    "filterLabel": "Show notices",
+    "filter": {
+      "all": "All",
+      "mine": "Mine",
+      "administration": "From administration"
+    },
+    "empty": {
+      "all": "There are no notices yet. Post the first one above.",
+      "mine": "You have not posted any notices yet.",
+      "administration": "Administration has not posted any notices."
+    },
+    "fromAdministration": "Administration",
+    "formerEmployee": "Removed staff member",
+    "edited": "edited",
+    "editLabel": "Notice text",
+    "delete": "Delete",
+    "deleteTitle": "Delete this notice?",
+    "deleteMine": "Staff will no longer see it. It cannot be undone.",
+    "deleteOther": "It is a notice by {{name}}. Staff will no longer see it. It cannot be undone.",
+    "deleteConfirm": "Delete"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo_one": "{{count}} min ago",
+    "minutesAgo_other": "{{count}} min ago",
+    "today": "today, {{time}}",
+    "yesterday": "yesterday, {{time}}",
+    "onDay": "{{day}}, {{time}}"
   }
 }
