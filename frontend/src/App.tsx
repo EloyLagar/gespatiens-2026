@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAdmin, RequireAuth } from './auth/RequireAuth'
 import { LoginPage } from './features/auth/LoginPage'
+import { DiaryPage } from './features/diary/DiaryPage'
 import { NoticesPage } from './features/notices/NoticesPage'
 import { AdmitPatientPage } from './features/patients/AdmitPatientPage'
 import { FormerResidentsPage } from './features/patients/FormerResidentsPage'
@@ -27,6 +28,8 @@ export function App() {
         {/* La memoria pone los avisos en la página principal */}
         <Route index element={<Navigate to="/avisos" replace />} />
         <Route path="avisos" element={<NoticesPage />} />
+        <Route path="diario" element={<DiaryPage />} />
+        <Route path="diario/:date" element={<DiaryPage />} />
         <Route path="residentes" element={<ResidentsPage />} />
         <Route path="residentes/nuevo" element={<AdmitPatientPage />} />
         <Route path="residentes/:id" element={<PatientDetailPage />} />

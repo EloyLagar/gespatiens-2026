@@ -14,7 +14,8 @@
     "skipToContent": "Skip to content",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "notices": "Notices"
+    "notices": "Notices",
+    "diary": "Diary"
   },
   "language": {
     "label": "Language",
@@ -280,5 +281,47 @@
     "today": "today, {{time}}",
     "yesterday": "yesterday, {{time}}",
     "onDay": "{{day}}, {{time}}"
+  },
+  "diary": {
+    "title": "Diary",
+    "today": "Today, {{date}}",
+    "previous": "Previous day",
+    "next": "Next day",
+    "pickDate": "Choose the day",
+    "goToday": "Go to today",
+    "shifts": "Shifts",
+    "part": {
+      "MORNING": "Morning",
+      "AFTERNOON": "Afternoon",
+      "NIGHT": "Night"
+    },
+    "whoWorked": "Who worked",
+    "notes": "Notes of interest",
+    "notesHelp": "What the next shift should know: incidents, calls, errands…",
+    "notFilled": "Nobody has filled in this shift yet.",
+    "noStaff": "No staff recorded.",
+    "filledBy": "Filled in by {{name}}, {{when}}",
+    "fill": "Fill in",
+    "reductions": {
+      "title": "Reductions",
+      "count_one": "{{count}} resident on reduction",
+      "count_other": "{{count}} residents on reduction",
+      "add": "Add reduction",
+      "onlyMedical": "The medical team and administration record reductions. The rest of the staff can check them here.",
+      "empty": "Nobody is on reduction this day.",
+      "caption": "Residents on reduction this day, by place number",
+      "resident": "Resident",
+      "type": "Reduction type",
+      "total": "Full",
+      "sport": "Sport",
+      "partial": "Partial",
+      "partialLabel": "Partial reduction (optional)",
+      "partialHelp": "What they are excused from: \"no lifting\", \"no outdoor activities\"…",
+      "chooseResident": "Choose the resident.",
+      "chooseType": "Tick full or sport, or describe the partial reduction.",
+      "remove": "Remove",
+      "removeTitle": "Remove the reduction for {{name}}?",
+      "removeBody": "They will be recorded with no reduction for this day."
+    }
   }
 }
