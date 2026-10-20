@@ -26,6 +26,12 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         // Solo la administración puede dar de alta empleados
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMINISTRATOR")
+                        // RF4: cada empleado gestiona su propio perfil. Va antes que la regla de /api/users/*
+                        // porque Spring aplica la primera regla que encaja, y "me" también encajaría en "*"
+                        .requestMatchers("/api/users/me", "/api/users/me/password").authenticated()
+                        // RF7: editar, restablecer contraseñas y eliminar perfiles es cosa de la administración
+                        .requestMatchers(HttpMethod.PUT, "/api/users/*", "/api/users/*/password").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMINISTRATOR")
                         // RF9: solo la administración puede dar de baja residentes
                         .requestMatchers(HttpMethod.POST, "/api/patients/*/discharge").hasRole("ADMINISTRATOR")
                         // El borrado definitivo es irreversible: también solo la administración

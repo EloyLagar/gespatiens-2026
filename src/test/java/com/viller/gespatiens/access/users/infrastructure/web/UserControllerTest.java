@@ -1,13 +1,17 @@
 package com.viller.gespatiens.access.users.infrastructure.web;
 
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
+import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
+import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
+import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException;
+import com.viller.gespatiens.access.users.domain.LastAdministratorException;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserNotFoundException;
@@ -28,7 +32,9 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -65,6 +71,15 @@ class UserControllerTest {
 
     @MockitoBean
     private ChangeOwnPasswordUseCase changeOwnPasswordUseCase;
+
+    @MockitoBean
+    private EditUserUseCase editUserUseCase;
+
+    @MockitoBean
+    private ResetUserPasswordUseCase resetUserPasswordUseCase;
+
+    @MockitoBean
+    private DeleteUserUseCase deleteUserUseCase;
 
     @MockitoBean
     private UserDetailsService userDetailsService;
@@ -198,5 +213,56 @@ class UserControllerTest {
                         .content("{\"currentPassword\":\"mal\",\"newPassword\":\"nueva12345\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value("La contraseña actual no es correcta"));
+    }
+
+    private static final String EDIT_BODY = """
+            {"name":"Ana","email":"ana@vientos.es","phoneNumber":"600111222","speciality":"SOCIAL_WORKER"}
+            """;
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void administratorEditsAnyProfile() throws Exception {
+        UUID id = UUID.randomUUID();
+        when(editUserUseCase.execute(id, "Ana", "ana@vientos.es", "600111222", Speciality.SOCIAL_WORKER))
+                .thenReturn(ana());
+
+        mockMvc.perform(put("/api/users/{id}", id).contentType(MediaType.APPLICATION_JSON).content(EDIT_BODY))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "PSYCHOLOGIST")
+    void nonAdministratorCannotEditOthersResetPasswordsOrDelete() throws Exception {
+        UUID id = UUID.randomUUID();
+
+        mockMvc.perform(put("/api/users/{id}", id).contentType(MediaType.APPLICATION_JSON).content(EDIT_BODY))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(put("/api/users/{id}/password", id).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"newPassword\":\"provisional1\"}"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(delete("/api/users/{id}", id))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(editUserUseCase, resetUserPasswordUseCase, deleteUserUseCase);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void administratorResetsPassword() throws Exception {
+        UUID id = UUID.randomUUID();
+
+        mockMvc.perform(put("/api/users/{id}/password", id).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"newPassword\":\"provisional1\"}"))
+                .andExpect(status().isNoContent());
+        verify(resetUserPasswordUseCase).execute(id, "provisional1");
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void deletingLastAdministratorReturnsConflict() throws Exception {
+        UUID id = UUID.randomUUID();
+        doThrow(new LastAdministratorException()).when(deleteUserUseCase).execute(id);
+
+        mockMvc.perform(delete("/api/users/{id}", id))
+                .andExpect(status().isConflict());
     }
 }

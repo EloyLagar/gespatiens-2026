@@ -1,11 +1,15 @@
 package com.viller.gespatiens.access.users.infrastructure.config;
 
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
+import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
+import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
+import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
+import com.viller.gespatiens.access.users.domain.AdministratorGuard;
 import com.viller.gespatiens.access.users.domain.PasswordHasher;
 import com.viller.gespatiens.access.users.domain.UserRepository;
 import org.springframework.context.annotation.Bean;
@@ -45,5 +49,26 @@ public class UserBeanConfiguration {
     public ChangeOwnPasswordUseCase changeOwnPasswordUseCase(UserRepository userRepository,
                                                              PasswordHasher passwordHasher) {
         return new ChangeOwnPasswordUseCase(userRepository, passwordHasher);
+    }
+
+    @Bean
+    public AdministratorGuard administratorGuard(UserRepository userRepository) {
+        return new AdministratorGuard(userRepository);
+    }
+
+    @Bean
+    public EditUserUseCase editUserUseCase(UserRepository userRepository, AdministratorGuard administratorGuard) {
+        return new EditUserUseCase(userRepository, administratorGuard);
+    }
+
+    @Bean
+    public ResetUserPasswordUseCase resetUserPasswordUseCase(UserRepository userRepository,
+                                                             PasswordHasher passwordHasher) {
+        return new ResetUserPasswordUseCase(userRepository, passwordHasher);
+    }
+
+    @Bean
+    public DeleteUserUseCase deleteUserUseCase(UserRepository userRepository, AdministratorGuard administratorGuard) {
+        return new DeleteUserUseCase(userRepository, administratorGuard);
     }
 }

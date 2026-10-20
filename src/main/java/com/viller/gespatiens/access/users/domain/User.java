@@ -7,7 +7,7 @@ public class User {
     private String name;
     private String email;
     private String phoneNumber;
-    private final Speciality speciality;
+    private Speciality speciality;
     // Solo guardamos el hash, nunca la contraseña en claro
     private String passwordHash;
 
@@ -83,6 +83,13 @@ public class User {
             throw new IllegalArgumentException("El número de teléfono no puede estar vacío");
         }
         this.phoneNumber = newPhoneNumber;
+    }
+
+    public void changeSpeciality(Speciality newSpeciality) {
+        if (newSpeciality == null) {
+            throw new IllegalArgumentException("El campo de especialidad no puede estar vacío");
+        }
+        this.speciality = newSpeciality;
     }
 
     public void changePasswordHash(String newPasswordHash) {
