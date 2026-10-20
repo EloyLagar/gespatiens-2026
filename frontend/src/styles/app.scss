@@ -561,7 +561,8 @@ button:focus-visible,
   gap: 12px;
 }
 
-.shift + .shift {
+// La separación general entre paneles (.panel + .panel) no aplica dentro de la fila de turnos
+.shifts > .shift.panel {
   margin-top: 0;
 }
 
