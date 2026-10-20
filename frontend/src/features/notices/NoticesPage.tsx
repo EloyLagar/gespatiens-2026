@@ -157,7 +157,8 @@ function Composer({ onPublished }: { onPublished: (notice: Notice) => void }) {
           setText(e.target.value)
           if (invalid) setInvalid(false)
         }}
-        rows={3}
+        // Dos líneas: lo importante de la pantalla es leer los avisos, no el cuadro para escribir
+        rows={2}
         maxCount={NOTICE_MAX_LENGTH}
         enableCounter
         invalid={invalid}
