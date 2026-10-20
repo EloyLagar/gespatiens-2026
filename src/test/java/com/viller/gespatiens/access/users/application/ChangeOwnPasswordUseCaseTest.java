@@ -16,9 +16,11 @@ class ChangeOwnPasswordUseCaseTest {
     private final FakePasswordHasher hasher = new FakePasswordHasher();
     private final ChangeOwnPasswordUseCase useCase = new ChangeOwnPasswordUseCase(repository, hasher);
 
+    private User ana;
+
     @BeforeEach
     void registerAna() {
-        repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST,
+        ana = repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST,
                 hasher.hash("antigua123")));
     }
 
@@ -28,7 +30,7 @@ class ChangeOwnPasswordUseCaseTest {
 
     @Test
     void changesPasswordWhenCurrentOneIsCorrect() {
-        useCase.execute("ana@vientos.es", "antigua123", "nueva12345");
+        useCase.execute(ana.getId(), "antigua123", "nueva12345");
 
         assertEquals("hashed:nueva12345", storedHash());
     }
@@ -36,14 +38,14 @@ class ChangeOwnPasswordUseCaseTest {
     @Test
     void rejectsWrongCurrentPassword() {
         assertThrows(InvalidCurrentPasswordException.class, () ->
-                useCase.execute("ana@vientos.es", "otra-cosa", "nueva12345"));
+                useCase.execute(ana.getId(), "otra-cosa", "nueva12345"));
         assertEquals("hashed:antigua123", storedHash());
     }
 
     @Test
     void rejectsShortNewPassword() {
         assertThrows(IllegalArgumentException.class, () ->
-                useCase.execute("ana@vientos.es", "antigua123", "corta"));
+                useCase.execute(ana.getId(), "antigua123", "corta"));
         assertEquals("hashed:antigua123", storedHash());
     }
 }

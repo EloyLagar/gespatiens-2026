@@ -3,7 +3,6 @@ package com.viller.gespatiens.access.users.infrastructure.web;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
-import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
@@ -32,7 +31,6 @@ public class UserController {
     private final RegisterUserUseCase registerUserUseCase;
     private final ListUsersUseCase listUsersUseCase;
     private final GetUserUseCase getUserUseCase;
-    private final GetCurrentUserUseCase getCurrentUserUseCase;
     private final UpdateOwnProfileUseCase updateOwnProfileUseCase;
     private final ChangeOwnPasswordUseCase changeOwnPasswordUseCase;
     private final EditUserUseCase editUserUseCase;
@@ -42,7 +40,6 @@ public class UserController {
     public UserController(RegisterUserUseCase registerUserUseCase,
                           ListUsersUseCase listUsersUseCase,
                           GetUserUseCase getUserUseCase,
-                          GetCurrentUserUseCase getCurrentUserUseCase,
                           UpdateOwnProfileUseCase updateOwnProfileUseCase,
                           ChangeOwnPasswordUseCase changeOwnPasswordUseCase,
                           EditUserUseCase editUserUseCase,
@@ -51,7 +48,6 @@ public class UserController {
         this.registerUserUseCase = registerUserUseCase;
         this.listUsersUseCase = listUsersUseCase;
         this.getUserUseCase = getUserUseCase;
-        this.getCurrentUserUseCase = getCurrentUserUseCase;
         this.updateOwnProfileUseCase = updateOwnProfileUseCase;
         this.changeOwnPasswordUseCase = changeOwnPasswordUseCase;
         this.editUserUseCase = editUserUseCase;
@@ -69,13 +65,13 @@ public class UserController {
     // El empleado autenticado. "/me" es un literal, así que Spring lo prefiere a "/{id}"
     @GetMapping("/me")
     public UserResponse me(Principal principal) {
-        return UserResponse.from(getCurrentUserUseCase.execute(principal.getName()));
+        return UserResponse.from(getUserUseCase.execute(currentUserId(principal)));
     }
 
     // RF4: cada empleado modifica sus propios datos, salvo el email
     @PutMapping("/me")
     public UserResponse updateMe(Principal principal, @RequestBody UpdateOwnProfileRequest request) {
-        User user = updateOwnProfileUseCase.execute(principal.getName(), request.name(), request.phoneNumber());
+        User user = updateOwnProfileUseCase.execute(currentUserId(principal), request.name(), request.phoneNumber());
         return UserResponse.from(user);
     }
 
@@ -83,7 +79,7 @@ public class UserController {
     @PutMapping("/me/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeMyPassword(Principal principal, @RequestBody ChangeOwnPasswordRequest request) {
-        changeOwnPasswordUseCase.execute(principal.getName(), request.currentPassword(), request.newPassword());
+        changeOwnPasswordUseCase.execute(currentUserId(principal), request.currentPassword(), request.newPassword());
     }
 
     @GetMapping("/{id}")
@@ -121,5 +117,10 @@ public class UserController {
                 request.speciality(),
                 request.password());
         return UserResponse.from(user);
+    }
+
+    // CurrentUserJwtConverter pone el id del empleado como "name" de la autenticación
+    private static UUID currentUserId(Principal principal) {
+        return UUID.fromString(principal.getName());
     }
 }

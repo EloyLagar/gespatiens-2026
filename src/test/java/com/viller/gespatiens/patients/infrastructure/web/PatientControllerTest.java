@@ -1,5 +1,6 @@
 package com.viller.gespatiens.patients.infrastructure.web;
 
+import com.viller.gespatiens.access.users.infrastructure.security.CurrentUserJwtConverter;
 import com.viller.gespatiens.access.users.infrastructure.security.SecurityConfig;
 import com.viller.gespatiens.patients.application.AdmitPatientUseCase;
 import com.viller.gespatiens.patients.application.DeletePatientUseCase;
@@ -23,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -81,8 +82,12 @@ class PatientControllerTest {
     @MockitoBean
     private DeletePatientUseCase deletePatientUseCase;
 
+    // La seguridad real necesita estos dos beans; con @WithMockUser no se llegan a usar
     @MockitoBean
-    private UserDetailsService userDetailsService;
+    private JwtDecoder jwtDecoder;
+
+    @MockitoBean
+    private CurrentUserJwtConverter currentUserJwtConverter;
 
     @Test
     void rejectsAnonymousRequest() throws Exception {

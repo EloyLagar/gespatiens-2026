@@ -3,7 +3,6 @@ package com.viller.gespatiens.access.users.infrastructure.web;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
-import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
@@ -15,13 +14,14 @@ import com.viller.gespatiens.access.users.domain.LastAdministratorException;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserNotFoundException;
+import com.viller.gespatiens.access.users.infrastructure.security.CurrentUserJwtConverter;
 import com.viller.gespatiens.access.users.infrastructure.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -46,6 +46,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(SecurityConfig.class)
 class UserControllerTest {
 
+    // Con JWT, el "username" de la autenticación es el id del empleado
+    private static final String ME = "7f3c2a10-0000-4000-8000-0000000000aa";
+    private static final UUID ME_ID = UUID.fromString(ME);
+
     private static final String VALID_BODY = """
             {"name":"Ana","email":"ana@vientos.es","phoneNumber":"600111222",
              "speciality":"PSYCHOLOGIST","password":"secreto123"}
@@ -64,9 +68,6 @@ class UserControllerTest {
     private GetUserUseCase getUserUseCase;
 
     @MockitoBean
-    private GetCurrentUserUseCase getCurrentUserUseCase;
-
-    @MockitoBean
     private UpdateOwnProfileUseCase updateOwnProfileUseCase;
 
     @MockitoBean
@@ -81,8 +82,12 @@ class UserControllerTest {
     @MockitoBean
     private DeleteUserUseCase deleteUserUseCase;
 
+    // La seguridad real necesita estos dos beans; con @WithMockUser no se llegan a usar
     @MockitoBean
-    private UserDetailsService userDetailsService;
+    private JwtDecoder jwtDecoder;
+
+    @MockitoBean
+    private CurrentUserJwtConverter currentUserJwtConverter;
 
     @Test
     void rejectsAnonymousRequest() throws Exception {
@@ -157,9 +162,9 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "ana@vientos.es")
+    @WithMockUser(username = ME)
     void meReturnsAuthenticatedUser() throws Exception {
-        when(getCurrentUserUseCase.execute("ana@vientos.es")).thenReturn(ana());
+        when(getUserUseCase.execute(ME_ID)).thenReturn(ana());
 
         mockMvc.perform(get("/api/users/me"))
                 .andExpect(status().isOk())
@@ -184,27 +189,27 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "ana@vientos.es", roles = "PSYCHOLOGIST")
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
     void employeeUpdatesOwnProfile() throws Exception {
-        when(updateOwnProfileUseCase.execute("ana@vientos.es", "Ana María", "600999888")).thenReturn(ana());
+        when(updateOwnProfileUseCase.execute(ME_ID, "Ana María", "600999888")).thenReturn(ana());
 
         mockMvc.perform(put("/api/users/me").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"Ana María\",\"phoneNumber\":\"600999888\"}"))
                 .andExpect(status().isOk());
-        verify(updateOwnProfileUseCase).execute("ana@vientos.es", "Ana María", "600999888");
+        verify(updateOwnProfileUseCase).execute(ME_ID, "Ana María", "600999888");
     }
 
     @Test
-    @WithMockUser(username = "ana@vientos.es", roles = "PSYCHOLOGIST")
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
     void employeeChangesOwnPassword() throws Exception {
         mockMvc.perform(put("/api/users/me/password").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"currentPassword\":\"antigua123\",\"newPassword\":\"nueva12345\"}"))
                 .andExpect(status().isNoContent());
-        verify(changeOwnPasswordUseCase).execute("ana@vientos.es", "antigua123", "nueva12345");
+        verify(changeOwnPasswordUseCase).execute(ME_ID, "antigua123", "nueva12345");
     }
 
     @Test
-    @WithMockUser(username = "ana@vientos.es")
+    @WithMockUser(username = ME)
     void wrongCurrentPasswordReturnsBadRequest() throws Exception {
         doThrow(new InvalidCurrentPasswordException())
                 .when(changeOwnPasswordUseCase).execute(any(), any(), any());
