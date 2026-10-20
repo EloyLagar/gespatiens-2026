@@ -4,11 +4,14 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,5 +59,49 @@ class DiaryDomainTest {
 
         assertThrows(IllegalArgumentException.class, () -> reduction.change(null, false, false, editor, NOW));
         assertTrue(reduction.isTotal());
+    }
+
+    @Test
+    void totalReductionExcusesEverythingAndSportOnlyPhysicalActivities() {
+        Reduction total = Reduction.record(DAY, UUID.randomUUID(), null, true, false, editor, NOW);
+        Reduction sport = Reduction.record(DAY, UUID.randomUUID(), null, false, true, editor, NOW);
+        Reduction partial = Reduction.record(DAY, UUID.randomUUID(), "No puede cargar peso", false, false, editor, NOW);
+
+        assertTrue(total.excuses(ActivityType.LIFE_SKILLS));
+        assertTrue(sport.excuses(ActivityType.WALK));
+        assertFalse(sport.excuses(ActivityType.VIDEO_FORUM));
+        assertFalse(partial.excuses(ActivityType.SPORT));
+    }
+
+    @Test
+    void therapeuticGroupsAndOthersNeedATitle() {
+        LocalTime ten = LocalTime.of(10, 0);
+
+        assertThrows(IllegalArgumentException.class, () -> Activity.schedule(DAY, ten, ActivityType.THERAPEUTIC_GROUP, " "));
+        assertThrows(IllegalArgumentException.class, () -> Activity.schedule(DAY, ten, ActivityType.OTHER, null));
+        assertDoesNotThrow(() -> Activity.schedule(DAY, ten, ActivityType.SPORT, null));
+        assertEquals("Taller de cerámica",
+                Activity.schedule(DAY, ten, ActivityType.OTHER, "  Taller de cerámica ").getTitle().orElseThrow());
+    }
+
+    @Test
+    void attendanceCannotBeTakenBeforeTheDay() {
+        Activity activity = Activity.schedule(DAY, LocalTime.of(10, 0), ActivityType.WALK, null);
+        Map<UUID, AttendanceStatus> list = Map.of(UUID.randomUUID(), AttendanceStatus.ATTENDED);
+
+        assertThrows(IllegalArgumentException.class, () -> activity.recordAttendance(list, DAY.minusDays(1)));
+        activity.recordAttendance(list, DAY);
+        assertEquals(list, activity.getAttendance());
+    }
+
+    @Test
+    void outingCannotReturnBeforeLeaving() {
+        TherapeuticOuting outing = TherapeuticOuting.leave(DAY, UUID.randomUUID(), LocalTime.of(11, 0), "Con su madre");
+
+        assertThrows(IllegalArgumentException.class, () -> outing.update(LocalTime.of(11, 0), LocalTime.of(10, 30), null));
+        assertFalse(outing.hasReturned());
+        outing.update(LocalTime.of(11, 0), LocalTime.of(18, 0), null);
+        assertTrue(outing.hasReturned());
+        assertTrue(outing.getNotes().isEmpty());
     }
 }
