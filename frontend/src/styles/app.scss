@@ -825,6 +825,66 @@ button:focus-visible,
   background: #fff1f1;
 }
 
+// Valoraciones (RF6): una fila por asistente con nota, satisfacción y utilidad
+.scores {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--rule);
+}
+
+.scores th,
+.scores td {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+}
+
+.scores thead th {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+.scores tbody th {
+  font-weight: 400;
+}
+
+.scores .scores__number {
+  width: 48px;
+  padding-right: 16px;
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.scores .scores__value {
+  width: 96px;
+  padding-left: 16px;
+}
+
+.score-input {
+  width: 64px;
+  height: 32px;
+  padding: 0 8px;
+  border: 0;
+  border-bottom: 1px solid var(--control);
+  background: var(--ground);
+  color: var(--text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.score-input--invalid {
+  outline: 2px solid var(--negative);
+  outline-offset: -2px;
+}
+
 .tag-reduced,
 .tag-away {
   display: inline-block;
@@ -1429,6 +1489,49 @@ button:focus-visible,
     grid-template-columns: 32px minmax(0, 1fr);
     gap: 8px 12px;
     padding: 10px 0;
+  }
+
+  // Las valoraciones en el móvil: número y nombre arriba, las tres puntuaciones en fila debajo
+  .scores thead {
+    display: none;
+  }
+
+  .scores tbody tr {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4px 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .scores tbody th,
+  .scores tbody td,
+  .scores tbody .scores__number,
+  .scores tbody .scores__value {
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+
+  .scores tbody .scores__who {
+    grid-column: 2 / -1;
+  }
+
+  .scores tbody .scores__value:nth-child(3) {
+    grid-column: 2;
+  }
+
+  .scores__value::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .score-input {
+    width: 100%;
+    height: 40px;
   }
 
   .roll-call__row > .segmented,

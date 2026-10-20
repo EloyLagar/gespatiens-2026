@@ -58,12 +58,20 @@ export function requiresTitle(type: ActivityType) {
 export const ATTENDANCE_STATUSES = ['ATTENDED', 'EXCUSED_ABSENCE', 'UNEXCUSED_ABSENCE'] as const
 export type AttendanceStatus = (typeof ATTENDANCE_STATUSES)[number]
 
+// RF6: la nota que pone el personal y la satisfacción y utilidad que da el residente, de 0 a 10 con un
+// decimal. Lo que no se tenga va a null. También es la forma de las medias de una actividad
+export const EVALUATION_FIELDS = ['mark', 'satisfaction', 'utility'] as const
+export type EvaluationField = (typeof EVALUATION_FIELDS)[number]
+export type Evaluation = Record<EvaluationField, number | null>
+
 export interface AttendanceRow {
   resident: DiaryResident
   // null: sin anotar (o rebajado, si reduced)
   status: AttendanceStatus | null
   reduced: boolean
   partialReduction: string | null
+  // null: sin valorar. Solo lo tienen quienes asistieron
+  evaluation: Evaluation | null
 }
 
 export interface Activity {
@@ -72,6 +80,7 @@ export interface Activity {
   type: ActivityType
   title: string | null
   attendance: AttendanceRow[]
+  averages: Evaluation
 }
 
 export interface Outing {
@@ -132,6 +141,11 @@ export function deleteActivity(activityId: string) {
 // Sustituye la lista entera: quien no aparece queda sin anotar
 export function recordAttendance(activityId: string, attendance: Record<string, AttendanceStatus>) {
   return request<Activity>(`/diary/activities/${activityId}/attendance`, { method: 'PUT', body: { attendance } })
+}
+
+// Sustituye todas las valoraciones: quien no aparece queda sin valorar. Solo educadores y administración
+export function recordEvaluations(activityId: string, evaluations: Record<string, Evaluation>) {
+  return request<Activity>(`/diary/activities/${activityId}/evaluations`, { method: 'PUT', body: { evaluations } })
 }
 
 export function recordOuting(date: IsoDate, patientId: string, leftAt: LocalTime, notes: string) {

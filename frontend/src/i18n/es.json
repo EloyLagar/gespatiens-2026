@@ -388,6 +388,34 @@
         "pending_other": "{{count}} sin anotar"
       }
     },
+    "evaluation": {
+      "evaluate": "Valorar",
+      "review": "Revisar valoraciones",
+      "view": "Ver valoraciones",
+      "save": "Guardar valoraciones",
+      "close": "Cerrar",
+      "help": "De 0 a 10, con un decimal como mucho. Deja en blanco lo que no tengas.",
+      "nobody": "Nadie asistió a esta actividad.",
+      "invalid": "Revisa las puntuaciones marcadas: van de 0 a 10 con un decimal como mucho.",
+      "invalidField": "{{field}} de {{name}} no es válida",
+      "resident": "Residente",
+      "field": {
+        "mark": "Nota",
+        "satisfaction": "Satisfacción",
+        "utility": "Utilidad"
+      },
+      "fieldOf": {
+        "mark": "Nota de {{name}}",
+        "satisfaction": "Satisfacción de {{name}}",
+        "utility": "Utilidad de {{name}}"
+      },
+      "averages": "Medias: {{values}}",
+      "average": {
+        "mark": "nota {{value}}",
+        "satisfaction": "satisfacción {{value}}",
+        "utility": "utilidad {{value}}"
+      }
+    },
     "outings": {
       "title": "Salidas terapéuticas",
       "count_one": "{{count}} salida",
