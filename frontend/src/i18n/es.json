@@ -322,6 +322,97 @@
       "remove": "Quitar",
       "removeTitle": "¿Quitar la rebaja de {{name}}?",
       "removeBody": "Volverá a constar sin rebaja para este día."
+    },
+    "activities": {
+      "title": "Actividades",
+      "count_one": "{{count}} actividad",
+      "count_other": "{{count}} actividades",
+      "add": "Programar actividad",
+      "empty": "No hay actividades programadas este día.",
+      "future": "Este día aún no ha llegado: se pueden programar actividades, pero la lista se pasa ese mismo día.",
+      "time": "Hora",
+      "typeLabel": "Tipo de actividad",
+      "type": {
+        "THERAPEUTIC_GROUP": "Grupo terapéutico",
+        "LIFE_SKILLS": "Habilidades para la vida",
+        "HEALTH_SCHOOL": "Escuela de salud",
+        "JOB_GUIDANCE": "Orientación laboral",
+        "OCCUPATIONAL_WORKSHOP": "Taller ocupacional",
+        "VIDEO_FORUM": "Videofórum",
+        "MAINTENANCE": "Mantenimiento",
+        "SPORT": "Deporte",
+        "WALK": "Paseo",
+        "OTHER": "Otros"
+      },
+      "titleLabel": {
+        "THERAPEUTIC_GROUP": "Nombre del grupo",
+        "OTHER": "Qué actividad es"
+      },
+      "titleOptional": "Nombre o detalle (opcional)",
+      "titleNeeded": {
+        "THERAPEUTIC_GROUP": "Indica el nombre del grupo terapéutico.",
+        "OTHER": "Indica qué actividad es."
+      },
+      "chooseTime": "Indica la hora de la actividad.",
+      "remove": "Quitar",
+      "removeTitle": "¿Quitar «{{name}}» del diario?",
+      "removeBody": "Se borrará también la lista de asistencia que se haya pasado."
+    },
+    "attendance": {
+      "take": "Pasar lista",
+      "edit": "Revisar lista",
+      "save": "Guardar lista",
+      "notTaken": "Todavía no se ha pasado lista.",
+      "notYet": "Se pasará lista ese día.",
+      "nobody": "No hay residentes en el centro para esta actividad.",
+      "pending_one": "Falta {{count}} residente por anotar",
+      "pending_other": "Faltan {{count}} residentes por anotar",
+      "markRest": "Marcar al resto como asistentes",
+      "reduced": "Rebajado",
+      "partial": "Rebaja parcial: {{partial}}",
+      "status": {
+        "ATTENDED": "Asistió",
+        "EXCUSED_ABSENCE": "Falta justificada",
+        "UNEXCUSED_ABSENCE": "Falta sin justificar"
+      },
+      "count": {
+        "ATTENDED_one": "{{count}} asistió",
+        "ATTENDED_other": "{{count}} asistieron",
+        "EXCUSED_ABSENCE_one": "{{count}} falta justificada",
+        "EXCUSED_ABSENCE_other": "{{count}} faltas justificadas",
+        "UNEXCUSED_ABSENCE_one": "{{count}} falta sin justificar",
+        "UNEXCUSED_ABSENCE_other": "{{count}} faltas sin justificar",
+        "reduced_one": "{{count}} rebajado",
+        "reduced_other": "{{count}} rebajados",
+        "pending_one": "{{count}} sin anotar",
+        "pending_other": "{{count}} sin anotar"
+      }
+    },
+    "outings": {
+      "title": "Salidas terapéuticas",
+      "count_one": "{{count}} salida",
+      "count_other": "{{count}} salidas",
+      "awayCount_one": "{{count}} fuera",
+      "awayCount_other": "{{count}} fuera",
+      "add": "Anotar salida",
+      "empty": "Nadie ha salido este día.",
+      "caption": "Salidas terapéuticas del día, por hora de salida",
+      "resident": "Residente",
+      "leftAt": "Salida",
+      "returnedAt": "Regreso",
+      "returnedHelp": "Vacío mientras no haya vuelto.",
+      "leftAtShort": "Salió a las {{time}}",
+      "returnedAtShort": "volvió a las {{time}}",
+      "away": "Fuera",
+      "notes": "Nota",
+      "notesHelp": "Opcional: con quién o adónde, «con su familia», «al médico»…",
+      "markReturn": "Anotar regreso",
+      "chooseResident": "Elige qué residente sale.",
+      "chooseLeftAt": "Indica la hora de salida.",
+      "returnBeforeLeave": "La hora de regreso no puede ser anterior a la de salida.",
+      "remove": "Quitar",
+      "removeTitle": "¿Quitar la salida de {{name}}?",
+      "removeBody": "Se borrarán la salida y su regreso de este día."
     }
   }
 }

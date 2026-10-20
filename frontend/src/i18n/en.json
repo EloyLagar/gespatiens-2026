@@ -322,6 +322,97 @@
       "remove": "Remove",
       "removeTitle": "Remove the reduction for {{name}}?",
       "removeBody": "They will be recorded with no reduction for this day."
+    },
+    "activities": {
+      "title": "Activities",
+      "count_one": "{{count}} activity",
+      "count_other": "{{count}} activities",
+      "add": "Schedule activity",
+      "empty": "No activities scheduled for this day.",
+      "future": "This day hasn't come yet: activities can be scheduled, but the roll is taken on the day.",
+      "time": "Time",
+      "typeLabel": "Activity type",
+      "type": {
+        "THERAPEUTIC_GROUP": "Therapeutic group",
+        "LIFE_SKILLS": "Life skills",
+        "HEALTH_SCHOOL": "Health school",
+        "JOB_GUIDANCE": "Job guidance",
+        "OCCUPATIONAL_WORKSHOP": "Occupational workshop",
+        "VIDEO_FORUM": "Video forum",
+        "MAINTENANCE": "Maintenance",
+        "SPORT": "Sport",
+        "WALK": "Walk",
+        "OTHER": "Other"
+      },
+      "titleLabel": {
+        "THERAPEUTIC_GROUP": "Group name",
+        "OTHER": "What the activity is"
+      },
+      "titleOptional": "Name or detail (optional)",
+      "titleNeeded": {
+        "THERAPEUTIC_GROUP": "Enter the name of the therapeutic group.",
+        "OTHER": "Say what the activity is."
+      },
+      "chooseTime": "Enter the activity time.",
+      "remove": "Remove",
+      "removeTitle": "Remove \"{{name}}\" from the diary?",
+      "removeBody": "Any roll already taken will be deleted too."
+    },
+    "attendance": {
+      "take": "Take roll",
+      "edit": "Review roll",
+      "save": "Save roll",
+      "notTaken": "The roll hasn't been taken yet.",
+      "notYet": "The roll will be taken on the day.",
+      "nobody": "There are no residents in the centre for this activity.",
+      "pending_one": "{{count}} resident still to mark",
+      "pending_other": "{{count}} residents still to mark",
+      "markRest": "Mark the rest as attended",
+      "reduced": "On reduction",
+      "partial": "Partial reduction: {{partial}}",
+      "status": {
+        "ATTENDED": "Attended",
+        "EXCUSED_ABSENCE": "Excused absence",
+        "UNEXCUSED_ABSENCE": "Unexcused absence"
+      },
+      "count": {
+        "ATTENDED_one": "{{count}} attended",
+        "ATTENDED_other": "{{count}} attended",
+        "EXCUSED_ABSENCE_one": "{{count}} excused absence",
+        "EXCUSED_ABSENCE_other": "{{count}} excused absences",
+        "UNEXCUSED_ABSENCE_one": "{{count}} unexcused absence",
+        "UNEXCUSED_ABSENCE_other": "{{count}} unexcused absences",
+        "reduced_one": "{{count}} on reduction",
+        "reduced_other": "{{count}} on reduction",
+        "pending_one": "{{count}} not marked",
+        "pending_other": "{{count}} not marked"
+      }
+    },
+    "outings": {
+      "title": "Therapeutic outings",
+      "count_one": "{{count}} outing",
+      "count_other": "{{count}} outings",
+      "awayCount_one": "{{count}} out",
+      "awayCount_other": "{{count}} out",
+      "add": "Record outing",
+      "empty": "Nobody went out this day.",
+      "caption": "Therapeutic outings of the day, by time out",
+      "resident": "Resident",
+      "leftAt": "Out",
+      "returnedAt": "Back",
+      "returnedHelp": "Leave empty until they are back.",
+      "leftAtShort": "Out at {{time}}",
+      "returnedAtShort": "back at {{time}}",
+      "away": "Out",
+      "notes": "Note",
+      "notesHelp": "Optional: who with or where to, \"with family\", \"to the doctor\"…",
+      "markReturn": "Record return",
+      "chooseResident": "Choose who is going out.",
+      "chooseLeftAt": "Enter the time out.",
+      "returnBeforeLeave": "The return time can't be earlier than the time out.",
+      "remove": "Remove",
+      "removeTitle": "Remove the outing for {{name}}?",
+      "removeBody": "The outing and its return for this day will be deleted."
     }
   }
 }

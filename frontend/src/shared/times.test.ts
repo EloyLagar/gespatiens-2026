@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { whenPosted } from './times'
+import { hhmm, nowHhmm, whenPosted } from './times'
 
 // Traducción falsa que deja ver la clave y sus valores
 const t = (key: string, options?: Record<string, unknown>) =>
@@ -25,5 +25,16 @@ describe('whenPosted', () => {
     expect(whenPosted(new Date(2026, 9, 12, 8, 5).toISOString(), t, 'es', now)).toBe(
       'time.onDay {"day":"12/10/2026","time":"08:05"}',
     )
+  })
+})
+
+describe('hhmm', () => {
+  it('quita los segundos que manda el backend', () => {
+    expect(hhmm('09:05:00')).toBe('09:05')
+    expect(hhmm('17:30')).toBe('17:30')
+  })
+
+  it('escribe la hora actual con dos cifras', () => {
+    expect(nowHhmm(new Date(2026, 9, 20, 7, 4))).toBe('07:04')
   })
 })

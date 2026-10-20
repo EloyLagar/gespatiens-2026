@@ -651,6 +651,196 @@ button:focus-visible,
   gap: 16px;
 }
 
+.text-action:disabled {
+  color: var(--faint);
+  cursor: default;
+}
+
+// Actividades: una tarjeta por actividad, con la hora a la izquierda como en una agenda
+.activities {
+  display: grid;
+  gap: 8px;
+}
+
+.activities > .panel + .panel {
+  margin-top: 0;
+}
+
+.activity {
+  display: grid;
+  gap: 8px;
+  padding: 16px var(--pad);
+}
+
+.activity__header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.activity__time {
+  min-width: 48px;
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.activity__title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.activity__actions {
+  margin-left: auto;
+}
+
+.activity__summary {
+  padding-left: 64px;
+  color: var(--muted);
+}
+
+.activity-form,
+.outing-form {
+  display: grid;
+  gap: 16px;
+  max-width: 560px;
+  margin-bottom: 16px;
+}
+
+.activity-form__row {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 16px;
+}
+
+// Pasar lista
+.roll-call {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.roll-call__tools {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.roll-call__pending {
+  color: var(--muted);
+}
+
+.roll-call__list {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+}
+
+.roll-call__row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  min-height: var(--row);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.roll-call__number {
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.roll-call__who {
+  display: grid;
+}
+
+.roll-call__note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+// Tres opciones pegadas; la marcada se tiñe según lo anotado. El radio real queda oculto pero enfocable
+.segmented {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.segmented__option {
+  position: relative;
+}
+
+.segmented__option input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.segmented__option span {
+  display: block;
+  padding: 7px 12px;
+  border: 1px solid var(--control);
+  background: var(--surface);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.segmented__option + .segmented__option span {
+  border-left: 0;
+}
+
+.segmented__option input:hover + span {
+  background: #e8e8e8;
+}
+
+.segmented__option input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.segmented__option input:checked + span {
+  font-weight: 600;
+}
+
+.segmented__option--ATTENDED input:checked + span {
+  border-color: var(--positive-ink);
+  background: #defbe6;
+}
+
+.segmented__option--EXCUSED_ABSENCE input:checked + span {
+  border-color: var(--notice-border);
+  background: var(--notice-bg);
+}
+
+.segmented__option--UNEXCUSED_ABSENCE input:checked + span {
+  border-color: var(--negative);
+  background: #fff1f1;
+}
+
+.tag-reduced,
+.tag-away {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--tint);
+  color: var(--accent-ink);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.tag-away {
+  background: var(--notice-bg);
+  color: var(--text);
+}
+
 // ---------------------------------------------------------------- Las 32 plazas
 
 .beds {
@@ -1210,6 +1400,59 @@ button:focus-visible,
 
   .day-switcher {
     flex-wrap: wrap;
+  }
+
+  .activity {
+    padding: 16px;
+  }
+
+  .activity__header {
+    flex-wrap: wrap;
+    gap: 4px 16px;
+  }
+
+  .activity__actions {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .activity__summary {
+    padding-left: 0;
+  }
+
+  .activity-form__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  // La lista en el móvil: número y nombre arriba, las tres opciones a todo el ancho debajo
+  .roll-call__row {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 10px 0;
+  }
+
+  .roll-call__row > .segmented,
+  .roll-call__row > .tag-reduced {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .segmented {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .segmented__option span {
+    min-height: 44px;
+    padding: 6px 8px;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .roll-call__tools {
+    flex-direction: column;
+    gap: 8px;
   }
 
   .form-section {
