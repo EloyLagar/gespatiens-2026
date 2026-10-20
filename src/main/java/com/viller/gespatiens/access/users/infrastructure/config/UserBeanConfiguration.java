@@ -1,11 +1,12 @@
 package com.viller.gespatiens.access.users.infrastructure.config;
 
+import com.viller.gespatiens.access.users.application.AccessTokenIssuer;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
-import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
+import com.viller.gespatiens.access.users.application.LoginUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
@@ -36,8 +37,9 @@ public class UserBeanConfiguration {
     }
 
     @Bean
-    public GetCurrentUserUseCase getCurrentUserUseCase(UserRepository userRepository) {
-        return new GetCurrentUserUseCase(userRepository);
+    public LoginUseCase loginUseCase(UserRepository userRepository, PasswordHasher passwordHasher,
+                                     AccessTokenIssuer accessTokenIssuer) {
+        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer);
     }
 
     @Bean

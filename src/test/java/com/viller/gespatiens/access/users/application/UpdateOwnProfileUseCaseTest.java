@@ -17,9 +17,9 @@ class UpdateOwnProfileUseCaseTest {
 
     @Test
     void updatesNameAndPhoneButKeepsEmailAndSpeciality() {
-        repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
+        User ana = repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
 
-        User updated = useCase.execute("ana@vientos.es", "Ana María", "600999888");
+        User updated = useCase.execute(ana.getId(), "Ana María", "600999888");
 
         assertEquals("Ana María", updated.getName());
         assertEquals("600999888", updated.getPhoneNumber());
@@ -29,24 +29,24 @@ class UpdateOwnProfileUseCaseTest {
 
     @Test
     void keepingOwnPhoneIsNotADuplicate() {
-        repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
+        User ana = repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
 
-        assertDoesNotThrow(() -> useCase.execute("ana@vientos.es", "Ana María", "600111222"));
+        assertDoesNotThrow(() -> useCase.execute(ana.getId(), "Ana María", "600111222"));
     }
 
     @Test
     void rejectsPhoneOfAnotherEmployee() {
-        repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
+        User ana = repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
         repository.save(User.create("Luis", "luis@vientos.es", "600333444", Speciality.SOCIAL_EDUCATOR, "hash"));
 
         assertThrows(PhoneNumberAlreadyRegisteredException.class, () ->
-                useCase.execute("ana@vientos.es", "Ana", "600333444"));
+                useCase.execute(ana.getId(), "Ana", "600333444"));
     }
 
     @Test
     void rejectsBlankName() {
-        repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
+        User ana = repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
 
-        assertThrows(IllegalArgumentException.class, () -> useCase.execute("ana@vientos.es", " ", "600111222"));
+        assertThrows(IllegalArgumentException.class, () -> useCase.execute(ana.getId(), " ", "600111222"));
     }
 }
