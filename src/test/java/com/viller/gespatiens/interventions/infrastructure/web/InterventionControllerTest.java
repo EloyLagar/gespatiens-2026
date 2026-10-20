@@ -136,6 +136,17 @@ class InterventionControllerTest {
 
     @Test
     @WithMockUser(username = ME, roles = "SOCIAL_EDUCATOR")
+    void educatorsAlsoAssignTutors() throws Exception {
+        when(assignTutorsUseCase.execute(PATIENT, Set.of(ME_ID))).thenReturn(List.of(pablo));
+
+        mockMvc.perform(put("/api/interventions/residents/{id}/tutors", PATIENT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"tutorIds\":[\"" + ME + "\"]}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
     void otherSpecialitiesCannotAssignTutors() throws Exception {
         mockMvc.perform(put("/api/interventions/residents/{id}/tutors", PATIENT)
                         .contentType(MediaType.APPLICATION_JSON)

@@ -7,7 +7,7 @@ import type { FollowUp, Intervention } from '../../api/interventions'
 import { todayIso } from '../../shared/dates'
 import { FollowUpPage } from './FollowUpPage'
 
-const auth = vi.hoisted(() => ({ isAdmin: false }))
+const auth = vi.hoisted(() => ({ isAdmin: false, user: { speciality: 'PSYCHOLOGIST' } }))
 vi.mock('../../auth/AuthContext', () => ({ useAuth: () => auth }))
 
 const pablo = { id: 'u1', name: 'Pablo', speciality: 'SOCIAL_EDUCATOR' as const }
@@ -97,6 +97,6 @@ describe('FollowUpPage', () => {
     renderPage()
 
     expect(await screen.findByRole('button', { name: 'Cambiar tutores' })).toBeInTheDocument()
-    expect(screen.getByText(/Asígnaselos para que puedan registrar/)).toBeInTheDocument()
+    expect(screen.getByText(/Asígnale educadores para que puedan registrar/)).toBeInTheDocument()
   })
 })
