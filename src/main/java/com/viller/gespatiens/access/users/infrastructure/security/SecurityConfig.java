@@ -26,6 +26,8 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         // Solo la administración puede dar de alta empleados
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMINISTRATOR")
+                        // RF9: solo la administración puede dar de baja residentes
+                        .requestMatchers(HttpMethod.POST, "/api/patients/*/discharge").hasRole("ADMINISTRATOR")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());

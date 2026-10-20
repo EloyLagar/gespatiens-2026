@@ -45,6 +45,22 @@ public class Patient {
         return new Patient(id, details, number, entryDate, exitDate);
     }
 
+    // RF9: el residente pasa a antiguos conservando sus datos y deja libre su número
+    public void discharge(LocalDate exitDate) {
+        if (!isActive()) {
+            throw new PatientAlreadyDischargedException(id);
+        }
+        if (exitDate == null) {
+            throw new IllegalArgumentException("La fecha de salida no puede estar vacía");
+        }
+        if (exitDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("La fecha de salida no puede ser futura");
+        }
+        validateState(null, entryDate, exitDate);
+        this.number = null;
+        this.exitDate = exitDate;
+    }
+
     // Invariante: activo <=> tiene número y no tiene fecha de salida
     private void validateState(Integer number, LocalDate entryDate, LocalDate exitDate) {
         if (exitDate == null) {

@@ -7,7 +7,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,6 +49,44 @@ class PatientTest {
     void exitDateCannotBeBeforeEntryDate() {
         assertThrows(IllegalArgumentException.class, () -> Patient.reconstitute(
                 UUID.randomUUID(), details(), null, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 1, 1)));
+    }
+
+    @Test
+    void dischargeFreesNumberAndSetsExitDate() {
+        Patient patient = Patient.admit(details(), 5, LocalDate.of(2026, 1, 1));
+
+        patient.discharge(LocalDate.of(2026, 6, 1));
+
+        assertFalse(patient.isActive());
+        assertNull(patient.getNumber());
+        assertEquals(LocalDate.of(2026, 6, 1), patient.getExitDate());
+    }
+
+    @Test
+    void dischargeAllowsSameDayAsEntry() {
+        Patient patient = Patient.admit(details(), 5, LocalDate.of(2026, 1, 1));
+
+        assertDoesNotThrow(() -> patient.discharge(LocalDate.of(2026, 1, 1)));
+    }
+
+    @Test
+    void dischargeRejectsInvalidExitDate() {
+        Patient patient = Patient.admit(details(), 5, LocalDate.of(2026, 1, 1));
+
+        assertThrows(IllegalArgumentException.class, () -> patient.discharge(LocalDate.of(2025, 12, 31)));
+        assertThrows(IllegalArgumentException.class, () -> patient.discharge(LocalDate.now().plusDays(1)));
+        assertThrows(IllegalArgumentException.class, () -> patient.discharge(null));
+        // Un intento fallido no deja al residente a medio dar de baja
+        assertTrue(patient.isActive());
+        assertEquals(5, patient.getNumber());
+    }
+
+    @Test
+    void cannotDischargeTwice() {
+        Patient patient = Patient.reconstitute(UUID.randomUUID(), details(), null,
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 1));
+
+        assertThrows(PatientAlreadyDischargedException.class, () -> patient.discharge(LocalDate.of(2026, 7, 1)));
     }
 
     @Test
