@@ -4,6 +4,7 @@ import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,6 +28,13 @@ public class UserRepositoryJpaAdapter implements UserRepository {
     public Optional<User> findById(UUID id) {
         return userJpaRepository.findById(id)
                 .map(this::toDomain);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userJpaRepository.findAllByOrderByName().stream()
+                .map(this::toDomain)
+                .toList();
     }
 
     @Override
