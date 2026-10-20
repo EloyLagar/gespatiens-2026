@@ -36,6 +36,8 @@ function DiaryDayPage({ date }: { date: string }) {
   const { user } = useAuth()
   // Registran rebajas el equipo médico (memoria) y la administración (decisión del centro)
   const canRecordReductions = user?.speciality === 'MEDICAL_TEAM' || user?.speciality === 'ADMINISTRATOR'
+  // Valoran las actividades (RF6) los educadores y la administración (decisión del centro)
+  const canEvaluate = user?.speciality === 'SOCIAL_EDUCATOR' || user?.speciality === 'ADMINISTRATOR'
 
   const day = useApi(() => getDiaryDay(date), [date])
   const staff = useApi(listUsers, [])
@@ -64,7 +66,7 @@ function DiaryDayPage({ date }: { date: string }) {
         subtitle={<span className="capitalize-first">{isToday ? t('diary.today', { date: longDate }) : longDate}</span>}
         actions={
           <div className="day-switcher">
-            <Button kind="tertiary" size="md" hasIconOnly renderIcon={ChevronLeft} iconDescription={t('diary.previous')}
+            <Button kind="tertiary" size="md" hasIconOnly autoAlign tooltipPosition="bottom" renderIcon={ChevronLeft} iconDescription={t('diary.previous')}
               onClick={() => navigate(`/diario/${shiftDays(date, -1)}`)} />
             <TextInput
               id="diary-date"
@@ -75,7 +77,7 @@ function DiaryDayPage({ date }: { date: string }) {
               value={date}
               onChange={(e) => e.target.value && navigate(`/diario/${e.target.value}`)}
             />
-            <Button kind="tertiary" size="md" hasIconOnly renderIcon={ChevronRight} iconDescription={t('diary.next')}
+            <Button kind="tertiary" size="md" hasIconOnly autoAlign tooltipPosition="bottom" renderIcon={ChevronRight} iconDescription={t('diary.next')}
               onClick={() => navigate(`/diario/${shiftDays(date, 1)}`)} />
             {!isToday && (
               <Button kind="ghost" size="md" onClick={() => navigate(`/diario/${todayIso()}`)}>
@@ -116,6 +118,7 @@ function DiaryDayPage({ date }: { date: string }) {
           <ActivitiesSection
             date={date}
             activities={current.activities}
+            canEvaluate={canEvaluate}
             onChanged={(activities) => setCurrent({ ...current, activities })}
           />
 

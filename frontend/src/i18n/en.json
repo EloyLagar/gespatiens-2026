@@ -388,6 +388,34 @@
         "pending_other": "{{count}} not marked"
       }
     },
+    "evaluation": {
+      "evaluate": "Evaluate",
+      "review": "Review evaluations",
+      "view": "View evaluations",
+      "save": "Save evaluations",
+      "close": "Close",
+      "help": "From 0 to 10, with at most one decimal. Leave blank whatever you do not have.",
+      "nobody": "Nobody attended this activity.",
+      "invalid": "Check the highlighted scores: they go from 0 to 10 with at most one decimal.",
+      "invalidField": "{{field}} for {{name}} is not valid",
+      "resident": "Resident",
+      "field": {
+        "mark": "Mark",
+        "satisfaction": "Satisfaction",
+        "utility": "Usefulness"
+      },
+      "fieldOf": {
+        "mark": "Mark for {{name}}",
+        "satisfaction": "Satisfaction for {{name}}",
+        "utility": "Usefulness for {{name}}"
+      },
+      "averages": "Averages: {{values}}",
+      "average": {
+        "mark": "mark {{value}}",
+        "satisfaction": "satisfaction {{value}}",
+        "utility": "usefulness {{value}}"
+      }
+    },
     "outings": {
       "title": "Therapeutic outings",
       "count_one": "{{count}} outing",

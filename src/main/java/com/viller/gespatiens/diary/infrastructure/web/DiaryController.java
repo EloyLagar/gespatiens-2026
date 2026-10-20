@@ -5,6 +5,7 @@ import com.viller.gespatiens.diary.application.DeleteOutingUseCase;
 import com.viller.gespatiens.diary.application.DeleteReductionUseCase;
 import com.viller.gespatiens.diary.application.GetDiaryDayUseCase;
 import com.viller.gespatiens.diary.application.RecordAttendanceUseCase;
+import com.viller.gespatiens.diary.application.RecordEvaluationsUseCase;
 import com.viller.gespatiens.diary.application.RecordOutingUseCase;
 import com.viller.gespatiens.diary.application.RecordReductionUseCase;
 import com.viller.gespatiens.diary.application.RecordShiftUseCase;
@@ -12,12 +13,14 @@ import com.viller.gespatiens.diary.application.RescheduleActivityUseCase;
 import com.viller.gespatiens.diary.application.ScheduleActivityUseCase;
 import com.viller.gespatiens.diary.application.UpdateOutingUseCase;
 import com.viller.gespatiens.diary.domain.DayPart;
+import com.viller.gespatiens.diary.domain.Evaluation;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryDayResponse.ActivityResponse;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryDayResponse.OutingResponse;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryDayResponse.ReductionResponse;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryDayResponse.ShiftResponse;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.ActivityRequest;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.AttendanceRequest;
+import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.EvaluationsRequest;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.OutingRequest;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.OutingUpdateRequest;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.ReductionRequest;
@@ -36,11 +39,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 // Una página del diario por fecha (yyyy-MM-dd). Las actividades y salidas se crean en su día y después
 // se tratan por id. Todo lo rellena cualquier empleado salvo las rebajas, que son del equipo médico y la
-// administración (ver SecurityConfig)
+// administración, y las valoraciones, que son de los educadores y la administración (ver SecurityConfig)
 @RestController
 @RequestMapping("/api/diary")
 public class DiaryController {
@@ -53,6 +58,7 @@ public class DiaryController {
     private final RescheduleActivityUseCase rescheduleActivityUseCase;
     private final DeleteActivityUseCase deleteActivityUseCase;
     private final RecordAttendanceUseCase recordAttendanceUseCase;
+    private final RecordEvaluationsUseCase recordEvaluationsUseCase;
     private final RecordOutingUseCase recordOutingUseCase;
     private final UpdateOutingUseCase updateOutingUseCase;
     private final DeleteOutingUseCase deleteOutingUseCase;
@@ -65,6 +71,7 @@ public class DiaryController {
                            RescheduleActivityUseCase rescheduleActivityUseCase,
                            DeleteActivityUseCase deleteActivityUseCase,
                            RecordAttendanceUseCase recordAttendanceUseCase,
+                           RecordEvaluationsUseCase recordEvaluationsUseCase,
                            RecordOutingUseCase recordOutingUseCase,
                            UpdateOutingUseCase updateOutingUseCase,
                            DeleteOutingUseCase deleteOutingUseCase) {
@@ -76,6 +83,7 @@ public class DiaryController {
         this.rescheduleActivityUseCase = rescheduleActivityUseCase;
         this.deleteActivityUseCase = deleteActivityUseCase;
         this.recordAttendanceUseCase = recordAttendanceUseCase;
+        this.recordEvaluationsUseCase = recordEvaluationsUseCase;
         this.recordOutingUseCase = recordOutingUseCase;
         this.updateOutingUseCase = updateOutingUseCase;
         this.deleteOutingUseCase = deleteOutingUseCase;
@@ -134,6 +142,19 @@ public class DiaryController {
     @PutMapping("/activities/{activityId}/attendance")
     public ActivityResponse recordAttendance(@PathVariable UUID activityId, @RequestBody AttendanceRequest request) {
         return ActivityResponse.from(recordAttendanceUseCase.execute(activityId, request.attendance()));
+    }
+
+    @PutMapping("/activities/{activityId}/evaluations")
+    public ActivityResponse recordEvaluations(@PathVariable UUID activityId, @RequestBody EvaluationsRequest request) {
+        Map<UUID, Evaluation> evaluations = new HashMap<>();
+        if (request.evaluations() != null) {
+            request.evaluations().forEach((patientId, e) -> {
+                if (e != null && (e.mark() != null || e.satisfaction() != null || e.utility() != null)) {
+                    evaluations.put(patientId, new Evaluation(e.mark(), e.satisfaction(), e.utility()));
+                }
+            });
+        }
+        return ActivityResponse.from(recordEvaluationsUseCase.execute(activityId, evaluations));
     }
 
     @PostMapping("/{date}/outings")

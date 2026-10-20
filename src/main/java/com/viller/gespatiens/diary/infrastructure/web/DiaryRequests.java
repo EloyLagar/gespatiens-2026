@@ -3,6 +3,7 @@ package com.viller.gespatiens.diary.infrastructure.web;
 import com.viller.gespatiens.diary.domain.ActivityType;
 import com.viller.gespatiens.diary.domain.AttendanceStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,14 @@ public final class DiaryRequests {
 
     // Residente -> lo anotado. Quien no aparece (o va a null) queda sin anotar
     public record AttendanceRequest(Map<UUID, AttendanceStatus> attendance) {
+    }
+
+    // Residente -> su valoración. Quien no aparece (o va a null, o con todo a null) queda sin valorar
+    public record EvaluationsRequest(Map<UUID, EvaluationRequest> evaluations) {
+    }
+
+    // De 0 a 10 con un decimal; lo que no se tenga, a null
+    public record EvaluationRequest(BigDecimal mark, BigDecimal satisfaction, BigDecimal utility) {
     }
 
     public record OutingRequest(UUID patientId, LocalTime leftAt, String notes) {

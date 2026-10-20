@@ -43,6 +43,9 @@ public class SecurityConfig {
                         // centro, la administración también puede registrarlas
                         .requestMatchers(HttpMethod.PUT, "/api/diary/*/reductions/*").hasAnyRole("MEDICAL_TEAM", "ADMINISTRATOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/diary/*/reductions/*").hasAnyRole("MEDICAL_TEAM", "ADMINISTRATOR")
+                        // RF6: las notas y valoraciones de las actividades las pasan los educadores y la
+                        // administración (decisión del centro). Los demás solo las consultan
+                        .requestMatchers(HttpMethod.PUT, "/api/diary/activities/*/evaluations").hasAnyRole("SOCIAL_EDUCATOR", "ADMINISTRATOR")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 // Sin httpBasic: con él, el navegador abre su propia ventana de usuario y contraseña

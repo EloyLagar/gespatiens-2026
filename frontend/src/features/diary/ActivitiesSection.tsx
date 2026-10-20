@@ -6,29 +6,45 @@ import {
   ACTIVITY_TITLE_MAX_LENGTH,
   ACTIVITY_TYPES,
   ATTENDANCE_STATUSES,
+  EVALUATION_FIELDS,
   deleteActivity,
   recordAttendance,
+  recordEvaluations,
   requiresTitle,
   rescheduleActivity,
   scheduleActivity,
   type Activity,
   type ActivityType,
   type AttendanceRow,
+  type EvaluationField,
 } from '../../api/diary'
 import { todayIso } from '../../shared/dates'
 import { hhmm } from '../../shared/times'
 import { ConfirmDialog, ErrorNotice } from '../../shared/ui'
-import { activityName, attendanceOf, byStartTime, summarize } from './activities'
+import {
+  activityName,
+  attendanceOf,
+  byStartTime,
+  draftOf,
+  evaluationsOf,
+  formatScore,
+  hasAverages,
+  parseScore,
+  summarize,
+  type ScoreDraft,
+} from './activities'
 
 interface Props {
   date: string
   activities: Activity[]
+  // RF6: valoran los educadores y la administración; los demás solo las ven
+  canEvaluate: boolean
   onChanged: (activities: Activity[]) => void
 }
 
 // Las actividades del día y su lista. Cualquier empleado las programa (también con antelación) y pasa
-// lista; "Rebajado" no se elige, sale de las rebajas del día
-export function ActivitiesSection({ date, activities, onChanged }: Props) {
+// lista; "Rebajado" no se elige, sale de las rebajas del día. A quienes asistieron se les valora (RF6)
+export function ActivitiesSection({ date, activities, canEvaluate, onChanged }: Props) {
   const { t } = useTranslation()
   const [adding, setAdding] = useState(false)
   const [removing, setRemoving] = useState<Activity | null>(null)
@@ -74,6 +90,7 @@ export function ActivitiesSection({ date, activities, onChanged }: Props) {
               date={date}
               activity={activity}
               canTakeRoll={canTakeRoll}
+              canEvaluate={canEvaluate}
               onSaved={replace}
               onRemove={() => setRemoving(activity)}
             />
@@ -184,16 +201,21 @@ interface CardProps {
   date: string
   activity: Activity
   canTakeRoll: boolean
+  canEvaluate: boolean
   onSaved: (activity: Activity) => void
   onRemove: () => void
 }
 
-function ActivityCard({ date, activity, canTakeRoll, onSaved, onRemove }: CardProps) {
-  const { t } = useTranslation()
-  const [mode, setMode] = useState<'view' | 'edit' | 'roll'>('view')
+function ActivityCard({ date, activity, canTakeRoll, canEvaluate, onSaved, onRemove }: CardProps) {
+  const { t, i18n } = useTranslation()
+  const [mode, setMode] = useState<'view' | 'edit' | 'roll' | 'evaluate'>('view')
   const titleId = `activity-${activity.id}-title`
   const summary = summarize(activity.attendance)
   const recorded = summary.ATTENDED + summary.EXCUSED_ABSENCE + summary.UNEXCUSED_ABSENCE
+  const evaluated = hasAverages(activity.averages)
+  const averages = EVALUATION_FIELDS
+    .filter((field) => activity.averages[field] !== null)
+    .map((field) => t(`diary.evaluation.average.${field}`, { value: formatScore(activity.averages[field], i18n.language) }))
 
   if (mode === 'edit') {
     return (
@@ -224,6 +246,11 @@ function ActivityCard({ date, activity, canTakeRoll, onSaved, onRemove }: CardPr
                 {recorded > 0 ? t('diary.attendance.edit') : t('diary.attendance.take')}
               </button>
             )}
+            {summary.ATTENDED > 0 && (canEvaluate || evaluated) && (
+              <button type="button" className="text-action" onClick={() => setMode('evaluate')}>
+                {!canEvaluate ? t('diary.evaluation.view') : evaluated ? t('diary.evaluation.review') : t('diary.evaluation.evaluate')}
+              </button>
+            )}
             <button type="button" className="text-action" onClick={() => setMode('edit')}>
               {t('common.edit')}
             </button>
@@ -236,11 +263,19 @@ function ActivityCard({ date, activity, canTakeRoll, onSaved, onRemove }: CardPr
 
       {mode === 'roll' ? (
         <RollCall activity={activity} onSaved={(saved) => { onSaved(saved); setMode('view') }} onCancel={() => setMode('view')} />
+      ) : mode === 'evaluate' ? (
+        <Evaluations activity={activity} readOnly={!canEvaluate}
+          onSaved={(saved) => { onSaved(saved); setMode('view') }} onCancel={() => setMode('view')} />
       ) : (
-        <p className="activity__summary">
-          {recorded > 0 ? counts.join(' · ') : canTakeRoll ? t('diary.attendance.notTaken') : t('diary.attendance.notYet')}
-          {recorded === 0 && summary.reduced > 0 && ` · ${t('diary.attendance.count.reduced', { count: summary.reduced })}`}
-        </p>
+        <>
+          <p className="activity__summary">
+            {recorded > 0 ? counts.join(' · ') : canTakeRoll ? t('diary.attendance.notTaken') : t('diary.attendance.notYet')}
+            {recorded === 0 && summary.reduced > 0 && ` · ${t('diary.attendance.count.reduced', { count: summary.reduced })}`}
+          </p>
+          {evaluated && (
+            <p className="activity__summary">{t('diary.evaluation.averages', { values: averages.join(' · ') })}</p>
+          )}
+        </>
       )}
     </section>
   )
@@ -329,6 +364,117 @@ function RollCall({ activity, onSaved, onCancel }: { activity: Activity; onSaved
         <Button size="sm" type="submit" disabled={busy}>
           {busy ? t('common.saving') : t('diary.attendance.save')}
         </Button>
+      </div>
+    </form>
+  )
+}
+
+// RF6: nota, satisfacción y utilidad de cada asistente. Los residentes no usan la aplicación: dan sus
+// valoraciones en papel y el educador las pasa aquí
+function Evaluations({ activity, readOnly, onSaved, onCancel }: {
+  activity: Activity
+  readOnly: boolean
+  onSaved: (a: Activity) => void
+  onCancel: () => void
+}) {
+  const { t, i18n } = useTranslation()
+  const attendees = activity.attendance.filter((r) => !r.reduced && r.status === 'ATTENDED')
+  const [drafts, setDrafts] = useState<Record<string, ScoreDraft>>(() =>
+    Object.fromEntries(attendees.map((r) => [r.resident.id, draftOf(r.evaluation, i18n.language)])))
+  const [showInvalid, setShowInvalid] = useState(false)
+  const [error, setError] = useState<unknown>(null)
+  const [busy, setBusy] = useState(false)
+
+  function write(id: string, field: EvaluationField, value: string) {
+    setDrafts({ ...drafts, [id]: { ...drafts[id], [field]: value } })
+  }
+
+  async function save(event: FormEvent) {
+    event.preventDefault()
+    const evaluations = evaluationsOf(drafts)
+    if (!evaluations) return setShowInvalid(true)
+    setShowInvalid(false)
+    setBusy(true)
+    setError(null)
+    try {
+      onSaved(await recordEvaluations(activity.id, evaluations))
+    } catch (err) {
+      setError(err)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  if (attendees.length === 0) {
+    return (
+      <div className="roll-call">
+        <p className="empty">{t('diary.evaluation.nobody')}</p>
+        <div className="form-actions">
+          <Button kind="secondary" size="sm" type="button" onClick={onCancel}>{t('diary.evaluation.close')}</Button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <form className="roll-call" onSubmit={save} noValidate>
+      <ErrorNotice error={error} title={t('form.notSaved')} />
+      {!readOnly && <p className="roll-call__pending">{t('diary.evaluation.help')}</p>}
+      <table className="scores">
+        <thead>
+          <tr>
+            <th scope="col" className="scores__number"><span className="visually-hidden">{t('diary.evaluation.resident')}</span></th>
+            <th scope="col" className="scores__who"><span className="visually-hidden">{t('diary.evaluation.resident')}</span></th>
+            {EVALUATION_FIELDS.map((field) => (
+              <th key={field} scope="col" className="scores__value">{t(`diary.evaluation.field.${field}`)}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {attendees.map((r) => {
+            const name = `${r.resident.name} ${r.resident.surname}`
+            const draft = drafts[r.resident.id]
+            return (
+              <tr key={r.resident.id}>
+                <td className="scores__number num">{r.resident.number ?? <span className="dash">—</span>}</td>
+                <th scope="row" className="scores__who">{name}</th>
+                {EVALUATION_FIELDS.map((field) => {
+                  const invalid = showInvalid && parseScore(draft[field]) === undefined
+                  return (
+                    <td key={field} className="scores__value" data-label={t(`diary.evaluation.field.${field}`)}>
+                      {readOnly ? (
+                        <span className="num">{draft[field] || <span className="dash">—</span>}</span>
+                      ) : (
+                        <input
+                          className={invalid ? 'score-input score-input--invalid' : 'score-input'}
+                          type="text"
+                          inputMode="decimal"
+                          autoComplete="off"
+                          maxLength={4}
+                          aria-label={t(`diary.evaluation.fieldOf.${field}`, { name })}
+                          aria-invalid={invalid || undefined}
+                          value={draft[field]}
+                          onChange={(e) => write(r.resident.id, field, e.target.value)}
+                        />
+                      )}
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+      {showInvalid && <p className="form-error" role="alert">{t('diary.evaluation.invalid')}</p>}
+      <div className="form-actions">
+        <Button kind="secondary" size="sm" type="button" onClick={onCancel} disabled={busy}>
+          {readOnly ? t('diary.evaluation.close') : t('common.cancel')}
+        </Button>
+        {!readOnly && (
+          <Button size="sm" type="submit" disabled={busy}>
+            {busy ? t('common.saving') : t('diary.evaluation.save')}
+          </Button>
+        )}
       </div>
     </form>
   )
