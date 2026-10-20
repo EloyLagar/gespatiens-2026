@@ -61,6 +61,14 @@ public class Patient {
         this.exitDate = exitDate;
     }
 
+    // Modificar la ficha. Las validaciones de cada campo ya las hace PatientDetails
+    public void updateDetails(PatientDetails details) {
+        if (details == null) {
+            throw new IllegalArgumentException("Los datos del residente no pueden estar vacíos");
+        }
+        this.details = details;
+    }
+
     // Un residente antiguo vuelve al centro con un número nuevo (no tiene por qué ser el que tenía).
     // La tabla solo guarda una estancia, así que la nueva entrada sustituye a la anterior
     public void readmit(int number, LocalDate entryDate) {

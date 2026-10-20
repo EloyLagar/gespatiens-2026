@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface PatientJpaRepository extends JpaRepository<PatientJpaEntity, UUID> {
     boolean existsByDni(String dni);
     boolean existsByVisitCode(String visitCode);
+    boolean existsByDniAndIdNot(String dni, UUID id);
+    boolean existsByVisitCodeAndIdNot(String visitCode, UUID id);
     List<PatientJpaEntity> findByExitDateIsNullOrderByNumber();
     List<PatientJpaEntity> findByExitDateIsNotNullOrderByExitDateDesc();
 

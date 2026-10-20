@@ -55,6 +55,18 @@ class InMemoryPatientRepository implements PatientRepository {
     }
 
     @Override
+    public boolean existsByDniAndIdNot(Dni dni, UUID id) {
+        return patients.values().stream()
+                .anyMatch(p -> !p.getId().equals(id) && p.getDetails().dni().equals(dni));
+    }
+
+    @Override
+    public boolean existsByVisitCodeAndIdNot(String visitCode, UUID id) {
+        return patients.values().stream()
+                .anyMatch(p -> !p.getId().equals(id) && visitCode.equals(p.getDetails().visitCode()));
+    }
+
+    @Override
     public Set<Integer> findOccupiedNumbers() {
         return patients.values().stream()
                 .filter(Patient::isActive)

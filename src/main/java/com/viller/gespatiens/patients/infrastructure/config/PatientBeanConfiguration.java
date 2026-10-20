@@ -5,6 +5,7 @@ import com.viller.gespatiens.patients.application.DischargePatientUseCase;
 import com.viller.gespatiens.patients.application.GetPatientUseCase;
 import com.viller.gespatiens.patients.application.ListPatientsUseCase;
 import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
+import com.viller.gespatiens.patients.application.UpdatePatientDetailsUseCase;
 import com.viller.gespatiens.patients.domain.PatientRepository;
 import com.viller.gespatiens.patients.domain.ResidentNumberAssigner;
 import org.springframework.context.annotation.Bean;
@@ -44,5 +45,10 @@ public class PatientBeanConfiguration {
     @Bean
     public ListPatientsUseCase listPatientsUseCase(PatientRepository patientRepository) {
         return new ListPatientsUseCase(patientRepository);
+    }
+
+    @Bean
+    public UpdatePatientDetailsUseCase updatePatientDetailsUseCase(PatientRepository patientRepository) {
+        return new UpdatePatientDetailsUseCase(patientRepository);
     }
 }

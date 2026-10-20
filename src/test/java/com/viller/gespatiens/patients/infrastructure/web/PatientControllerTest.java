@@ -6,11 +6,13 @@ import com.viller.gespatiens.patients.application.DischargePatientUseCase;
 import com.viller.gespatiens.patients.application.GetPatientUseCase;
 import com.viller.gespatiens.patients.application.ListPatientsUseCase;
 import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
+import com.viller.gespatiens.patients.application.UpdatePatientDetailsUseCase;
 import com.viller.gespatiens.patients.domain.CenterFullException;
 import com.viller.gespatiens.patients.domain.Dni;
 import com.viller.gespatiens.patients.domain.Patient;
 import com.viller.gespatiens.patients.domain.PatientAlreadyActiveException;
 import com.viller.gespatiens.patients.domain.PatientAlreadyDischargedException;
+import com.viller.gespatiens.patients.domain.PatientAlreadyRegisteredException;
 import com.viller.gespatiens.patients.domain.PatientDetails;
 import com.viller.gespatiens.patients.domain.PatientNotFoundException;
 import com.viller.gespatiens.patients.domain.PatientStatus;
@@ -35,6 +37,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,6 +70,9 @@ class PatientControllerTest {
 
     @MockitoBean
     private ListPatientsUseCase listPatientsUseCase;
+
+    @MockitoBean
+    private UpdatePatientDetailsUseCase updatePatientDetailsUseCase;
 
     @MockitoBean
     private UserDetailsService userDetailsService;
@@ -288,5 +294,36 @@ class PatientControllerTest {
     void anonymousCannotListPatients() throws Exception {
         mockMvc.perform(get("/api/patients"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "PSYCHOLOGIST")
+    void anyEmployeeUpdatesPatientDetails() throws Exception {
+        when(updatePatientDetailsUseCase.execute(eq(PATIENT_ID), any())).thenReturn(dischargedPatient());
+
+        mockMvc.perform(put("/api/patients/{id}", PATIENT_ID).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(PATIENT_ID.toString()));
+    }
+
+    @Test
+    @WithMockUser
+    void updateWithMissingNameReturnsBadRequest() throws Exception {
+        String body = VALID_BODY.replace("\"name\":\"Juan\"", "\"name\":\"\"");
+
+        mockMvc.perform(put("/api/patients/{id}", PATIENT_ID).contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("El campo nombre no puede estar vacío"));
+        verifyNoInteractions(updatePatientDetailsUseCase);
+    }
+
+    @Test
+    @WithMockUser
+    void updateWithDniOfAnotherPatientReturnsConflict() throws Exception {
+        when(updatePatientDetailsUseCase.execute(eq(PATIENT_ID), any()))
+                .thenThrow(new PatientAlreadyRegisteredException(new Dni("12345678Z")));
+
+        mockMvc.perform(put("/api/patients/{id}", PATIENT_ID).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+                .andExpect(status().isConflict());
     }
 }
