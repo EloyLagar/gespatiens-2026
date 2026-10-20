@@ -1,0 +1,243 @@
+{
+  "app": {
+    "name": "gespatiens",
+    "scope": "Comunidad terapéutica Los Vientos",
+    "scopeShort": "Los Vientos"
+  },
+  "nav": {
+    "label": "Apartados",
+    "residents": "Residentes",
+    "formerResidents": "Antiguos residentes",
+    "employees": "Empleados",
+    "profile": "Mi perfil",
+    "logout": "Cerrar sesión",
+    "skipToContent": "Saltar al contenido",
+    "openMenu": "Abrir el menú",
+    "closeMenu": "Cerrar el menú"
+  },
+  "language": {
+    "label": "Idioma",
+    "es": "ES",
+    "en": "EN"
+  },
+  "speciality": {
+    "ADMINISTRATOR": "Administración",
+    "SOCIAL_EDUCATOR": "Educación social",
+    "SOCIAL_WORKER": "Trabajo social",
+    "PSYCHOLOGIST": "Psicología",
+    "MEDICAL_TEAM": "Equipo médico"
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "lead": "Acceso solo para el personal del centro.",
+    "expired": "Tu sesión ha caducado. Vuelve a entrar para seguir.",
+    "email": "Email",
+    "password": "Contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "failed": "No se ha podido entrar",
+    "entering": "Entrando…",
+    "submit": "Entrar",
+    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te ponga una nueva."
+  },
+  "errors": {
+    "title": "Algo ha fallado",
+    "network": "No hay conexión con el servidor. Comprueba que la aplicación está arrancada y vuelve a intentarlo.",
+    "badRequest": "Hay datos que no son válidos.",
+    "unauthorized": "Email o contraseña incorrectos.",
+    "forbidden": "Tu especialidad no tiene permiso para hacer esto.",
+    "notFound": "No existe o ya se ha borrado.",
+    "conflict": "Choca con datos que ya existen.",
+    "generic": "Ha ocurrido un error inesperado. Vuelve a intentarlo."
+  },
+  "common": {
+    "retry": "Reintentar",
+    "working": "Un momento…",
+    "cancel": "Cancelar",
+    "loading": "Cargando",
+    "clearSearch": "Borrar la búsqueda",
+    "actions": "Acciones",
+    "edit": "Editar",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "dayUnit_one": "día",
+    "dayUnit_other": "días"
+  },
+  "residents": {
+    "title": "Residentes",
+    "subtitle_one": "{{count}} de {{max}} plazas ocupadas · la próxima alta recibe el nº {{next}}",
+    "subtitle_other": "{{count}} de {{max}} plazas ocupadas · la próxima alta recibe el nº {{next}}",
+    "subtitleFull": "Centro completo: {{max}} de {{max}} plazas ocupadas. Para dar un alta, antes hay que dar una baja.",
+    "fullHint": "El centro está completo",
+    "admit": "Dar de alta",
+    "listTitle": "En el centro",
+    "search": "Buscar residente",
+    "searchPlaceholder": "Nombre, DNI o nº de plaza",
+    "count_one": "{{count}} residente",
+    "count_other": "{{count}} residentes",
+    "empty": "No hay residentes en el centro. Las 32 plazas están libres.",
+    "noMatch": "Nadie coincide con «{{query}}».",
+    "tableCaption": "Residentes en el centro, ordenados por número de plaza"
+  },
+  "beds": {
+    "title": "Plazas",
+    "label": "Las 32 plazas del centro",
+    "summary": "{{taken}} ocupadas · {{free}} libres de {{max}}",
+    "taken": "Plaza {{number}}: {{name}}",
+    "free": "Plaza {{number}}: libre",
+    "nextFree": "Plaza {{number}}: libre, la recibirá la próxima alta",
+    "next": "Próxima",
+    "freeShort": "Libre"
+  },
+  "patient": {
+    "number": "Nº",
+    "fullName": "Nombre",
+    "name": "Nombre",
+    "surname": "Apellidos",
+    "dni": "DNI / NIE",
+    "dniHelp": "Con la letra: 12345678Z o X1234567L",
+    "birthDate": "Fecha de nacimiento",
+    "age": "Edad",
+    "ageValue_one": "{{count}} año",
+    "ageValue_other": "{{count}} años",
+    "phoneNumber": "Teléfono",
+    "address": "Dirección",
+    "sip": "SIP",
+    "sipHelp": "Tarjeta sanitaria. Opcional",
+    "visitCode": "Código de visita",
+    "visitCodeHelp": "Opcional. No puede repetirse entre residentes",
+    "belongings": "Pertenencias",
+    "abuseSubstances": "Sustancias de abuso",
+    "extraInfo": "Información adicional",
+    "entryDate": "Entrada",
+    "exitDate": "Salida",
+    "daysIn": "En el centro",
+    "stay": "Estancia",
+    "since": "desde el {{date}}",
+    "sectionPersonal": "Datos personales",
+    "sectionCentre": "Datos del ingreso"
+  },
+  "admit": {
+    "title": "Dar de alta a un residente",
+    "subtitle": "Recibirá la plaza nº {{number}}, la menor libre.",
+    "submit": "Dar de alta",
+    "entryDateHelp": "Hoy, salvo que el alta sea de otro día"
+  },
+  "detail": {
+    "notFoundTitle": "Ficha no encontrada",
+    "editTitle": "Editar la ficha de {{name}}",
+    "statusActive": "En el centro · plaza nº {{number}}",
+    "statusFormer": "Antiguo residente · salió el {{date}}",
+    "discharge": "Dar de baja",
+    "stay": "Estancia",
+    "days_one": "{{count}} día",
+    "days_other": "{{count}} días",
+    "deleteTitle": "Borrar la ficha",
+    "deleteText": "Borra para siempre los datos de este antiguo residente. No se puede deshacer: si solo ha salido del centro, la baja ya conserva su ficha.",
+    "delete": "Borrar la ficha",
+    "flash": {
+      "admitted": "{{name}} ha recibido la plaza nº {{number}}.",
+      "readmitted": "{{name}} vuelve al centro con la plaza nº {{number}}.",
+      "saved": "Ficha guardada.",
+      "discharged": "{{name}} ha pasado a antiguos residentes. Su ficha se conserva."
+    }
+  },
+  "discharge": {
+    "title": "¿Dar de baja a {{name}}?",
+    "body": "Pasará a antiguos residentes y la plaza nº {{number}} quedará libre. Su ficha se conserva y podrá volver más adelante.",
+    "date": "Fecha de salida",
+    "confirm": "Dar de baja"
+  },
+  "readmit": {
+    "title": "¿Reincorporar a {{name}}?",
+    "body": "Salió el {{exit}}. Volverá con la plaza nº {{number}}, la menor libre, que puede no ser la que tenía.",
+    "full": "El centro está completo: no queda ninguna plaza libre.",
+    "date": "Fecha de reingreso",
+    "dateHelp": "No puede ser anterior a su última salida",
+    "confirm": "Reincorporar"
+  },
+  "deletePatient": {
+    "title": "¿Borrar la ficha de {{name}}?",
+    "body": "Se borrarán para siempre todos los datos de {{name}} (DNI {{dni}}). No se puede deshacer.",
+    "confirm": "Borrar para siempre"
+  },
+  "former": {
+    "title": "Antiguos residentes",
+    "subtitle_one": "{{count}} persona ha pasado por el centro. Su ficha se conserva.",
+    "subtitle_other": "{{count}} personas han pasado por el centro. Sus fichas se conservan.",
+    "fullNotice": "El centro está completo: no se puede reincorporar a nadie hasta que se dé una baja.",
+    "listTitle": "Han salido",
+    "searchPlaceholder": "Nombre o DNI",
+    "count_one": "{{count}} antiguo residente",
+    "count_other": "{{count}} antiguos residentes",
+    "empty": "Todavía no ha salido nadie del centro.",
+    "tableCaption": "Antiguos residentes, del que salió más recientemente al primero",
+    "left": "salió el {{date}}",
+    "readmit": "Reincorporar",
+    "readmitWho": "Reincorporar a {{name}}"
+  },
+  "form": {
+    "required": "Este campo es obligatorio.",
+    "requiredMark": "obligatorio",
+    "notSaved": "No se ha guardado",
+    "passwordLength": "Al menos {{min}} caracteres.",
+    "passwordMismatch": "Las dos contraseñas no coinciden."
+  },
+  "employees": {
+    "title": "Empleados",
+    "subtitle_one": "{{count}} persona en plantilla · {{admins}} en administración",
+    "subtitle_other": "{{count}} personas en plantilla · {{admins}} en administración",
+    "add": "Dar de alta empleado",
+    "tableCaption": "Empleados del centro, ordenados por nombre",
+    "you": "tú",
+    "myProfile": "Mi perfil",
+    "editWho": "Editar a {{name}}"
+  },
+  "user": {
+    "name": "Nombre",
+    "speciality": "Especialidad",
+    "email": "Email",
+    "phoneNumber": "Teléfono"
+  },
+  "employeeForm": {
+    "newTitle": "Dar de alta a un empleado",
+    "create": "Dar de alta",
+    "editTitleUnknown": "Empleado no encontrado",
+    "profile": "Perfil",
+    "profileHelp": "La especialidad decide qué puede hacer en la aplicación. Solo la administración puede cambiarla, igual que el email.",
+    "saved": "Perfil guardado.",
+    "resetTitle": "Contraseña",
+    "resetHelp": "Si ha olvidado la suya, ponle una provisional y pídele que la cambie desde su perfil.",
+    "resetSubmit": "Poner contraseña nueva",
+    "resetDone": "{{name}} ya puede entrar con la contraseña nueva.",
+    "deleteTitle": "Eliminar empleado",
+    "deleteText": "Pierde el acceso al momento, aunque tenga la sesión abierta. Siempre tiene que quedar al menos una persona en administración.",
+    "delete": "Eliminar empleado",
+    "deleteConfirmTitle": "¿Eliminar a {{name}}?",
+    "deleteBody": "{{name}} ({{email}}) dejará de poder entrar en la aplicación. No se puede deshacer.",
+    "deleteConfirm": "Eliminar",
+    "emailHelp": "Con él entra en la aplicación",
+    "specialityHelp": "Administración puede gestionar empleados, dar bajas y borrar fichas",
+    "initialPassword": "Contraseña inicial"
+  },
+  "password": {
+    "current": "Contraseña actual",
+    "new": "Contraseña nueva",
+    "repeat": "Repite la contraseña nueva"
+  },
+  "profile": {
+    "title": "Mi perfil",
+    "saved": "Datos guardados.",
+    "data": "Mis datos",
+    "dataHelp": "El email y la especialidad solo los cambia la administración.",
+    "password": "Contraseña",
+    "passwordHelp": "Se pide la actual para que nadie pueda cambiarla desde una sesión que se haya quedado abierta.",
+    "changePassword": "Cambiar la contraseña",
+    "passwordChanged": "Contraseña cambiada."
+  },
+  "notFound": {
+    "title": "Esta página no existe",
+    "text": "Puede que el enlace esté mal o que la ficha se haya borrado.",
+    "back": "Volver a residentes"
+  }
+}
