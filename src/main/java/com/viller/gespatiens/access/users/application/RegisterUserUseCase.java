@@ -9,8 +9,6 @@ import com.viller.gespatiens.access.users.domain.UserRepository;
 
 public class RegisterUserUseCase {
 
-    private static final int MIN_PASSWORD_LENGTH = 8;
-
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
 
@@ -20,11 +18,7 @@ public class RegisterUserUseCase {
     }
 
     public User execute(String name, String email, String phoneNumber, Speciality speciality, String rawPassword) {
-        // La longitud se valida aquí porque, una vez hasheada, el dominio ya no puede saberla
-        if (rawPassword == null || rawPassword.length() < MIN_PASSWORD_LENGTH) {
-            throw new IllegalArgumentException(
-                    "La contraseña debe tener al menos " + MIN_PASSWORD_LENGTH + " caracteres");
-        }
+        PasswordPolicy.check(rawPassword);
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyRegisteredException(email);
         }

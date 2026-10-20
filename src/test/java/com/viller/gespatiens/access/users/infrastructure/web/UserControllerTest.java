@@ -1,10 +1,13 @@
 package com.viller.gespatiens.access.users.infrastructure.web;
 
+import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
+import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException;
+import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserNotFoundException;
@@ -23,9 +26,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +59,12 @@ class UserControllerTest {
 
     @MockitoBean
     private GetCurrentUserUseCase getCurrentUserUseCase;
+
+    @MockitoBean
+    private UpdateOwnProfileUseCase updateOwnProfileUseCase;
+
+    @MockitoBean
+    private ChangeOwnPasswordUseCase changeOwnPasswordUseCase;
 
     @MockitoBean
     private UserDetailsService userDetailsService;
@@ -154,5 +166,37 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/users/{id}", id))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "ana@vientos.es", roles = "PSYCHOLOGIST")
+    void employeeUpdatesOwnProfile() throws Exception {
+        when(updateOwnProfileUseCase.execute("ana@vientos.es", "Ana María", "600999888")).thenReturn(ana());
+
+        mockMvc.perform(put("/api/users/me").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Ana María\",\"phoneNumber\":\"600999888\"}"))
+                .andExpect(status().isOk());
+        verify(updateOwnProfileUseCase).execute("ana@vientos.es", "Ana María", "600999888");
+    }
+
+    @Test
+    @WithMockUser(username = "ana@vientos.es", roles = "PSYCHOLOGIST")
+    void employeeChangesOwnPassword() throws Exception {
+        mockMvc.perform(put("/api/users/me/password").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"antigua123\",\"newPassword\":\"nueva12345\"}"))
+                .andExpect(status().isNoContent());
+        verify(changeOwnPasswordUseCase).execute("ana@vientos.es", "antigua123", "nueva12345");
+    }
+
+    @Test
+    @WithMockUser(username = "ana@vientos.es")
+    void wrongCurrentPasswordReturnsBadRequest() throws Exception {
+        doThrow(new InvalidCurrentPasswordException())
+                .when(changeOwnPasswordUseCase).execute(any(), any(), any());
+
+        mockMvc.perform(put("/api/users/me/password").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"mal\",\"newPassword\":\"nueva12345\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("La contraseña actual no es correcta"));
     }
 }

@@ -1,9 +1,11 @@
 package com.viller.gespatiens.access.users.infrastructure.config;
 
+import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
+import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.PasswordHasher;
 import com.viller.gespatiens.access.users.domain.UserRepository;
 import org.springframework.context.annotation.Bean;
@@ -32,5 +34,16 @@ public class UserBeanConfiguration {
     @Bean
     public GetCurrentUserUseCase getCurrentUserUseCase(UserRepository userRepository) {
         return new GetCurrentUserUseCase(userRepository);
+    }
+
+    @Bean
+    public UpdateOwnProfileUseCase updateOwnProfileUseCase(UserRepository userRepository) {
+        return new UpdateOwnProfileUseCase(userRepository);
+    }
+
+    @Bean
+    public ChangeOwnPasswordUseCase changeOwnPasswordUseCase(UserRepository userRepository,
+                                                             PasswordHasher passwordHasher) {
+        return new ChangeOwnPasswordUseCase(userRepository, passwordHasher);
     }
 }

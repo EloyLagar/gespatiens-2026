@@ -53,6 +53,11 @@ public class UserRepositoryJpaAdapter implements UserRepository {
         return userJpaRepository.existsByPhoneNumber(phoneNumber);
     }
 
+    @Override
+    public boolean existsByPhoneNumberAndIdNot(String phoneNumber, UUID id) {
+        return userJpaRepository.existsByPhoneNumberAndIdNot(phoneNumber, id);
+    }
+
     private UserJpaEntity toEntity(User user) {
         UserJpaEntity entity = new UserJpaEntity();
         entity.setId(user.getId());
