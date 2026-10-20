@@ -64,7 +64,7 @@ function DiaryDayPage({ date }: { date: string }) {
         subtitle={<span className="capitalize-first">{isToday ? t('diary.today', { date: longDate }) : longDate}</span>}
         actions={
           <div className="day-switcher">
-            <Button kind="tertiary" size="md" hasIconOnly renderIcon={ChevronLeft} iconDescription={t('diary.previous')}
+            <Button kind="tertiary" size="md" hasIconOnly autoAlign tooltipPosition="bottom" renderIcon={ChevronLeft} iconDescription={t('diary.previous')}
               onClick={() => navigate(`/diario/${shiftDays(date, -1)}`)} />
             <TextInput
               id="diary-date"
