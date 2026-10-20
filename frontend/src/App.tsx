@@ -3,6 +3,8 @@ import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAdmin, RequireAuth } from './auth/RequireAuth'
 import { LoginPage } from './features/auth/LoginPage'
 import { DiaryPage } from './features/diary/DiaryPage'
+import { FollowUpPage } from './features/interventions/FollowUpPage'
+import { InterventionsPage } from './features/interventions/InterventionsPage'
 import { NoticesPage } from './features/notices/NoticesPage'
 import { AdmitPatientPage } from './features/patients/AdmitPatientPage'
 import { FormerResidentsPage } from './features/patients/FormerResidentsPage'
@@ -30,6 +32,8 @@ export function App() {
         <Route path="avisos" element={<NoticesPage />} />
         <Route path="diario" element={<DiaryPage />} />
         <Route path="diario/:date" element={<DiaryPage />} />
+        <Route path="intervenciones" element={<InterventionsPage />} />
+        <Route path="intervenciones/:patientId" element={<FollowUpPage />} />
         <Route path="residentes" element={<ResidentsPage />} />
         <Route path="residentes/nuevo" element={<AdmitPatientPage />} />
         <Route path="residentes/:id" element={<PatientDetailPage />} />

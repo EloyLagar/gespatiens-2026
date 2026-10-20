@@ -825,6 +825,35 @@ button:focus-visible,
   background: #fff1f1;
 }
 
+// Intervenciones: los tutores de un residente, en fila con su inicial y especialidad
+.tutors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tutors__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.intervention-form {
+  max-width: 720px;
+  margin-bottom: 16px;
+}
+
+.intervention-form .cds--text-input[type='date'] {
+  width: 180px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
 // Valoraciones (RF6): una fila por asistente con nota, satisfacción y utilidad
 .scores {
   width: 100%;

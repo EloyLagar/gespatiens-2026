@@ -15,7 +15,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "notices": "Notices",
-    "diary": "Diary"
+    "diary": "Diary",
+    "interventions": "Interventions"
   },
   "language": {
     "label": "Language",
@@ -142,7 +143,8 @@
       "readmitted": "{{name}} is back in the centre in place no. {{number}}.",
       "saved": "Record saved.",
       "discharged": "{{name}} is now a former resident. Their record is kept."
-    }
+    },
+    "interventions": "Tutors and interventions"
   },
   "discharge": {
     "title": "Discharge {{name}}?",
@@ -442,5 +444,50 @@
       "removeTitle": "Remove the outing for {{name}}?",
       "removeBody": "The outing and its return for this day will be deleted."
     }
+  },
+  "interventions": {
+    "title": "Interventions",
+    "subtitle_one": "{{count}} resident in the centre · {{withoutTutor}} without a tutor",
+    "subtitle_other": "{{count}} residents in the centre · {{withoutTutor}} without a tutor",
+    "listTitle": "Residents",
+    "filterLabel": "Show residents",
+    "filter": {
+      "all": "All",
+      "mine": "My tutees"
+    },
+    "empty": {
+      "all": "There are no residents in the centre.",
+      "mine": "You are not the tutor of any resident."
+    },
+    "tableCaption": "Residents in the centre with their tutors and latest intervention",
+    "tutors": "Tutors",
+    "count": "Interventions",
+    "last": "Latest",
+    "lastOn": "latest on {{date}}",
+    "none": "no interventions",
+    "noTutors": "No tutor",
+    "yourTutee": "your tutee",
+    "notFoundTitle": "Resident not found",
+    "place": "Place {{number}}",
+    "former": "Former resident: their history is kept",
+    "openRecord": "Open record",
+    "changeTutors": "Change tutors",
+    "whoTutors": "Who tutors this resident",
+    "noTutorsYet": "No tutors yet. Administration assigns them.",
+    "noTutorsAdmin": "No tutors yet. Assign them so they can record interventions.",
+    "historyTitle": "Interventions",
+    "historyCount_one": "{{count}} intervention",
+    "historyCount_other": "{{count}} interventions",
+    "historyEmpty": "There are no interventions with this resident yet.",
+    "onlyTutors": "Only their tutors can record interventions.",
+    "record": "Record intervention",
+    "date": "Day",
+    "text": "Intervention carried out",
+    "textHelp": "What was done with the resident and anything the rest of the team should know.",
+    "dateInvalid": "Choose a day that is not after today.",
+    "textNeeded": "Describe the intervention before saving it.",
+    "delete": "Delete",
+    "deleteTitle": "Delete this intervention?",
+    "deleteBody": "It will disappear from the history of {{name}}. This cannot be undone."
   }
 }
