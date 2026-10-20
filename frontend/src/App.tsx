@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAdmin, RequireAuth } from './auth/RequireAuth'
 import { LoginPage } from './features/auth/LoginPage'
+import { NoticesPage } from './features/notices/NoticesPage'
 import { AdmitPatientPage } from './features/patients/AdmitPatientPage'
 import { FormerResidentsPage } from './features/patients/FormerResidentsPage'
 import { PatientDetailPage } from './features/patients/PatientDetailPage'
@@ -23,7 +24,9 @@ export function App() {
           </RequireAuth>
         }
       >
-        <Route index element={<Navigate to="/residentes" replace />} />
+        {/* La memoria pone los avisos en la página principal */}
+        <Route index element={<Navigate to="/avisos" replace />} />
+        <Route path="avisos" element={<NoticesPage />} />
         <Route path="residentes" element={<ResidentsPage />} />
         <Route path="residentes/nuevo" element={<AdmitPatientPage />} />
         <Route path="residentes/:id" element={<PatientDetailPage />} />
@@ -57,7 +60,7 @@ function NotFound() {
   return (
     <>
       <PageHeader title={t('notFound.title')} subtitle={t('notFound.text')} />
-      <Link to="/residentes">{t('notFound.back')}</Link>
+      <Link to="/avisos">{t('notFound.back')}</Link>
     </>
   )
 }

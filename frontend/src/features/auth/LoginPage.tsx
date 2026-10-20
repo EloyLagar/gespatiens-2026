@@ -15,7 +15,7 @@ export function LoginPage() {
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
 
-  const from = (location.state as { from?: string } | null)?.from ?? '/residentes'
+  const from = (location.state as { from?: string } | null)?.from ?? '/avisos'
   if (user) return <Navigate to={from} replace />
 
   async function submit(event: FormEvent) {

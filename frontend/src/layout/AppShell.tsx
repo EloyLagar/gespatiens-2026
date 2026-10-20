@@ -1,4 +1,4 @@
-import { Archive, Close, Logout, Menu, UserMultiple, UserProfile, Group } from '@carbon/icons-react'
+import { Archive, Close, Group, Logout, Menu, Notification, UserMultiple, UserProfile } from '@carbon/icons-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
@@ -39,6 +39,7 @@ export function AppShell() {
   // RNF3: cada empleado ve los apartados de la aplicación. Las acciones que no puede hacer
   // (dar de baja, borrar, gestionar empleados) se ocultan dentro de cada pantalla
   const items: NavItem[] = [
+    { to: '/avisos', label: t('nav.notices'), icon: <Notification size={16} /> },
     { to: '/residentes', label: t('nav.residents'), icon: <UserMultiple size={16} /> },
     { to: '/antiguos', label: t('nav.formerResidents'), icon: <Archive size={16} /> },
     { to: '/empleados', label: t('nav.employees'), icon: <Group size={16} /> },

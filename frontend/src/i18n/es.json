@@ -13,7 +13,8 @@
     "logout": "Cerrar sesión",
     "skipToContent": "Saltar al contenido",
     "openMenu": "Abrir el menú",
-    "closeMenu": "Cerrar el menú"
+    "closeMenu": "Cerrar el menú",
+    "notices": "Avisos"
   },
   "language": {
     "label": "Idioma",
@@ -238,6 +239,46 @@
   "notFound": {
     "title": "Esta página no existe",
     "text": "Puede que el enlace esté mal o que la ficha se haya borrado.",
-    "back": "Volver a residentes"
+    "back": "Volver al inicio"
+  },
+  "notices": {
+    "title": "Avisos",
+    "subtitle_one": "{{count}} aviso del personal · {{admin}} de administración",
+    "subtitle_other": "{{count}} avisos del personal · {{admin}} de administración",
+    "new": "Nuevo aviso",
+    "newHelp": "Lo verá todo el personal del centro al entrar en la aplicación.",
+    "emptyText": "Escribe el aviso antes de publicarlo.",
+    "publish": "Publicar",
+    "publishing": "Publicando…",
+    "notPublished": "No se ha publicado",
+    "listTitle": "Publicados",
+    "filterLabel": "Mostrar avisos",
+    "filter": {
+      "all": "Todos",
+      "mine": "Míos",
+      "administration": "De administración"
+    },
+    "empty": {
+      "all": "Todavía no hay avisos. Publica el primero arriba.",
+      "mine": "Aún no has publicado ningún aviso.",
+      "administration": "La administración no ha publicado avisos."
+    },
+    "fromAdministration": "Administración",
+    "formerEmployee": "Empleado eliminado",
+    "edited": "editado",
+    "editLabel": "Texto del aviso",
+    "delete": "Eliminar",
+    "deleteTitle": "¿Eliminar este aviso?",
+    "deleteMine": "Dejará de verlo todo el personal. No se puede deshacer.",
+    "deleteOther": "Es un aviso de {{name}}. Dejará de verlo todo el personal. No se puede deshacer.",
+    "deleteConfirm": "Eliminar"
+  },
+  "time": {
+    "justNow": "ahora mismo",
+    "minutesAgo_one": "hace {{count}} min",
+    "minutesAgo_other": "hace {{count}} min",
+    "today": "hoy, {{time}}",
+    "yesterday": "ayer, {{time}}",
+    "onDay": "{{day}}, {{time}}"
   }
 }

@@ -72,3 +72,25 @@ export type PatientStatus = 'ACTIVE' | 'FORMER'
 
 // Debe coincidir con Patient.MAX_RESIDENTS en el dominio (RF10)
 export const MAX_RESIDENTS = 32
+
+export interface NoticeAuthor {
+  id: string
+  name: string
+  speciality: Speciality
+  administrator: boolean
+}
+
+export interface Notice {
+  id: string
+  text: string
+  // Instantes ISO (UTC), p. ej. 2026-10-20T08:00:00Z
+  createdAt: string
+  editedAt: string | null
+  // null si el autor ya no está en la plantilla
+  author: NoticeAuthor | null
+  mine: boolean
+  manageable: boolean
+}
+
+// Debe coincidir con Notice.MAX_LENGTH en el dominio
+export const NOTICE_MAX_LENGTH = 2000
