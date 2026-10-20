@@ -12,6 +12,9 @@ public interface PatientRepository {
     List<Patient> findByStatus(PatientStatus status);
     boolean existsByDni(Dni dni);
     boolean existsByVisitCode(String visitCode);
+    // Al editar una ficha: ¿lo tiene otro residente distinto del que se edita?
+    boolean existsByDniAndIdNot(Dni dni, UUID id);
+    boolean existsByVisitCodeAndIdNot(String visitCode, UUID id);
     // Números de referencia en uso por los residentes activos
     Set<Integer> findOccupiedNumbers();
 }

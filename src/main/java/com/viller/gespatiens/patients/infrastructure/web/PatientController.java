@@ -5,12 +5,14 @@ import com.viller.gespatiens.patients.application.DischargePatientUseCase;
 import com.viller.gespatiens.patients.application.GetPatientUseCase;
 import com.viller.gespatiens.patients.application.ListPatientsUseCase;
 import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
+import com.viller.gespatiens.patients.application.UpdatePatientDetailsUseCase;
 import com.viller.gespatiens.patients.domain.Patient;
 import com.viller.gespatiens.patients.domain.PatientStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,17 +31,20 @@ public class PatientController {
     private final ReadmitPatientUseCase readmitPatientUseCase;
     private final GetPatientUseCase getPatientUseCase;
     private final ListPatientsUseCase listPatientsUseCase;
+    private final UpdatePatientDetailsUseCase updatePatientDetailsUseCase;
 
     public PatientController(AdmitPatientUseCase admitPatientUseCase,
                              DischargePatientUseCase dischargePatientUseCase,
                              ReadmitPatientUseCase readmitPatientUseCase,
                              GetPatientUseCase getPatientUseCase,
-                             ListPatientsUseCase listPatientsUseCase) {
+                             ListPatientsUseCase listPatientsUseCase,
+                             UpdatePatientDetailsUseCase updatePatientDetailsUseCase) {
         this.admitPatientUseCase = admitPatientUseCase;
         this.dischargePatientUseCase = dischargePatientUseCase;
         this.readmitPatientUseCase = readmitPatientUseCase;
         this.getPatientUseCase = getPatientUseCase;
         this.listPatientsUseCase = listPatientsUseCase;
+        this.updatePatientDetailsUseCase = updatePatientDetailsUseCase;
     }
 
     // ?status=ACTIVE (por defecto) para los residentes actuales, ?status=FORMER para los antiguos
@@ -59,6 +64,12 @@ public class PatientController {
     @ResponseStatus(HttpStatus.CREATED)
     public PatientResponse admit(@RequestBody AdmitPatientRequest request) {
         Patient patient = admitPatientUseCase.execute(request.toDetails(), request.entryDateOrToday());
+        return PatientResponse.from(patient);
+    }
+
+    @PutMapping("/{id}")
+    public PatientResponse update(@PathVariable UUID id, @RequestBody UpdatePatientRequest request) {
+        Patient patient = updatePatientDetailsUseCase.execute(id, request.toDetails());
         return PatientResponse.from(patient);
     }
 

@@ -56,6 +56,16 @@ public class PatientRepositoryJpaAdapter implements PatientRepository {
     }
 
     @Override
+    public boolean existsByDniAndIdNot(Dni dni, UUID id) {
+        return patientJpaRepository.existsByDniAndIdNot(dni.value(), id);
+    }
+
+    @Override
+    public boolean existsByVisitCodeAndIdNot(String visitCode, UUID id) {
+        return patientJpaRepository.existsByVisitCodeAndIdNot(visitCode, id);
+    }
+
+    @Override
     public Set<Integer> findOccupiedNumbers() {
         return new HashSet<>(patientJpaRepository.findOccupiedNumbers());
     }
