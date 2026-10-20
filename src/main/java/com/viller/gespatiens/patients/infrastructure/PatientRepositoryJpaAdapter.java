@@ -4,9 +4,11 @@ import com.viller.gespatiens.patients.domain.Dni;
 import com.viller.gespatiens.patients.domain.Patient;
 import com.viller.gespatiens.patients.domain.PatientDetails;
 import com.viller.gespatiens.patients.domain.PatientRepository;
+import com.viller.gespatiens.patients.domain.PatientStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -30,6 +32,17 @@ public class PatientRepositoryJpaAdapter implements PatientRepository {
     public Optional<Patient> findById(UUID id) {
         return patientJpaRepository.findById(id)
                 .map(this::toDomain);
+    }
+
+    @Override
+    public List<Patient> findByStatus(PatientStatus status) {
+        List<PatientJpaEntity> entities = switch (status) {
+            case ACTIVE -> patientJpaRepository.findByExitDateIsNullOrderByNumber();
+            case FORMER -> patientJpaRepository.findByExitDateIsNotNullOrderByExitDateDesc();
+        };
+        return entities.stream()
+                .map(this::toDomain)
+                .toList();
     }
 
     @Override
