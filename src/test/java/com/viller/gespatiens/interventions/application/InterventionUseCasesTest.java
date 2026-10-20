@@ -41,14 +41,16 @@ class InterventionUseCasesTest {
     private static final Clock CLOCK = Clock.fixed(Instant.parse("2026-10-21T10:00:00Z"), ZoneOffset.UTC);
 
     private final StaffMember pablo = new StaffMember(UUID.randomUUID(), "Pablo", "SOCIAL_EDUCATOR", false);
-    private final StaffMember ana = new StaffMember(UUID.randomUUID(), "Ana", "PSYCHOLOGIST", false);
+    private final StaffMember ana = new StaffMember(UUID.randomUUID(), "Ana", "SOCIAL_EDUCATOR", false);
+    private final StaffMember marcos = new StaffMember(UUID.randomUUID(), "Marcos", "PSYCHOLOGIST", false);
     private final StaffMember admin = new StaffMember(UUID.randomUUID(), "Rosa", "ADMINISTRATOR", true);
     private final Resident lucia = new Resident(UUID.randomUUID(), 5, "Lucía", "Martínez", true);
     private final Resident juan = new Resident(UUID.randomUUID(), 1, "Juan", "García", true);
     private final Resident former = new Resident(UUID.randomUUID(), null, "Marta", "Ruiz", false);
 
     private final StaffDirectory staff = new StaffDirectory() {
-        private final Map<UUID, StaffMember> all = Map.of(pablo.id(), pablo, ana.id(), ana, admin.id(), admin);
+        private final Map<UUID, StaffMember> all = Map.of(pablo.id(), pablo, ana.id(), ana, marcos.id(), marcos,
+                admin.id(), admin);
 
         @Override
         public Optional<StaffMember> find(UUID employeeId) {
@@ -140,6 +142,15 @@ class InterventionUseCasesTest {
         assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), Set.of(UUID.randomUUID())));
         assertThrows(ResidentNotFoundException.class, () -> assign.execute(UUID.randomUUID(), Set.of()));
         assertEquals(List.of(), assign.execute(lucia.id(), Set.of()));
+    }
+
+    // Solo los educadores sociales son tutores: ni la administración ni el resto de especialidades
+    @Test
+    void onlySocialEducatorsCanBeTutors() {
+        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), Set.of(pablo.id(), admin.id())));
+        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), Set.of(marcos.id())));
+        assertEquals(List.of("Pablo"), assign.execute(lucia.id(), Set.of(pablo.id())).stream()
+                .map(StaffMember::name).toList());
     }
 
     // El historial de un antiguo residente se consulta, pero ya no se le añaden intervenciones

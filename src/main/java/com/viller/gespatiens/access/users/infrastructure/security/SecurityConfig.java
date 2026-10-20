@@ -46,9 +46,8 @@ public class SecurityConfig {
                         // RF6: las notas y valoraciones de las actividades las pasan los educadores y la
                         // administración (decisión del centro). Los demás solo las consultan
                         .requestMatchers(HttpMethod.PUT, "/api/diary/activities/*/evaluations").hasAnyRole("SOCIAL_EDUCATOR", "ADMINISTRATOR")
-                        // Los tutores de cada residente los asigna la administración: ser tutor es lo que
-                        // permite registrar sus intervenciones, así que nadie debe poder nombrarse a sí mismo
-                        .requestMatchers(HttpMethod.PUT, "/api/interventions/residents/*/tutors").hasRole("ADMINISTRATOR")
+                        // Los tutores de cada residente los asignan la administración y los educadores (decisión del centro)
+                        .requestMatchers(HttpMethod.PUT, "/api/interventions/residents/*/tutors").hasAnyRole("ADMINISTRATOR", "SOCIAL_EDUCATOR")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 // Sin httpBasic: con él, el navegador abre su propia ventana de usuario y contraseña

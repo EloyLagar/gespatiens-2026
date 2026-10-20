@@ -25,7 +25,9 @@ import { initialOf, tintFor } from '../users/people'
 export function FollowUpPage() {
   const { patientId = '' } = useParams()
   const { t } = useTranslation()
-  const { isAdmin } = useAuth()
+  const { user, isAdmin } = useAuth()
+  // Asignan tutores la administración y los educadores (decisión del centro)
+  const canAssignTutors = isAdmin || user?.speciality === 'SOCIAL_EDUCATOR'
   const { data, error, loading, reload } = useApi(() => getFollowUp(patientId), [patientId])
   const [followUp, setFollowUp] = useState<FollowUp | null>(null)
   const [deleting, setDeleting] = useState<Intervention | null>(null)
@@ -72,7 +74,7 @@ export function FollowUpPage() {
 
       <TutorsPanel
         followUp={followUp}
-        canAssign={isAdmin && resident.active}
+        canAssign={canAssignTutors && resident.active}
         // Cambiar tutores cambia quién puede registrar: se recarga para que canRecord sea el de la API
         onSaved={(tutors) => { setFollowUp({ ...followUp, tutors }); reload() }}
       />
@@ -204,9 +206,9 @@ function TutorsForm({ patientId, current, onSaved, onCancel }: {
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
 
-  // La administración no tutela: se lista al resto de la plantilla por nombre
+  // Solo los educadores sociales son tutores (decisión del centro)
   const candidates = (staff.data ?? [])
-    .filter((u) => u.speciality !== 'ADMINISTRATOR' || chosen.has(u.id))
+    .filter((u) => u.speciality === 'SOCIAL_EDUCATOR')
     .sort((a, b) => a.name.localeCompare(b.name))
 
   function toggle(id: string, checked: boolean) {
@@ -241,7 +243,7 @@ function TutorsForm({ patientId, current, onSaved, onCancel }: {
             <Checkbox
               key={u.id}
               id={`tutor-${u.id}`}
-              labelText={`${u.name} · ${t(`speciality.${u.speciality}`)}`}
+              labelText={u.name}
               checked={chosen.has(u.id)}
               onChange={(_, { checked }) => toggle(u.id, checked)}
             />
