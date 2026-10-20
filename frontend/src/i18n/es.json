@@ -14,7 +14,8 @@
     "skipToContent": "Saltar al contenido",
     "openMenu": "Abrir el menú",
     "closeMenu": "Cerrar el menú",
-    "notices": "Avisos"
+    "notices": "Avisos",
+    "diary": "Diario"
   },
   "language": {
     "label": "Idioma",
@@ -280,5 +281,47 @@
     "today": "hoy, {{time}}",
     "yesterday": "ayer, {{time}}",
     "onDay": "{{day}}, {{time}}"
+  },
+  "diary": {
+    "title": "Diario",
+    "today": "Hoy, {{date}}",
+    "previous": "Día anterior",
+    "next": "Día siguiente",
+    "pickDate": "Elegir el día",
+    "goToday": "Ir a hoy",
+    "shifts": "Turnos",
+    "part": {
+      "MORNING": "Mañana",
+      "AFTERNOON": "Tarde",
+      "NIGHT": "Noche"
+    },
+    "whoWorked": "Quién trabajó",
+    "notes": "Información de interés",
+    "notesHelp": "Lo que el siguiente turno debe saber: incidencias, llamadas, recados…",
+    "notFilled": "Nadie ha rellenado este turno todavía.",
+    "noStaff": "Sin personal anotado.",
+    "filledBy": "Lo rellenó {{name}}, {{when}}",
+    "fill": "Rellenar",
+    "reductions": {
+      "title": "Rebajas",
+      "count_one": "{{count}} residente rebajado",
+      "count_other": "{{count}} residentes rebajados",
+      "add": "Añadir rebaja",
+      "onlyMedical": "Las rebajas las registra el equipo médico. El resto del personal las consulta aquí.",
+      "empty": "Nadie está rebajado este día.",
+      "caption": "Residentes rebajados este día, por número de plaza",
+      "resident": "Residente",
+      "type": "Tipo de rebaja",
+      "total": "Total",
+      "sport": "Deportiva",
+      "partial": "Parcial",
+      "partialLabel": "Rebaja parcial (opcional)",
+      "partialHelp": "De qué está rebajado: «no puede cargar peso», «sin actividades al aire libre»…",
+      "chooseResident": "Elige a qué residente se rebaja.",
+      "chooseType": "Marca total o deportiva, o describe la rebaja parcial.",
+      "remove": "Quitar",
+      "removeTitle": "¿Quitar la rebaja de {{name}}?",
+      "removeBody": "Volverá a constar sin rebaja para este día."
+    }
   }
 }

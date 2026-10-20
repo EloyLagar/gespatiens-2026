@@ -38,6 +38,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/patients/*/discharge").hasRole("ADMINISTRATOR")
                         // El borrado definitivo es irreversible: también solo la administración
                         .requestMatchers(HttpMethod.DELETE, "/api/patients/*").hasRole("ADMINISTRATOR")
+                        // Diario: "un espacio para que el equipo médico pueda registrar los pacientes rebajados
+                        // con su tipo de rebaja. Los demás usuarios solo deben poder verlo"
+                        .requestMatchers(HttpMethod.PUT, "/api/diary/*/reductions/*").hasRole("MEDICAL_TEAM")
+                        .requestMatchers(HttpMethod.DELETE, "/api/diary/*/reductions/*").hasRole("MEDICAL_TEAM")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 // Sin httpBasic: con él, el navegador abre su propia ventana de usuario y contraseña

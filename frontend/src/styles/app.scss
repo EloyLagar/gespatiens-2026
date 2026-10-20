@@ -520,6 +520,136 @@ button:focus-visible,
   white-space: pre-line;
 }
 
+// ---------------------------------------------------------------- Diario
+
+.capitalize-first::first-letter {
+  text-transform: uppercase;
+}
+
+.day-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.day-switcher .cds--text-input {
+  width: 160px;
+}
+
+.section-title {
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.section-help {
+  margin: -4px 0 12px;
+  color: var(--muted);
+}
+
+// Tres turnos en una fila: comparten borde inferior y la acción va al pie de cada uno
+.shifts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.shift {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shift + .shift {
+  margin-top: 0;
+}
+
+.shift__title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.shift__staff {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shift__empty {
+  color: var(--muted);
+}
+
+.shift__notes {
+  white-space: pre-line;
+}
+
+.shift__footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.shift__meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.shift__form {
+  display: grid;
+  gap: 16px;
+}
+
+.staff-picker {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.staff-picker legend,
+.reduction-form__types legend {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.reduction-form {
+  display: grid;
+  gap: 16px;
+  max-width: 560px;
+  margin-bottom: 16px;
+}
+
+.reduction-form__types {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.reduction-form__who {
+  font-weight: 600;
+}
+
+.form-error {
+  color: var(--negative);
+}
+
+.row-actions {
+  display: inline-flex;
+  gap: 16px;
+}
+
 // ---------------------------------------------------------------- Las 32 plazas
 
 .beds {
@@ -988,6 +1118,10 @@ button:focus-visible,
   .kv-list--four {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .shifts {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 671px) {
@@ -1071,6 +1205,10 @@ button:focus-visible,
 
   .kv-span {
     grid-column: auto;
+  }
+
+  .day-switcher {
+    flex-wrap: wrap;
   }
 
   .form-section {
