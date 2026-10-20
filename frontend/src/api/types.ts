@@ -1,0 +1,74 @@
+// Tipos de los DTO de la API de Spring (infrastructure/web/*Response y *Request).
+// Si cambia un record de Java, este fichero cambia con él en el mismo commit
+
+export type Speciality =
+  | 'ADMINISTRATOR'
+  | 'SOCIAL_EDUCATOR'
+  | 'SOCIAL_WORKER'
+  | 'PSYCHOLOGIST'
+  | 'MEDICAL_TEAM'
+
+export const SPECIALITIES: Speciality[] = [
+  'ADMINISTRATOR',
+  'SOCIAL_EDUCATOR',
+  'SOCIAL_WORKER',
+  'PSYCHOLOGIST',
+  'MEDICAL_TEAM',
+]
+
+export interface User {
+  id: string
+  name: string
+  email: string
+  phoneNumber: string
+  speciality: Speciality
+}
+
+export interface LoginResponse {
+  accessToken: string
+  tokenType: 'Bearer'
+  expiresAt: string
+  user: User
+}
+
+// Fechas siempre en formato ISO yyyy-MM-dd, como las devuelve y espera la API
+export type IsoDate = string
+
+export interface Patient {
+  id: string
+  number: number | null
+  active: boolean
+  name: string
+  surname: string
+  dni: string
+  birthDate: IsoDate
+  address: string
+  phoneNumber: string
+  sip: string | null
+  visitCode: string | null
+  belongings: string | null
+  abuseSubstances: string | null
+  extraInfo: string | null
+  entryDate: IsoDate
+  exitDate: IsoDate | null
+}
+
+// La ficha editable: lo que envían el alta (POST) y la edición (PUT)
+export interface PatientDetails {
+  name: string
+  surname: string
+  dni: string
+  birthDate: IsoDate
+  address: string
+  phoneNumber: string
+  sip: string
+  visitCode: string
+  belongings: string
+  abuseSubstances: string
+  extraInfo: string
+}
+
+export type PatientStatus = 'ACTIVE' | 'FORMER'
+
+// Debe coincidir con Patient.MAX_RESIDENTS en el dominio (RF10)
+export const MAX_RESIDENTS = 32

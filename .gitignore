@@ -34,3 +34,6 @@ build/
 
 ### Documentación ###
 *.pdf
+
+### Ficheros de trabajo de la skill de diseño (draw.mjs, inspect.mjs)
+.taste-skill/

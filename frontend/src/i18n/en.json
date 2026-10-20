@@ -1,0 +1,243 @@
+{
+  "app": {
+    "name": "gespatiens",
+    "scope": "Los Vientos therapeutic community",
+    "scopeShort": "Los Vientos"
+  },
+  "nav": {
+    "label": "Sections",
+    "residents": "Residents",
+    "formerResidents": "Former residents",
+    "employees": "Staff",
+    "profile": "My profile",
+    "logout": "Sign out",
+    "skipToContent": "Skip to content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "language": {
+    "label": "Language",
+    "es": "ES",
+    "en": "EN"
+  },
+  "speciality": {
+    "ADMINISTRATOR": "Administration",
+    "SOCIAL_EDUCATOR": "Social education",
+    "SOCIAL_WORKER": "Social work",
+    "PSYCHOLOGIST": "Psychology",
+    "MEDICAL_TEAM": "Medical team"
+  },
+  "login": {
+    "title": "Sign in",
+    "lead": "For centre staff only.",
+    "expired": "Your session has expired. Sign in again to continue.",
+    "email": "Email",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "failed": "Could not sign in",
+    "entering": "Signing in…",
+    "submit": "Sign in",
+    "forgot": "Forgotten your password? Ask administration to set a new one."
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "network": "The server cannot be reached. Check that the application is running and try again.",
+    "badRequest": "Some of the data is not valid.",
+    "unauthorized": "Wrong email or password.",
+    "forbidden": "Your role is not allowed to do this.",
+    "notFound": "It does not exist or has been deleted.",
+    "conflict": "It clashes with data that already exists.",
+    "generic": "An unexpected error occurred. Try again."
+  },
+  "common": {
+    "retry": "Retry",
+    "working": "One moment…",
+    "cancel": "Cancel",
+    "loading": "Loading",
+    "clearSearch": "Clear search",
+    "actions": "Actions",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving…",
+    "dayUnit_one": "day",
+    "dayUnit_other": "days"
+  },
+  "residents": {
+    "title": "Residents",
+    "subtitle_one": "{{count}} of {{max}} places taken · the next admission gets no. {{next}}",
+    "subtitle_other": "{{count}} of {{max}} places taken · the next admission gets no. {{next}}",
+    "subtitleFull": "Centre full: {{max}} of {{max}} places taken. Someone must be discharged before a new admission.",
+    "fullHint": "The centre is full",
+    "admit": "Admit",
+    "listTitle": "In the centre",
+    "search": "Search residents",
+    "searchPlaceholder": "Name, ID or place no.",
+    "count_one": "{{count}} resident",
+    "count_other": "{{count}} residents",
+    "empty": "There are no residents in the centre. All 32 places are free.",
+    "noMatch": "Nobody matches “{{query}}”.",
+    "tableCaption": "Residents in the centre, by place number"
+  },
+  "beds": {
+    "title": "Places",
+    "label": "The centre's 32 places",
+    "summary": "{{taken}} taken · {{free}} free of {{max}}",
+    "taken": "Place {{number}}: {{name}}",
+    "free": "Place {{number}}: free",
+    "nextFree": "Place {{number}}: free, goes to the next admission",
+    "next": "Next",
+    "freeShort": "Free"
+  },
+  "patient": {
+    "number": "No.",
+    "fullName": "Name",
+    "name": "First name",
+    "surname": "Surnames",
+    "dni": "DNI / NIE",
+    "dniHelp": "With its letter: 12345678Z or X1234567L",
+    "birthDate": "Date of birth",
+    "age": "Age",
+    "ageValue_one": "{{count}} year old",
+    "ageValue_other": "{{count}} years old",
+    "phoneNumber": "Phone",
+    "address": "Address",
+    "sip": "SIP",
+    "sipHelp": "Health card. Optional",
+    "visitCode": "Visit code",
+    "visitCodeHelp": "Optional. Must be unique among residents",
+    "belongings": "Belongings",
+    "abuseSubstances": "Substances of abuse",
+    "extraInfo": "Additional information",
+    "entryDate": "Admitted",
+    "exitDate": "Left",
+    "daysIn": "In the centre",
+    "stay": "Stay",
+    "since": "since {{date}}",
+    "sectionPersonal": "Personal details",
+    "sectionCentre": "Admission details"
+  },
+  "admit": {
+    "title": "Admit a resident",
+    "subtitle": "They will get place no. {{number}}, the lowest free one.",
+    "submit": "Admit",
+    "entryDateHelp": "Today, unless the admission was on another day"
+  },
+  "detail": {
+    "notFoundTitle": "Record not found",
+    "editTitle": "Edit {{name}}'s record",
+    "statusActive": "In the centre · place no. {{number}}",
+    "statusFormer": "Former resident · left on {{date}}",
+    "discharge": "Discharge",
+    "stay": "Stay",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "deleteTitle": "Delete record",
+    "deleteText": "Permanently deletes this former resident's data. It cannot be undone: if they have just left the centre, discharging already keeps their record.",
+    "delete": "Delete record",
+    "flash": {
+      "admitted": "{{name}} has been given place no. {{number}}.",
+      "readmitted": "{{name}} is back in the centre in place no. {{number}}.",
+      "saved": "Record saved.",
+      "discharged": "{{name}} is now a former resident. Their record is kept."
+    }
+  },
+  "discharge": {
+    "title": "Discharge {{name}}?",
+    "body": "They will become a former resident and place no. {{number}} will be freed. Their record is kept and they can come back later.",
+    "date": "Date they left",
+    "confirm": "Discharge"
+  },
+  "readmit": {
+    "title": "Readmit {{name}}?",
+    "body": "They left on {{exit}}. They will come back in place no. {{number}}, the lowest free one, which may not be the one they had.",
+    "full": "The centre is full: there are no free places.",
+    "date": "Readmission date",
+    "dateHelp": "Cannot be before they last left",
+    "confirm": "Readmit"
+  },
+  "deletePatient": {
+    "title": "Delete {{name}}'s record?",
+    "body": "All of {{name}}'s data (ID {{dni}}) will be permanently deleted. It cannot be undone.",
+    "confirm": "Delete permanently"
+  },
+  "former": {
+    "title": "Former residents",
+    "subtitle_one": "{{count}} person has been through the centre. Their record is kept.",
+    "subtitle_other": "{{count}} people have been through the centre. Their records are kept.",
+    "fullNotice": "The centre is full: nobody can be readmitted until someone is discharged.",
+    "listTitle": "Have left",
+    "searchPlaceholder": "Name or ID",
+    "count_one": "{{count}} former resident",
+    "count_other": "{{count}} former residents",
+    "empty": "Nobody has left the centre yet.",
+    "tableCaption": "Former residents, most recently left first",
+    "left": "left on {{date}}",
+    "readmit": "Readmit",
+    "readmitWho": "Readmit {{name}}"
+  },
+  "form": {
+    "required": "This field is required.",
+    "requiredMark": "required",
+    "notSaved": "Not saved",
+    "passwordLength": "At least {{min}} characters.",
+    "passwordMismatch": "The two passwords do not match."
+  },
+  "employees": {
+    "title": "Staff",
+    "subtitle_one": "{{count}} person on staff · {{admins}} in administration",
+    "subtitle_other": "{{count}} people on staff · {{admins}} in administration",
+    "add": "Add staff member",
+    "tableCaption": "Centre staff, by name",
+    "you": "you",
+    "myProfile": "My profile",
+    "editWho": "Edit {{name}}"
+  },
+  "user": {
+    "name": "Name",
+    "speciality": "Role",
+    "email": "Email",
+    "phoneNumber": "Phone"
+  },
+  "employeeForm": {
+    "newTitle": "Add a staff member",
+    "create": "Add",
+    "editTitleUnknown": "Staff member not found",
+    "profile": "Profile",
+    "profileHelp": "The role decides what they can do in the application. Only administration can change it, like the email.",
+    "saved": "Profile saved.",
+    "resetTitle": "Password",
+    "resetHelp": "If they have forgotten theirs, set a temporary one and ask them to change it from their profile.",
+    "resetSubmit": "Set new password",
+    "resetDone": "{{name}} can now sign in with the new password.",
+    "deleteTitle": "Remove staff member",
+    "deleteText": "They lose access at once, even with a session open. At least one person must always remain in administration.",
+    "delete": "Remove staff member",
+    "deleteConfirmTitle": "Remove {{name}}?",
+    "deleteBody": "{{name}} ({{email}}) will no longer be able to sign in. It cannot be undone.",
+    "deleteConfirm": "Remove",
+    "emailHelp": "They sign in with it",
+    "specialityHelp": "Administration can manage staff, discharge residents and delete records",
+    "initialPassword": "Initial password"
+  },
+  "password": {
+    "current": "Current password",
+    "new": "New password",
+    "repeat": "Repeat the new password"
+  },
+  "profile": {
+    "title": "My profile",
+    "saved": "Details saved.",
+    "data": "My details",
+    "dataHelp": "Only administration can change your email and role.",
+    "password": "Password",
+    "passwordHelp": "Your current password is required so nobody can change it from a session left open.",
+    "changePassword": "Change password",
+    "passwordChanged": "Password changed."
+  },
+  "notFound": {
+    "title": "This page does not exist",
+    "text": "The link may be wrong or the record may have been deleted.",
+    "back": "Back to residents"
+  }
+}
