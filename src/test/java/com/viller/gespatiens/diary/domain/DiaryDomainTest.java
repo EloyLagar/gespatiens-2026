@@ -2,6 +2,7 @@ package com.viller.gespatiens.diary.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -92,6 +93,33 @@ class DiaryDomainTest {
         assertThrows(IllegalArgumentException.class, () -> activity.recordAttendance(list, DAY.minusDays(1)));
         activity.recordAttendance(list, DAY);
         assertEquals(list, activity.getAttendance());
+    }
+
+    @Test
+    void evaluationGoesFromZeroToTenWithOneDecimalAndNeedsSomething() {
+        assertThrows(IllegalArgumentException.class, () -> new Evaluation(null, null, null));
+        assertThrows(IllegalArgumentException.class, () -> new Evaluation(new BigDecimal("10.5"), null, null));
+        assertThrows(IllegalArgumentException.class, () -> new Evaluation(null, new BigDecimal("-1"), null));
+        assertThrows(IllegalArgumentException.class, () -> new Evaluation(null, null, new BigDecimal("7.25")));
+        assertEquals(new Evaluation(new BigDecimal("7.0"), null, BigDecimal.TEN),
+                new Evaluation(new BigDecimal("7"), null, new BigDecimal("10.00")));
+    }
+
+    // Solo se valora a quien asistió, y si deja de constar como asistente pierde su valoración
+    @Test
+    void onlyThoseWhoAttendedAreEvaluated() {
+        UUID came = UUID.randomUUID();
+        UUID missed = UUID.randomUUID();
+        Activity activity = Activity.schedule(DAY, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, null);
+        activity.recordAttendance(Map.of(came, AttendanceStatus.ATTENDED, missed, AttendanceStatus.EXCUSED_ABSENCE), DAY);
+        Evaluation good = new Evaluation(new BigDecimal("8"), new BigDecimal("9"), new BigDecimal("7.5"));
+
+        assertThrows(IllegalArgumentException.class, () -> activity.recordEvaluations(Map.of(missed, good)));
+        activity.recordEvaluations(Map.of(came, good));
+        assertEquals(good, activity.getEvaluations().get(came));
+
+        activity.recordAttendance(Map.of(came, AttendanceStatus.UNEXCUSED_ABSENCE), DAY);
+        assertTrue(activity.getEvaluations().isEmpty());
     }
 
     @Test

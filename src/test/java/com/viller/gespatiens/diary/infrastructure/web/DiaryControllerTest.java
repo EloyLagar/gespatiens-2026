@@ -8,10 +8,12 @@ import com.viller.gespatiens.diary.application.DeleteReductionUseCase;
 import com.viller.gespatiens.diary.application.DiaryDayView;
 import com.viller.gespatiens.diary.application.DiaryDayView.ActivityView;
 import com.viller.gespatiens.diary.application.DiaryDayView.AttendanceRow;
+import com.viller.gespatiens.diary.application.DiaryDayView.EvaluationAverages;
 import com.viller.gespatiens.diary.application.DiaryDayView.OutingView;
 import com.viller.gespatiens.diary.application.DiaryDayView.ReductionView;
 import com.viller.gespatiens.diary.application.GetDiaryDayUseCase;
 import com.viller.gespatiens.diary.application.RecordAttendanceUseCase;
+import com.viller.gespatiens.diary.application.RecordEvaluationsUseCase;
 import com.viller.gespatiens.diary.application.RecordOutingUseCase;
 import com.viller.gespatiens.diary.application.RecordReductionUseCase;
 import com.viller.gespatiens.diary.application.RecordShiftUseCase;
@@ -20,6 +22,7 @@ import com.viller.gespatiens.diary.application.ScheduleActivityUseCase;
 import com.viller.gespatiens.diary.application.UpdateOutingUseCase;
 import com.viller.gespatiens.diary.domain.ActivityType;
 import com.viller.gespatiens.diary.domain.AttendanceStatus;
+import com.viller.gespatiens.diary.domain.Evaluation;
 import com.viller.gespatiens.diary.domain.DiaryEntryNotFoundException;
 import com.viller.gespatiens.diary.domain.Resident;
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -58,6 +62,8 @@ class DiaryControllerTest {
 
     private static final String ME = "7f3c2a10-0000-4000-8000-0000000000aa";
     private static final UUID PATIENT = UUID.fromString("7f3c2a10-0000-4000-8000-000000000001");
+    private static final EvaluationAverages NO_AVERAGES =
+            new EvaluationAverages(Optional.empty(), Optional.empty(), Optional.empty());
     private static final String REDUCTION = "{\"partial\":\"No puede cargar peso\",\"total\":false,\"sport\":true}";
 
     @Autowired
@@ -79,6 +85,8 @@ class DiaryControllerTest {
     private DeleteActivityUseCase deleteActivityUseCase;
     @MockitoBean
     private RecordAttendanceUseCase recordAttendanceUseCase;
+    @MockitoBean
+    private RecordEvaluationsUseCase recordEvaluationsUseCase;
     @MockitoBean
     private RecordOutingUseCase recordOutingUseCase;
     @MockitoBean
@@ -167,7 +175,8 @@ class DiaryControllerTest {
                 ActivityType.OTHER, "Taller de cerámica"))
                 .thenReturn(new ActivityView(id, LocalTime.of(10, 30), ActivityType.OTHER,
                         Optional.of("Taller de cerámica"),
-                        List.of(new AttendanceRow(lucia, Optional.empty(), true, Optional.empty()))));
+                        List.of(new AttendanceRow(lucia, Optional.empty(), true, Optional.empty(), Optional.empty())),
+                        NO_AVERAGES));
 
         mockMvc.perform(post("/api/diary/2026-10-20/activities")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -184,13 +193,63 @@ class DiaryControllerTest {
     void attendanceIsSentAsResidentToStatus() throws Exception {
         UUID activity = UUID.randomUUID();
         when(recordAttendanceUseCase.execute(activity, Map.of(PATIENT, AttendanceStatus.EXCUSED_ABSENCE)))
-                .thenReturn(new ActivityView(activity, LocalTime.of(17, 0), ActivityType.WALK, Optional.empty(), List.of()));
+                .thenReturn(new ActivityView(activity, LocalTime.of(17, 0), ActivityType.WALK, Optional.empty(), List.of(),
+                        NO_AVERAGES));
 
         mockMvc.perform(put("/api/diary/activities/{id}/attendance", activity)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"attendance\":{\"" + PATIENT + "\":\"EXCUSED_ABSENCE\"}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.type").value("WALK"));
+    }
+
+    @Test
+    @WithMockUser(username = ME, roles = "SOCIAL_EDUCATOR")
+    void educatorsRecordEvaluationsAndGetTheAverages() throws Exception {
+        Resident lucia = new Resident(PATIENT, 5, "Lucía", "Martínez", true);
+        UUID activity = UUID.randomUUID();
+        Evaluation evaluation = new Evaluation(new BigDecimal("7.5"), new BigDecimal("9"), null);
+        when(recordEvaluationsUseCase.execute(activity, Map.of(PATIENT, evaluation)))
+                .thenReturn(new ActivityView(activity, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, Optional.empty(),
+                        List.of(new AttendanceRow(lucia, Optional.of(AttendanceStatus.ATTENDED), false, Optional.empty(),
+                                Optional.of(evaluation))),
+                        new EvaluationAverages(Optional.of(new BigDecimal("7.5")), Optional.of(new BigDecimal("9.0")),
+                                Optional.empty())));
+
+        mockMvc.perform(put("/api/diary/activities/{id}/evaluations", activity)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":7.5,\"satisfaction\":9,\"utility\":null}}}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.attendance[0].evaluation.mark").value(7.5))
+                .andExpect(jsonPath("$.averages.satisfaction").value(9.0));
+    }
+
+    @Test
+    @WithMockUser(username = ME, roles = "ADMINISTRATOR")
+    void anEmptyEvaluationIsLeftOutAndAnOutOfRangeOneIsBadRequest() throws Exception {
+        UUID activity = UUID.randomUUID();
+        when(recordEvaluationsUseCase.execute(activity, Map.of()))
+                .thenReturn(new ActivityView(activity, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, Optional.empty(),
+                        List.of(), NO_AVERAGES));
+
+        mockMvc.perform(put("/api/diary/activities/{id}/evaluations", activity)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":null}}}"))
+                .andExpect(status().isOk());
+        mockMvc.perform(put("/api/diary/activities/{id}/evaluations", activity)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":11}}}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
+    void otherSpecialitiesCannotRecordEvaluations() throws Exception {
+        mockMvc.perform(put("/api/diary/activities/{id}/evaluations", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"evaluations\":{}}"))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(recordEvaluationsUseCase);
     }
 
     @Test

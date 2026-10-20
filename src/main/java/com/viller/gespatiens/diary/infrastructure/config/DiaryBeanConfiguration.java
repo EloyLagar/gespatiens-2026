@@ -5,6 +5,7 @@ import com.viller.gespatiens.diary.application.DeleteOutingUseCase;
 import com.viller.gespatiens.diary.application.DeleteReductionUseCase;
 import com.viller.gespatiens.diary.application.GetDiaryDayUseCase;
 import com.viller.gespatiens.diary.application.RecordAttendanceUseCase;
+import com.viller.gespatiens.diary.application.RecordEvaluationsUseCase;
 import com.viller.gespatiens.diary.application.RecordOutingUseCase;
 import com.viller.gespatiens.diary.application.RecordReductionUseCase;
 import com.viller.gespatiens.diary.application.RecordShiftUseCase;
@@ -78,6 +79,13 @@ public class DiaryBeanConfiguration {
                                                            ReductionRepository reductionRepository,
                                                            ResidentDirectory residentDirectory, Clock clock) {
         return new RecordAttendanceUseCase(activityRepository, reductionRepository, residentDirectory, clock);
+    }
+
+    @Bean
+    public RecordEvaluationsUseCase recordEvaluationsUseCase(ActivityRepository activityRepository,
+                                                             ReductionRepository reductionRepository,
+                                                             ResidentDirectory residentDirectory) {
+        return new RecordEvaluationsUseCase(activityRepository, reductionRepository, residentDirectory);
     }
 
     @Bean

@@ -2,12 +2,15 @@ package com.viller.gespatiens.diary.infrastructure;
 
 import com.viller.gespatiens.diary.domain.Activity;
 import com.viller.gespatiens.diary.domain.ActivityRepository;
+import com.viller.gespatiens.diary.domain.Evaluation;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class ActivityRepositoryJpaAdapter implements ActivityRepository {
@@ -48,6 +51,9 @@ public class ActivityRepositoryJpaAdapter implements ActivityRepository {
         entity.setType(activity.getType());
         entity.setTitle(activity.getTitle().orElse(null));
         entity.setAttendance(activity.getAttendance());
+        entity.setEvaluations(activity.getEvaluations().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> new EvaluationEmbeddable(
+                        e.getValue().mark(), e.getValue().satisfaction(), e.getValue().utility()))));
         return entity;
     }
 
@@ -58,6 +64,9 @@ public class ActivityRepositoryJpaAdapter implements ActivityRepository {
                 entity.getStartTime(),
                 entity.getType(),
                 entity.getTitle(),
-                entity.getAttendance());
+                entity.getAttendance(),
+                entity.getEvaluations().entrySet().stream()
+                        .collect(Collectors.toMap(Map.Entry::getKey, e -> new Evaluation(
+                                e.getValue().getMark(), e.getValue().getSatisfaction(), e.getValue().getUtility()))));
     }
 }

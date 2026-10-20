@@ -3,15 +3,18 @@ package com.viller.gespatiens.diary.infrastructure.web;
 import com.viller.gespatiens.diary.application.DiaryDayView;
 import com.viller.gespatiens.diary.application.DiaryDayView.ActivityView;
 import com.viller.gespatiens.diary.application.DiaryDayView.AttendanceRow;
+import com.viller.gespatiens.diary.application.DiaryDayView.EvaluationAverages;
 import com.viller.gespatiens.diary.application.DiaryDayView.OutingView;
 import com.viller.gespatiens.diary.application.DiaryDayView.ReductionView;
 import com.viller.gespatiens.diary.application.DiaryDayView.ShiftView;
 import com.viller.gespatiens.diary.domain.ActivityType;
 import com.viller.gespatiens.diary.domain.AttendanceStatus;
 import com.viller.gespatiens.diary.domain.DayPart;
+import com.viller.gespatiens.diary.domain.Evaluation;
 import com.viller.gespatiens.diary.domain.Resident;
 import com.viller.gespatiens.diary.domain.StaffMember;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -54,20 +57,34 @@ public record DiaryDayResponse(LocalDate date, List<ShiftResponse> shifts, List<
         }
     }
 
-    // status null: sin anotar (o rebajado, si reduced)
+    // Una valoración o las medias de una actividad: lo que no se tenga va a null
+    public record EvaluationResponse(BigDecimal mark, BigDecimal satisfaction, BigDecimal utility) {
+        static EvaluationResponse from(Evaluation evaluation) {
+            return new EvaluationResponse(evaluation.mark(), evaluation.satisfaction(), evaluation.utility());
+        }
+
+        static EvaluationResponse from(EvaluationAverages averages) {
+            return new EvaluationResponse(averages.mark().orElse(null), averages.satisfaction().orElse(null),
+                    averages.utility().orElse(null));
+        }
+    }
+
+    // status null: sin anotar (o rebajado, si reduced). evaluation null: sin valorar
     public record AttendanceResponse(ResidentResponse resident, AttendanceStatus status, boolean reduced,
-                                     String partialReduction) {
+                                     String partialReduction, EvaluationResponse evaluation) {
         static AttendanceResponse from(AttendanceRow row) {
             return new AttendanceResponse(ResidentResponse.from(row.resident()), row.status().orElse(null),
-                    row.reduced(), row.partialReduction().orElse(null));
+                    row.reduced(), row.partialReduction().orElse(null),
+                    row.evaluation().map(EvaluationResponse::from).orElse(null));
         }
     }
 
     public record ActivityResponse(UUID id, LocalTime startTime, ActivityType type, String title,
-                                   List<AttendanceResponse> attendance) {
+                                   List<AttendanceResponse> attendance, EvaluationResponse averages) {
         static ActivityResponse from(ActivityView view) {
             return new ActivityResponse(view.id(), view.startTime(), view.type(), view.title().orElse(null),
-                    view.attendance().stream().map(AttendanceResponse::from).toList());
+                    view.attendance().stream().map(AttendanceResponse::from).toList(),
+                    EvaluationResponse.from(view.averages()));
         }
     }
 

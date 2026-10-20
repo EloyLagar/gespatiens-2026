@@ -10,6 +10,7 @@ import com.viller.gespatiens.diary.domain.ActivityType;
 import com.viller.gespatiens.diary.domain.AttendanceStatus;
 import com.viller.gespatiens.diary.domain.DayPart;
 import com.viller.gespatiens.diary.domain.DiaryEntryNotFoundException;
+import com.viller.gespatiens.diary.domain.Evaluation;
 import com.viller.gespatiens.diary.domain.Reduction;
 import com.viller.gespatiens.diary.domain.ReductionNotFoundException;
 import com.viller.gespatiens.diary.domain.ReductionRepository;
@@ -23,6 +24,7 @@ import com.viller.gespatiens.diary.domain.TherapeuticOuting;
 import com.viller.gespatiens.diary.domain.TherapeuticOutingRepository;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -87,6 +89,8 @@ class DiaryUseCasesTest {
             new RescheduleActivityUseCase(activities, reductions, residents);
     private final RecordAttendanceUseCase recordAttendance =
             new RecordAttendanceUseCase(activities, reductions, residents, CLOCK);
+    private final RecordEvaluationsUseCase recordEvaluations =
+            new RecordEvaluationsUseCase(activities, reductions, residents);
     private final RecordOutingUseCase recordOuting = new RecordOutingUseCase(outings, residents);
     private final UpdateOutingUseCase updateOuting = new UpdateOutingUseCase(outings, residents);
     private final DeleteOutingUseCase deleteOuting = new DeleteOutingUseCase(outings);
@@ -184,6 +188,34 @@ class DiaryUseCasesTest {
         assertTrue(inSport.reduced());
         assertFalse(inForum.reduced());
         assertEquals("No puede cargar peso", inForum.partialReduction().orElseThrow());
+    }
+
+    @Test
+    void evaluationsAreShownWithTheirAverages() {
+        UUID id = scheduleActivity.execute(DAY, LocalTime.of(10, 0), ActivityType.VIDEO_FORUM, null).id();
+        recordAttendance.execute(id, Map.of(juan.id(), AttendanceStatus.ATTENDED, lucia.id(), AttendanceStatus.ATTENDED));
+
+        ActivityView evaluated = recordEvaluations.execute(id, Map.of(
+                juan.id(), new Evaluation(new BigDecimal("8"), new BigDecimal("9"), null),
+                lucia.id(), new Evaluation(new BigDecimal("6.5"), new BigDecimal("6"), null)));
+
+        assertEquals(new BigDecimal("8.0"), evaluated.attendance().get(0).evaluation().orElseThrow().mark());
+        assertEquals(new BigDecimal("7.3"), evaluated.averages().mark().orElseThrow());
+        assertEquals(new BigDecimal("7.5"), evaluated.averages().satisfaction().orElseThrow());
+        assertTrue(evaluated.averages().utility().isEmpty());
+        assertEquals(evaluated, getDay.execute(DAY).activities().get(0));
+    }
+
+    @Test
+    void absentOrReducedResidentsCannotBeEvaluated() {
+        recordReduction.execute(DAY, lucia.id(), null, true, false, laura.id());
+        UUID id = scheduleActivity.execute(DAY, LocalTime.of(10, 0), ActivityType.MAINTENANCE, null).id();
+        recordAttendance.execute(id, Map.of(juan.id(), AttendanceStatus.UNEXCUSED_ABSENCE));
+        Evaluation five = new Evaluation(new BigDecimal("5"), null, null);
+
+        assertThrows(IllegalArgumentException.class, () -> recordEvaluations.execute(id, Map.of(juan.id(), five)));
+        assertThrows(IllegalArgumentException.class, () -> recordEvaluations.execute(id, Map.of(lucia.id(), five)));
+        assertThrows(DiaryEntryNotFoundException.class, () -> recordEvaluations.execute(UUID.randomUUID(), Map.of()));
     }
 
     @Test

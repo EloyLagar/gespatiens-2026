@@ -48,6 +48,12 @@ public class ActivityJpaEntity {
     @Column(name = "status", nullable = false, length = 20)
     private Map<UUID, AttendanceStatus> attendance = new HashMap<>();
 
+    // residente -> su valoración. Son Map y no List, así que dos colecciones EAGER no dan problemas
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "activity_evaluations", joinColumns = @JoinColumn(name = "activity_id"))
+    @MapKeyColumn(name = "patient_id")
+    private Map<UUID, EvaluationEmbeddable> evaluations = new HashMap<>();
+
     public UUID getId() {
         return id;
     }
@@ -72,6 +78,10 @@ public class ActivityJpaEntity {
         return attendance;
     }
 
+    public Map<UUID, EvaluationEmbeddable> getEvaluations() {
+        return evaluations;
+    }
+
     public void setId(UUID id) {
         this.id = id;
     }
@@ -94,5 +104,9 @@ public class ActivityJpaEntity {
 
     public void setAttendance(Map<UUID, AttendanceStatus> attendance) {
         this.attendance = new HashMap<>(attendance);
+    }
+
+    public void setEvaluations(Map<UUID, EvaluationEmbeddable> evaluations) {
+        this.evaluations = new HashMap<>(evaluations);
     }
 }
