@@ -2,6 +2,8 @@ package com.viller.gespatiens.patients.infrastructure.config;
 
 import com.viller.gespatiens.patients.application.AdmitPatientUseCase;
 import com.viller.gespatiens.patients.application.DischargePatientUseCase;
+import com.viller.gespatiens.patients.application.GetPatientUseCase;
+import com.viller.gespatiens.patients.application.ListPatientsUseCase;
 import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
 import com.viller.gespatiens.patients.domain.PatientRepository;
 import com.viller.gespatiens.patients.domain.ResidentNumberAssigner;
@@ -32,5 +34,15 @@ public class PatientBeanConfiguration {
     public ReadmitPatientUseCase readmitPatientUseCase(PatientRepository patientRepository,
                                                        ResidentNumberAssigner residentNumberAssigner) {
         return new ReadmitPatientUseCase(patientRepository, residentNumberAssigner);
+    }
+
+    @Bean
+    public GetPatientUseCase getPatientUseCase(PatientRepository patientRepository) {
+        return new GetPatientUseCase(patientRepository);
+    }
+
+    @Bean
+    public ListPatientsUseCase listPatientsUseCase(PatientRepository patientRepository) {
+        return new ListPatientsUseCase(patientRepository);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 // Errores comunes a todos los módulos. Las excepciones propias de cada módulo
 // se traducen en su propio handler (UserExceptionHandler, PatientExceptionHandler...)
@@ -24,6 +25,13 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
                 "El cuerpo de la petición no es válido: revisa el formato del JSON, "
                         + "los valores de los enums y que las fechas sigan el formato yyyy-MM-dd");
+    }
+
+    // Parámetro de la URL con un valor que no encaja: un id que no es un UUID, ?status=OTRO...
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                "Valor no válido para el parámetro " + ex.getName() + ": " + ex.getValue());
     }
 
     // Una restricción unique de la BD ha saltado aunque el caso de uso ya lo comprobaba:
