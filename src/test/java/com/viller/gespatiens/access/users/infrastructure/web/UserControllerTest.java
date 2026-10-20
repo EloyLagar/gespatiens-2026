@@ -1,9 +1,13 @@
 package com.viller.gespatiens.access.users.infrastructure.web;
 
+import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
+import com.viller.gespatiens.access.users.application.GetUserUseCase;
+import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
 import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
+import com.viller.gespatiens.access.users.domain.UserNotFoundException;
 import com.viller.gespatiens.access.users.infrastructure.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +19,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+import java.util.UUID;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +44,15 @@ class UserControllerTest {
 
     @MockitoBean
     private RegisterUserUseCase registerUserUseCase;
+
+    @MockitoBean
+    private ListUsersUseCase listUsersUseCase;
+
+    @MockitoBean
+    private GetUserUseCase getUserUseCase;
+
+    @MockitoBean
+    private GetCurrentUserUseCase getCurrentUserUseCase;
 
     @MockitoBean
     private UserDetailsService userDetailsService;
@@ -95,5 +112,47 @@ class UserControllerTest {
 
         mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isBadRequest());
+    }
+
+    private static User ana() {
+        return User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash");
+    }
+
+    @Test
+    @WithMockUser(roles = "SOCIAL_EDUCATOR")
+    void anyEmployeeListsUsersWithoutPasswords() throws Exception {
+        when(listUsersUseCase.execute()).thenReturn(List.of(ana()));
+
+        mockMvc.perform(get("/api/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].email").value("ana@vientos.es"))
+                .andExpect(jsonPath("$[0].passwordHash").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser(username = "ana@vientos.es")
+    void meReturnsAuthenticatedUser() throws Exception {
+        when(getCurrentUserUseCase.execute("ana@vientos.es")).thenReturn(ana());
+
+        mockMvc.perform(get("/api/users/me"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("ana@vientos.es"))
+                .andExpect(jsonPath("$.speciality").value("PSYCHOLOGIST"));
+    }
+
+    @Test
+    void meRequiresAuthentication() throws Exception {
+        mockMvc.perform(get("/api/users/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void unknownUserReturnsNotFound() throws Exception {
+        UUID id = UUID.randomUUID();
+        when(getUserUseCase.execute(id)).thenThrow(new UserNotFoundException(id));
+
+        mockMvc.perform(get("/api/users/{id}", id))
+                .andExpect(status().isNotFound());
     }
 }

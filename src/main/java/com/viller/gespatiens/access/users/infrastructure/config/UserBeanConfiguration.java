@@ -1,5 +1,8 @@
 package com.viller.gespatiens.access.users.infrastructure.config;
 
+import com.viller.gespatiens.access.users.application.GetCurrentUserUseCase;
+import com.viller.gespatiens.access.users.application.GetUserUseCase;
+import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
 import com.viller.gespatiens.access.users.domain.PasswordHasher;
 import com.viller.gespatiens.access.users.domain.UserRepository;
@@ -14,5 +17,20 @@ public class UserBeanConfiguration {
     @Bean
     public RegisterUserUseCase registerUserUseCase(UserRepository userRepository, PasswordHasher passwordHasher) {
         return new RegisterUserUseCase(userRepository, passwordHasher);
+    }
+
+    @Bean
+    public ListUsersUseCase listUsersUseCase(UserRepository userRepository) {
+        return new ListUsersUseCase(userRepository);
+    }
+
+    @Bean
+    public GetUserUseCase getUserUseCase(UserRepository userRepository) {
+        return new GetUserUseCase(userRepository);
+    }
+
+    @Bean
+    public GetCurrentUserUseCase getCurrentUserUseCase(UserRepository userRepository) {
+        return new GetCurrentUserUseCase(userRepository);
     }
 }
