@@ -89,6 +89,48 @@ class PatientTest {
         assertThrows(PatientAlreadyDischargedException.class, () -> patient.discharge(LocalDate.of(2026, 7, 1)));
     }
 
+    private static Patient formerPatient() {
+        return Patient.reconstitute(UUID.randomUUID(), details(), null,
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 1));
+    }
+
+    @Test
+    void readmitGivesNewNumberAndStartsNewStay() {
+        Patient patient = formerPatient();
+
+        patient.readmit(7, LocalDate.of(2026, 9, 1));
+
+        assertTrue(patient.isActive());
+        assertEquals(7, patient.getNumber());
+        assertEquals(LocalDate.of(2026, 9, 1), patient.getEntryDate());
+        assertNull(patient.getExitDate());
+        assertEquals("Juan", patient.getDetails().name());
+    }
+
+    @Test
+    void readmitRejectsEntryBeforeLastExit() {
+        Patient patient = formerPatient();
+
+        assertThrows(IllegalArgumentException.class, () -> patient.readmit(7, LocalDate.of(2026, 5, 31)));
+        assertThrows(IllegalArgumentException.class, () -> patient.readmit(7, null));
+        assertThrows(IllegalArgumentException.class, () -> patient.readmit(33, LocalDate.of(2026, 9, 1)));
+        // Un intento fallido no deja al residente a medio reincorporar
+        assertFalse(patient.isActive());
+        assertNull(patient.getNumber());
+    }
+
+    @Test
+    void readmitAllowsSameDayAsLastExit() {
+        assertDoesNotThrow(() -> formerPatient().readmit(7, LocalDate.of(2026, 6, 1)));
+    }
+
+    @Test
+    void cannotReadmitActivePatient() {
+        Patient patient = Patient.admit(details(), 5, LocalDate.of(2026, 1, 1));
+
+        assertThrows(PatientAlreadyActiveException.class, () -> patient.readmit(6, LocalDate.of(2026, 2, 1)));
+    }
+
     @Test
     void detailsRejectFutureBirthDateAndMissingFields() {
         assertThrows(IllegalArgumentException.class, () -> new PatientDetails("Juan", "García",

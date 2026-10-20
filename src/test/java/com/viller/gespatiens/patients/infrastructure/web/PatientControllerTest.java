@@ -3,9 +3,11 @@ package com.viller.gespatiens.patients.infrastructure.web;
 import com.viller.gespatiens.access.users.infrastructure.security.SecurityConfig;
 import com.viller.gespatiens.patients.application.AdmitPatientUseCase;
 import com.viller.gespatiens.patients.application.DischargePatientUseCase;
+import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
 import com.viller.gespatiens.patients.domain.CenterFullException;
 import com.viller.gespatiens.patients.domain.Dni;
 import com.viller.gespatiens.patients.domain.Patient;
+import com.viller.gespatiens.patients.domain.PatientAlreadyActiveException;
 import com.viller.gespatiens.patients.domain.PatientAlreadyDischargedException;
 import com.viller.gespatiens.patients.domain.PatientDetails;
 import com.viller.gespatiens.patients.domain.PatientNotFoundException;
@@ -51,6 +53,9 @@ class PatientControllerTest {
 
     @MockitoBean
     private DischargePatientUseCase dischargePatientUseCase;
+
+    @MockitoBean
+    private ReadmitPatientUseCase readmitPatientUseCase;
 
     @MockitoBean
     private UserDetailsService userDetailsService;
@@ -162,5 +167,50 @@ class PatientControllerTest {
 
         mockMvc.perform(post("/api/patients/{id}/discharge", PATIENT_ID))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithMockUser(roles = "SOCIAL_EDUCATOR")
+    void anyEmployeeReadmitsPatient() throws Exception {
+        PatientDetails details = new PatientDetails("Juan", "García López", new Dni("12345678Z"),
+                LocalDate.of(1990, 5, 1), "C/ Mayor 1, Valencia", "600111222",
+                null, null, null, null, null);
+        Patient readmitted = Patient.reconstitute(PATIENT_ID, details, 2, LocalDate.of(2026, 9, 1), null);
+        when(readmitPatientUseCase.execute(PATIENT_ID, LocalDate.of(2026, 9, 1))).thenReturn(readmitted);
+
+        mockMvc.perform(post("/api/patients/{id}/readmit", PATIENT_ID)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"entryDate\":\"2026-09-01\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.active").value(true))
+                .andExpect(jsonPath("$.number").value(2))
+                .andExpect(jsonPath("$.entryDate").value("2026-09-01"))
+                .andExpect(jsonPath("$.exitDate").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser
+    void readmitWithoutBodyUsesToday() throws Exception {
+        when(readmitPatientUseCase.execute(PATIENT_ID, LocalDate.now()))
+                .thenThrow(new PatientAlreadyActiveException(PATIENT_ID));
+
+        mockMvc.perform(post("/api/patients/{id}/readmit", PATIENT_ID))
+                .andExpect(status().isConflict());
+        verify(readmitPatientUseCase).execute(PATIENT_ID, LocalDate.now());
+    }
+
+    @Test
+    @WithMockUser
+    void readmitWhenCenterIsFullReturnsConflict() throws Exception {
+        when(readmitPatientUseCase.execute(eq(PATIENT_ID), any())).thenThrow(new CenterFullException());
+
+        mockMvc.perform(post("/api/patients/{id}/readmit", PATIENT_ID))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void anonymousCannotReadmit() throws Exception {
+        mockMvc.perform(post("/api/patients/{id}/readmit", PATIENT_ID))
+                .andExpect(status().isUnauthorized());
+        verifyNoInteractions(readmitPatientUseCase);
     }
 }
