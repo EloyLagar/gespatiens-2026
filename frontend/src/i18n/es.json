@@ -15,7 +15,8 @@
     "openMenu": "Abrir el menú",
     "closeMenu": "Cerrar el menú",
     "notices": "Avisos",
-    "diary": "Diario"
+    "diary": "Diario",
+    "interventions": "Intervenciones"
   },
   "language": {
     "label": "Idioma",
@@ -142,7 +143,8 @@
       "readmitted": "{{name}} vuelve al centro con la plaza nº {{number}}.",
       "saved": "Ficha guardada.",
       "discharged": "{{name}} ha pasado a antiguos residentes. Su ficha se conserva."
-    }
+    },
+    "interventions": "Tutores e intervenciones"
   },
   "discharge": {
     "title": "¿Dar de baja a {{name}}?",
@@ -442,5 +444,50 @@
       "removeTitle": "¿Quitar la salida de {{name}}?",
       "removeBody": "Se borrarán la salida y su regreso de este día."
     }
+  },
+  "interventions": {
+    "title": "Intervenciones",
+    "subtitle_one": "{{count}} residente en el centro · {{withoutTutor}} sin tutor",
+    "subtitle_other": "{{count}} residentes en el centro · {{withoutTutor}} sin tutor",
+    "listTitle": "Residentes",
+    "filterLabel": "Mostrar residentes",
+    "filter": {
+      "all": "Todos",
+      "mine": "Mis tutorados"
+    },
+    "empty": {
+      "all": "No hay residentes en el centro.",
+      "mine": "No eres tutor de ningún residente."
+    },
+    "tableCaption": "Residentes en el centro con sus tutores y su última intervención",
+    "tutors": "Tutores",
+    "count": "Intervenciones",
+    "last": "Última",
+    "lastOn": "última el {{date}}",
+    "none": "sin intervenciones",
+    "noTutors": "Sin tutor",
+    "yourTutee": "tu tutorado",
+    "notFoundTitle": "Residente no encontrado",
+    "place": "Plaza {{number}}",
+    "former": "Antiguo residente: su historial se conserva",
+    "openRecord": "Ver ficha",
+    "changeTutors": "Cambiar tutores",
+    "whoTutors": "Quién tutela a este residente",
+    "noTutorsYet": "Todavía no tiene tutores. Los asigna la administración.",
+    "noTutorsAdmin": "Todavía no tiene tutores. Asígnaselos para que puedan registrar sus intervenciones.",
+    "historyTitle": "Intervenciones",
+    "historyCount_one": "{{count}} intervención",
+    "historyCount_other": "{{count}} intervenciones",
+    "historyEmpty": "Todavía no hay intervenciones con este residente.",
+    "onlyTutors": "Solo sus tutores pueden registrar intervenciones.",
+    "record": "Registrar intervención",
+    "date": "Día",
+    "text": "Intervención realizada",
+    "textHelp": "Qué se hizo con el residente y lo que sea de interés para el resto del equipo.",
+    "dateInvalid": "Indica un día que no sea posterior a hoy.",
+    "textNeeded": "Describe la intervención antes de guardarla.",
+    "delete": "Eliminar",
+    "deleteTitle": "¿Eliminar esta intervención?",
+    "deleteBody": "Desaparecerá del historial de {{name}}. No se puede deshacer."
   }
 }

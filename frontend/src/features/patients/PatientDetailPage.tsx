@@ -114,6 +114,9 @@ export function PatientDetailPage() {
             <Button kind="tertiary" renderIcon={Edit} onClick={() => setEditing(true)}>
               {t('common.edit')}
             </Button>
+            <Link className="cds--btn cds--btn--ghost" to={`/intervenciones/${patient.id}`}>
+              {t('detail.interventions')}
+            </Link>
             {/* RF9: la baja es cosa de la administración. Al resto ni se le muestra el botón */}
             {patient.active && isAdmin && (
               <Button kind="danger--tertiary" onClick={() => setDialog('discharge')}>
