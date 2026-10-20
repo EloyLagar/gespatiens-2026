@@ -307,7 +307,7 @@
       "count_one": "{{count}} residente rebajado",
       "count_other": "{{count}} residentes rebajados",
       "add": "Añadir rebaja",
-      "onlyMedical": "Las rebajas las registra el equipo médico. El resto del personal las consulta aquí.",
+      "onlyMedical": "Las rebajas las registran el equipo médico y la administración. El resto del personal las consulta aquí.",
       "empty": "Nadie está rebajado este día.",
       "caption": "Residentes rebajados este día, por número de plaza",
       "resident": "Residente",

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 // La memoria: "existirá un espacio para que el equipo médico pueda registrar los pacientes rebajados
-// con su tipo de rebaja". Que solo sea el equipo médico lo comprueba SecurityConfig.
+// con su tipo de rebaja". Quién puede (equipo médico y administración) lo comprueba SecurityConfig.
 // Registrar la rebaja de un residente que ya la tenía ese día la sustituye
 public class RecordReductionUseCase {
 

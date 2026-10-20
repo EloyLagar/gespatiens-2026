@@ -7,7 +7,7 @@ import com.viller.gespatiens.diary.domain.ReductionRepository;
 import java.time.LocalDate;
 import java.util.UUID;
 
-// Quitar una rebaja registrada por error. Como registrarla, solo el equipo médico (SecurityConfig)
+// Quitar una rebaja registrada por error. Como registrarla: equipo médico y administración (SecurityConfig)
 public class DeleteReductionUseCase {
 
     private final ReductionRepository reductionRepository;

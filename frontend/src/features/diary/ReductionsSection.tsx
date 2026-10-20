@@ -9,7 +9,7 @@ import { ConfirmDialog, ErrorNotice } from '../../shared/ui'
 interface Props {
   date: string
   reductions: Reduction[]
-  // La memoria: el equipo médico registra las rebajas; "los demás usuarios solo deben poder verlo"
+  // Equipo médico (memoria) y administración (decisión del centro) registran las rebajas; el resto solo las ve
   canEdit: boolean
   residents: Patient[]
   onChanged: (reductions: Reduction[]) => void

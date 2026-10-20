@@ -32,12 +32,13 @@ function DiaryDayPage({ date }: { date: string }) {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const isMedicalTeam = user?.speciality === 'MEDICAL_TEAM'
+  // Registran rebajas el equipo médico (memoria) y la administración (decisión del centro)
+  const canRecordReductions = user?.speciality === 'MEDICAL_TEAM' || user?.speciality === 'ADMINISTRATOR'
 
   const day = useApi(() => getDiaryDay(date), [date])
   const staff = useApi(listUsers, [])
-  // Solo el equipo médico necesita la lista de residentes, para elegir a quién rebajar
-  const residents = useApi(() => (isMedicalTeam ? listPatients('ACTIVE') : Promise.resolve([])), [isMedicalTeam])
+  // Solo quien registra rebajas necesita la lista de residentes, para elegir a quién rebajar
+  const residents = useApi(() => (canRecordReductions ? listPatients('ACTIVE') : Promise.resolve([])), [canRecordReductions])
   const [current, setCurrent] = useState<DiaryDay | null>(null)
   useEffect(() => setCurrent(day.data), [day.data])
 
@@ -101,7 +102,7 @@ function DiaryDayPage({ date }: { date: string }) {
           <ReductionsSection
             date={date}
             reductions={current.reductions}
-            canEdit={isMedicalTeam}
+            canEdit={canRecordReductions}
             residents={residents.data ?? []}
             onChanged={(reductions) => setCurrent({ ...current, reductions })}
           />

@@ -93,9 +93,22 @@ class DiaryControllerTest {
                 .andExpect(jsonPath("$.sport").value(true));
     }
 
-    // La memoria: "Los demás usuarios solo deben poder verlo", y eso incluye a la administración
     @Test
     @WithMockUser(username = ME, roles = "ADMINISTRATOR")
+    void administrationCanAlsoRecordReductions() throws Exception {
+        Resident lucia = new Resident(PATIENT, 5, "Lucía", "Martínez", true);
+        when(recordReductionUseCase.execute(eq(LocalDate.of(2026, 10, 20)), eq(PATIENT), any(), anyBoolean(),
+                anyBoolean(), eq(UUID.fromString(ME))))
+                .thenReturn(new ReductionView(lucia, Optional.empty(), true, false));
+
+        mockMvc.perform(put("/api/diary/2026-10-20/reductions/{p}", PATIENT)
+                        .contentType(MediaType.APPLICATION_JSON).content(REDUCTION))
+                .andExpect(status().isOk());
+    }
+
+    // La memoria: "Los demás usuarios solo deben poder verlo"
+    @Test
+    @WithMockUser(username = ME, roles = "SOCIAL_EDUCATOR")
     void otherSpecialitiesCannotRecordOrDeleteReductions() throws Exception {
         mockMvc.perform(put("/api/diary/2026-10-20/reductions/{p}", PATIENT)
                         .contentType(MediaType.APPLICATION_JSON).content(REDUCTION))

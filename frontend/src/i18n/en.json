@@ -307,7 +307,7 @@
       "count_one": "{{count}} resident on reduction",
       "count_other": "{{count}} residents on reduction",
       "add": "Add reduction",
-      "onlyMedical": "The medical team records reductions. The rest of the staff can check them here.",
+      "onlyMedical": "The medical team and administration record reductions. The rest of the staff can check them here.",
       "empty": "Nobody is on reduction this day.",
       "caption": "Residents on reduction this day, by place number",
       "resident": "Resident",
