@@ -47,4 +47,10 @@ class InMemoryUserRepository implements UserRepository {
     public boolean existsByPhoneNumber(String phoneNumber) {
         return users.values().stream().anyMatch(u -> u.getPhoneNumber().equals(phoneNumber));
     }
+
+    @Override
+    public boolean existsByPhoneNumberAndIdNot(String phoneNumber, UUID id) {
+        return users.values().stream()
+                .anyMatch(u -> !u.getId().equals(id) && u.getPhoneNumber().equals(phoneNumber));
+    }
 }

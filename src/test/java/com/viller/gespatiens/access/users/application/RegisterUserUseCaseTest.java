@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RegisterUserUseCaseTest {
 
     private final InMemoryUserRepository repository = new InMemoryUserRepository();
-    private final RegisterUserUseCase useCase = new RegisterUserUseCase(repository, raw -> "hashed:" + raw);
+    private final RegisterUserUseCase useCase = new RegisterUserUseCase(repository, new FakePasswordHasher());
 
     @Test
     void registersUserWithHashedPassword() {
