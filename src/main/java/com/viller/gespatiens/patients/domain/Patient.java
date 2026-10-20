@@ -61,6 +61,25 @@ public class Patient {
         this.exitDate = exitDate;
     }
 
+    // Un residente antiguo vuelve al centro con un número nuevo (no tiene por qué ser el que tenía).
+    // La tabla solo guarda una estancia, así que la nueva entrada sustituye a la anterior
+    public void readmit(int number, LocalDate entryDate) {
+        if (isActive()) {
+            throw new PatientAlreadyActiveException(id);
+        }
+        if (entryDate == null) {
+            throw new IllegalArgumentException("La fecha de entrada no puede estar vacía");
+        }
+        if (entryDate.isBefore(exitDate)) {
+            throw new IllegalArgumentException(
+                    "La fecha de reingreso no puede ser anterior a la última salida (" + exitDate + ")");
+        }
+        validateState(number, entryDate, null);
+        this.number = number;
+        this.entryDate = entryDate;
+        this.exitDate = null;
+    }
+
     // Invariante: activo <=> tiene número y no tiene fecha de salida
     private void validateState(Integer number, LocalDate entryDate, LocalDate exitDate) {
         if (exitDate == null) {

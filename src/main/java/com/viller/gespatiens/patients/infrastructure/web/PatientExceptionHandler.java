@@ -1,6 +1,7 @@
 package com.viller.gespatiens.patients.infrastructure.web;
 
 import com.viller.gespatiens.patients.domain.CenterFullException;
+import com.viller.gespatiens.patients.domain.PatientAlreadyActiveException;
 import com.viller.gespatiens.patients.domain.PatientAlreadyDischargedException;
 import com.viller.gespatiens.patients.domain.PatientAlreadyRegisteredException;
 import com.viller.gespatiens.patients.domain.PatientNotFoundException;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class PatientExceptionHandler {
 
     @ExceptionHandler({PatientAlreadyRegisteredException.class, VisitCodeAlreadyInUseException.class,
-            CenterFullException.class, PatientAlreadyDischargedException.class})
+            CenterFullException.class, PatientAlreadyDischargedException.class,
+            PatientAlreadyActiveException.class})
     public ProblemDetail handleConflict(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }

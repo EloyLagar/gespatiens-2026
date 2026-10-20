@@ -2,6 +2,7 @@ package com.viller.gespatiens.patients.infrastructure.web;
 
 import com.viller.gespatiens.patients.application.AdmitPatientUseCase;
 import com.viller.gespatiens.patients.application.DischargePatientUseCase;
+import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
 import com.viller.gespatiens.patients.domain.Patient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +20,14 @@ public class PatientController {
 
     private final AdmitPatientUseCase admitPatientUseCase;
     private final DischargePatientUseCase dischargePatientUseCase;
+    private final ReadmitPatientUseCase readmitPatientUseCase;
 
     public PatientController(AdmitPatientUseCase admitPatientUseCase,
-                             DischargePatientUseCase dischargePatientUseCase) {
+                             DischargePatientUseCase dischargePatientUseCase,
+                             ReadmitPatientUseCase readmitPatientUseCase) {
         this.admitPatientUseCase = admitPatientUseCase;
         this.dischargePatientUseCase = dischargePatientUseCase;
+        this.readmitPatientUseCase = readmitPatientUseCase;
     }
 
     @PostMapping
@@ -38,6 +42,14 @@ public class PatientController {
     public PatientResponse discharge(@PathVariable UUID id,
                                      @RequestBody(required = false) DischargePatientRequest request) {
         Patient patient = dischargePatientUseCase.execute(id, DischargePatientRequest.exitDateOrToday(request));
+        return PatientResponse.from(patient);
+    }
+
+    // Dar de alta de nuevo a un residente antiguo, con los datos de su ficha
+    @PostMapping("/{id}/readmit")
+    public PatientResponse readmit(@PathVariable UUID id,
+                                   @RequestBody(required = false) ReadmitPatientRequest request) {
+        Patient patient = readmitPatientUseCase.execute(id, ReadmitPatientRequest.entryDateOrToday(request));
         return PatientResponse.from(patient);
     }
 }
