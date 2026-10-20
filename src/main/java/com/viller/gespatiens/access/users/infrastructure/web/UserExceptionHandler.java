@@ -2,6 +2,7 @@ package com.viller.gespatiens.access.users.infrastructure.web;
 
 import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException;
+import com.viller.gespatiens.access.users.domain.LastAdministratorException;
 import com.viller.gespatiens.access.users.domain.PhoneNumberAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class UserExceptionHandler {
 
-    @ExceptionHandler({EmailAlreadyRegisteredException.class, PhoneNumberAlreadyRegisteredException.class})
+    @ExceptionHandler({EmailAlreadyRegisteredException.class, PhoneNumberAlreadyRegisteredException.class,
+            LastAdministratorException.class})
     public ProblemDetail handleDuplicate(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }

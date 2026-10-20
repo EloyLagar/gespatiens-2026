@@ -1,5 +1,6 @@
 package com.viller.gespatiens.access.users.application;
 
+import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserRepository;
 
@@ -52,5 +53,21 @@ class InMemoryUserRepository implements UserRepository {
     public boolean existsByPhoneNumberAndIdNot(String phoneNumber, UUID id) {
         return users.values().stream()
                 .anyMatch(u -> !u.getId().equals(id) && u.getPhoneNumber().equals(phoneNumber));
+    }
+
+    @Override
+    public boolean existsByEmailAndIdNot(String email, UUID id) {
+        return users.values().stream()
+                .anyMatch(u -> !u.getId().equals(id) && u.getEmail().equals(email));
+    }
+
+    @Override
+    public long countBySpeciality(Speciality speciality) {
+        return users.values().stream().filter(u -> u.getSpeciality() == speciality).count();
+    }
+
+    @Override
+    public void delete(User user) {
+        users.remove(user.getId());
     }
 }

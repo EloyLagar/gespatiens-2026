@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public interface UserRepository {
     User save(User user);
+    void delete(User user);
     Optional<User> findById(UUID id);
     // Ordenados por nombre
     List<User> findAll();
@@ -14,4 +15,6 @@ public interface UserRepository {
     boolean existsByPhoneNumber(String phoneNumber);
     // Al editar un perfil: ¿lo tiene otro empleado distinto del que se edita?
     boolean existsByPhoneNumberAndIdNot(String phoneNumber, UUID id);
+    boolean existsByEmailAndIdNot(String email, UUID id);
+    long countBySpeciality(Speciality speciality);
 }

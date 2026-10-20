@@ -1,5 +1,6 @@
 package com.viller.gespatiens.access.users.infrastructure;
 
+import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserRepository;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,11 @@ public class UserRepositoryJpaAdapter implements UserRepository {
         UserJpaEntity entity = toEntity(user);
         UserJpaEntity saved = userJpaRepository.save(entity);
         return toDomain(saved);
+    }
+
+    @Override
+    public void delete(User user) {
+        userJpaRepository.deleteById(user.getId());
     }
 
     @Override
@@ -56,6 +62,16 @@ public class UserRepositoryJpaAdapter implements UserRepository {
     @Override
     public boolean existsByPhoneNumberAndIdNot(String phoneNumber, UUID id) {
         return userJpaRepository.existsByPhoneNumberAndIdNot(phoneNumber, id);
+    }
+
+    @Override
+    public boolean existsByEmailAndIdNot(String email, UUID id) {
+        return userJpaRepository.existsByEmailAndIdNot(email, id);
+    }
+
+    @Override
+    public long countBySpeciality(Speciality speciality) {
+        return userJpaRepository.countBySpeciality(speciality);
     }
 
     private UserJpaEntity toEntity(User user) {
