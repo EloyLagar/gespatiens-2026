@@ -10,6 +10,8 @@ import { useAuth } from '../../auth/AuthContext'
 import { todayIso } from '../../shared/dates'
 import { ErrorNotice, LoadingRows, PageHeader } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
+import { ActivitiesSection } from './ActivitiesSection'
+import { OutingsSection } from './OutingsSection'
 import { ReductionsSection } from './ReductionsSection'
 import { ShiftPanel } from './ShiftPanel'
 
@@ -37,8 +39,8 @@ function DiaryDayPage({ date }: { date: string }) {
 
   const day = useApi(() => getDiaryDay(date), [date])
   const staff = useApi(listUsers, [])
-  // Solo quien registra rebajas necesita la lista de residentes, para elegir a quién rebajar
-  const residents = useApi(() => (canRecordReductions ? listPatients('ACTIVE') : Promise.resolve([])), [canRecordReductions])
+  // Los residentes en el centro, para elegir a quién rebajar o quién sale
+  const residents = useApi(() => listPatients('ACTIVE'), [])
   const [current, setCurrent] = useState<DiaryDay | null>(null)
   useEffect(() => setCurrent(day.data), [day.data])
 
@@ -104,7 +106,24 @@ function DiaryDayPage({ date }: { date: string }) {
             reductions={current.reductions}
             canEdit={canRecordReductions}
             residents={residents.data ?? []}
-            onChanged={(reductions) => setCurrent({ ...current, reductions })}
+            onChanged={(reductions) => {
+              setCurrent({ ...current, reductions })
+              // Una rebaja cambia quién figura como "Rebajado" en las listas de actividades
+              day.reload()
+            }}
+          />
+
+          <ActivitiesSection
+            date={date}
+            activities={current.activities}
+            onChanged={(activities) => setCurrent({ ...current, activities })}
+          />
+
+          <OutingsSection
+            date={date}
+            outings={current.outings}
+            residents={residents.data ?? []}
+            onChanged={(outings) => setCurrent({ ...current, outings })}
           />
         </>
       )}

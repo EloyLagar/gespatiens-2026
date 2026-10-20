@@ -22,3 +22,12 @@ export function whenPosted(iso: string, t: Translate, language: string, now: Dat
   const day = new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date)
   return t('time.onDay', { day, time })
 }
+
+// Una hora del diario (LocalTime: "10:30" o "10:30:00") como la escribe un campo <input type="time">
+export function hhmm(localTime: string): string {
+  return localTime.slice(0, 5)
+}
+
+export function nowHhmm(now: Date = new Date()): string {
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+}

@@ -32,15 +32,71 @@ export interface Reduction {
   sport: boolean
 }
 
+// Hora del día tal como la manda el backend (LocalTime): "10:30" o "10:30:00"
+export type LocalTime = string
+
+export const ACTIVITY_TYPES = [
+  'THERAPEUTIC_GROUP',
+  'LIFE_SKILLS',
+  'HEALTH_SCHOOL',
+  'JOB_GUIDANCE',
+  'OCCUPATIONAL_WORKSHOP',
+  'VIDEO_FORUM',
+  'MAINTENANCE',
+  'SPORT',
+  'WALK',
+  'OTHER',
+] as const
+export type ActivityType = (typeof ACTIVITY_TYPES)[number]
+
+// Igual que ActivityType.requiresTitle(): el grupo terapéutico necesita su nombre; "Otros", qué es
+export function requiresTitle(type: ActivityType) {
+  return type === 'THERAPEUTIC_GROUP' || type === 'OTHER'
+}
+
+// "Rebajado" no se elige: sale de las rebajas del día
+export const ATTENDANCE_STATUSES = ['ATTENDED', 'EXCUSED_ABSENCE', 'UNEXCUSED_ABSENCE'] as const
+export type AttendanceStatus = (typeof ATTENDANCE_STATUSES)[number]
+
+export interface AttendanceRow {
+  resident: DiaryResident
+  // null: sin anotar (o rebajado, si reduced)
+  status: AttendanceStatus | null
+  reduced: boolean
+  partialReduction: string | null
+}
+
+export interface Activity {
+  id: string
+  startTime: LocalTime
+  type: ActivityType
+  title: string | null
+  attendance: AttendanceRow[]
+}
+
+export interface Outing {
+  id: string
+  resident: DiaryResident
+  leftAt: LocalTime
+  // null: todavía no ha vuelto
+  returnedAt: LocalTime | null
+  notes: string | null
+}
+
 export interface DiaryDay {
   date: IsoDate
   shifts: Shift[]
   reductions: Reduction[]
+  activities: Activity[]
+  outings: Outing[]
 }
 
-// Deben coincidir con ShiftLog.MAX_NOTES_LENGTH y Reduction.MAX_PARTIAL_LENGTH en el dominio
+// Deben coincidir con ShiftLog.MAX_NOTES_LENGTH, Reduction.MAX_PARTIAL_LENGTH, Activity.MAX_TITLE_LENGTH
+// y TherapeuticOuting.MAX_NOTES_LENGTH en el dominio
 export const SHIFT_NOTES_MAX_LENGTH = 2000
 export const PARTIAL_REDUCTION_MAX_LENGTH = 100
+export const ACTIVITY_TITLE_MAX_LENGTH = 100
+export const OUTING_NOTES_MAX_LENGTH = 200
 
 export function getDiaryDay(date: IsoDate) {
   return request<DiaryDay>(`/diary/${date}`)
@@ -59,4 +115,33 @@ export function recordReduction(date: IsoDate, patientId: string, partial: strin
 
 export function deleteReduction(date: IsoDate, patientId: string) {
   return request<void>(`/diary/${date}/reductions/${patientId}`, { method: 'DELETE' })
+}
+
+export function scheduleActivity(date: IsoDate, startTime: LocalTime, type: ActivityType, title: string) {
+  return request<Activity>(`/diary/${date}/activities`, { method: 'POST', body: { startTime, type, title } })
+}
+
+export function rescheduleActivity(activityId: string, startTime: LocalTime, type: ActivityType, title: string) {
+  return request<Activity>(`/diary/activities/${activityId}`, { method: 'PUT', body: { startTime, type, title } })
+}
+
+export function deleteActivity(activityId: string) {
+  return request<void>(`/diary/activities/${activityId}`, { method: 'DELETE' })
+}
+
+// Sustituye la lista entera: quien no aparece queda sin anotar
+export function recordAttendance(activityId: string, attendance: Record<string, AttendanceStatus>) {
+  return request<Activity>(`/diary/activities/${activityId}/attendance`, { method: 'PUT', body: { attendance } })
+}
+
+export function recordOuting(date: IsoDate, patientId: string, leftAt: LocalTime, notes: string) {
+  return request<Outing>(`/diary/${date}/outings`, { method: 'POST', body: { patientId, leftAt, notes } })
+}
+
+export function updateOuting(outingId: string, leftAt: LocalTime, returnedAt: LocalTime | null, notes: string) {
+  return request<Outing>(`/diary/outings/${outingId}`, { method: 'PUT', body: { leftAt, returnedAt, notes } })
+}
+
+export function deleteOuting(outingId: string) {
+  return request<void>(`/diary/outings/${outingId}`, { method: 'DELETE' })
 }

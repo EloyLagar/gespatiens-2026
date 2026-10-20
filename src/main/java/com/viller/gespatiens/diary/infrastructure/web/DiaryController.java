@@ -1,12 +1,25 @@
 package com.viller.gespatiens.diary.infrastructure.web;
 
+import com.viller.gespatiens.diary.application.DeleteActivityUseCase;
+import com.viller.gespatiens.diary.application.DeleteOutingUseCase;
 import com.viller.gespatiens.diary.application.DeleteReductionUseCase;
 import com.viller.gespatiens.diary.application.GetDiaryDayUseCase;
+import com.viller.gespatiens.diary.application.RecordAttendanceUseCase;
+import com.viller.gespatiens.diary.application.RecordOutingUseCase;
 import com.viller.gespatiens.diary.application.RecordReductionUseCase;
 import com.viller.gespatiens.diary.application.RecordShiftUseCase;
+import com.viller.gespatiens.diary.application.RescheduleActivityUseCase;
+import com.viller.gespatiens.diary.application.ScheduleActivityUseCase;
+import com.viller.gespatiens.diary.application.UpdateOutingUseCase;
 import com.viller.gespatiens.diary.domain.DayPart;
+import com.viller.gespatiens.diary.infrastructure.web.DiaryDayResponse.ActivityResponse;
+import com.viller.gespatiens.diary.infrastructure.web.DiaryDayResponse.OutingResponse;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryDayResponse.ReductionResponse;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryDayResponse.ShiftResponse;
+import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.ActivityRequest;
+import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.AttendanceRequest;
+import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.OutingRequest;
+import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.OutingUpdateRequest;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.ReductionRequest;
 import com.viller.gespatiens.diary.infrastructure.web.DiaryRequests.ShiftRequest;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,33 +38,55 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-// Una página del diario por fecha (yyyy-MM-dd). Los turnos los rellena cualquier empleado;
-// las rebajas, solo el equipo médico (ver SecurityConfig)
+// Una página del diario por fecha (yyyy-MM-dd). Las actividades y salidas se crean en su día y después
+// se tratan por id. Todo lo rellena cualquier empleado salvo las rebajas, que son del equipo médico y la
+// administración (ver SecurityConfig)
 @RestController
-@RequestMapping("/api/diary/{date}")
+@RequestMapping("/api/diary")
 public class DiaryController {
 
     private final GetDiaryDayUseCase getDiaryDayUseCase;
     private final RecordShiftUseCase recordShiftUseCase;
     private final RecordReductionUseCase recordReductionUseCase;
     private final DeleteReductionUseCase deleteReductionUseCase;
+    private final ScheduleActivityUseCase scheduleActivityUseCase;
+    private final RescheduleActivityUseCase rescheduleActivityUseCase;
+    private final DeleteActivityUseCase deleteActivityUseCase;
+    private final RecordAttendanceUseCase recordAttendanceUseCase;
+    private final RecordOutingUseCase recordOutingUseCase;
+    private final UpdateOutingUseCase updateOutingUseCase;
+    private final DeleteOutingUseCase deleteOutingUseCase;
 
     public DiaryController(GetDiaryDayUseCase getDiaryDayUseCase,
                            RecordShiftUseCase recordShiftUseCase,
                            RecordReductionUseCase recordReductionUseCase,
-                           DeleteReductionUseCase deleteReductionUseCase) {
+                           DeleteReductionUseCase deleteReductionUseCase,
+                           ScheduleActivityUseCase scheduleActivityUseCase,
+                           RescheduleActivityUseCase rescheduleActivityUseCase,
+                           DeleteActivityUseCase deleteActivityUseCase,
+                           RecordAttendanceUseCase recordAttendanceUseCase,
+                           RecordOutingUseCase recordOutingUseCase,
+                           UpdateOutingUseCase updateOutingUseCase,
+                           DeleteOutingUseCase deleteOutingUseCase) {
         this.getDiaryDayUseCase = getDiaryDayUseCase;
         this.recordShiftUseCase = recordShiftUseCase;
         this.recordReductionUseCase = recordReductionUseCase;
         this.deleteReductionUseCase = deleteReductionUseCase;
+        this.scheduleActivityUseCase = scheduleActivityUseCase;
+        this.rescheduleActivityUseCase = rescheduleActivityUseCase;
+        this.deleteActivityUseCase = deleteActivityUseCase;
+        this.recordAttendanceUseCase = recordAttendanceUseCase;
+        this.recordOutingUseCase = recordOutingUseCase;
+        this.updateOutingUseCase = updateOutingUseCase;
+        this.deleteOutingUseCase = deleteOutingUseCase;
     }
 
-    @GetMapping
+    @GetMapping("/{date}")
     public DiaryDayResponse get(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return DiaryDayResponse.from(getDiaryDayUseCase.execute(date));
     }
 
-    @PutMapping("/shifts/{part}")
+    @PutMapping("/{date}/shifts/{part}")
     public ShiftResponse recordShift(Principal principal,
                                      @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                      @PathVariable DayPart part,
@@ -59,7 +95,7 @@ public class DiaryController {
                 currentUserId(principal)));
     }
 
-    @PutMapping("/reductions/{patientId}")
+    @PutMapping("/{date}/reductions/{patientId}")
     public ReductionResponse recordReduction(Principal principal,
                                              @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                              @PathVariable UUID patientId,
@@ -68,11 +104,56 @@ public class DiaryController {
                 request.total(), request.sport(), currentUserId(principal)));
     }
 
-    @DeleteMapping("/reductions/{patientId}")
+    @DeleteMapping("/{date}/reductions/{patientId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteReduction(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                 @PathVariable UUID patientId) {
         deleteReductionUseCase.execute(date, patientId);
+    }
+
+    @PostMapping("/{date}/activities")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ActivityResponse scheduleActivity(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                             @RequestBody ActivityRequest request) {
+        return ActivityResponse.from(scheduleActivityUseCase.execute(date, request.startTime(), request.type(),
+                request.title()));
+    }
+
+    @PutMapping("/activities/{activityId}")
+    public ActivityResponse rescheduleActivity(@PathVariable UUID activityId, @RequestBody ActivityRequest request) {
+        return ActivityResponse.from(rescheduleActivityUseCase.execute(activityId, request.startTime(),
+                request.type(), request.title()));
+    }
+
+    @DeleteMapping("/activities/{activityId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteActivity(@PathVariable UUID activityId) {
+        deleteActivityUseCase.execute(activityId);
+    }
+
+    @PutMapping("/activities/{activityId}/attendance")
+    public ActivityResponse recordAttendance(@PathVariable UUID activityId, @RequestBody AttendanceRequest request) {
+        return ActivityResponse.from(recordAttendanceUseCase.execute(activityId, request.attendance()));
+    }
+
+    @PostMapping("/{date}/outings")
+    @ResponseStatus(HttpStatus.CREATED)
+    public OutingResponse recordOuting(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                       @RequestBody OutingRequest request) {
+        return OutingResponse.from(recordOutingUseCase.execute(date, request.patientId(), request.leftAt(),
+                request.notes()));
+    }
+
+    @PutMapping("/outings/{outingId}")
+    public OutingResponse updateOuting(@PathVariable UUID outingId, @RequestBody OutingUpdateRequest request) {
+        return OutingResponse.from(updateOutingUseCase.execute(outingId, request.leftAt(), request.returnedAt(),
+                request.notes()));
+    }
+
+    @DeleteMapping("/outings/{outingId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOuting(@PathVariable UUID outingId) {
+        deleteOutingUseCase.execute(outingId);
     }
 
     // CurrentUserJwtConverter pone el id del empleado como "name" de la autenticación

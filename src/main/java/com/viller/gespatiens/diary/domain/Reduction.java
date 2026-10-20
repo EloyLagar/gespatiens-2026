@@ -43,6 +43,12 @@ public class Reduction {
         return new Reduction(id, date, patientId, partial, total, sport, recordedBy, recordedAt);
     }
 
+    // De qué actividades libra: la total, de todas; la deportiva, de deporte y paseo. La parcial es un texto
+    // ("no puede cargar peso") y no libra de nada por sí sola: se muestra al pasar lista y decide el personal
+    public boolean excuses(ActivityType activityType) {
+        return total || (sport && activityType.isPhysical());
+    }
+
     public void change(String newPartial, boolean newTotal, boolean newSport, UUID recorderId, Instant now) {
         setTypes(newPartial, newTotal, newSport);
         this.recordedBy = recorderId;
