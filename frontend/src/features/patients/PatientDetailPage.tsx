@@ -123,6 +123,12 @@ export function PatientDetailPage() {
             <Link className="cds--btn cds--btn--ghost" to={`/intervenciones/${patient.id}`}>
               {t('detail.interventions')}
             </Link>
+            {/* RNF7: quién ha consultado o cambiado esta ficha */}
+            {isAdmin && (
+              <Link className="cds--btn cds--btn--ghost" to={`/registro?residente=${patient.id}`}>
+                {t('detail.auditLog')}
+              </Link>
+            )}
             {/* RF9: la baja es cosa de la administración. Al resto ni se le muestra el botón */}
             {patient.active && isAdmin && (
               <Button kind="danger--tertiary" onClick={() => setDialog('discharge')}>
