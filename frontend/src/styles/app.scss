@@ -1999,3 +1999,235 @@ ol.resident-reports {
 .pre-line {
   white-space: pre-line;
 }
+
+// ---------------------------------------------------------------- Panel de control (memoria final, 5.1)
+
+.dashboard-filters {
+  max-width: 200px;
+  margin-bottom: var(--gap);
+}
+
+// Cifras de un vistazo: etiqueta, valor grande y una nota
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.stat {
+  padding: var(--pad);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.stat__label {
+  color: var(--muted);
+}
+
+.stat__value {
+  margin: 8px 0;
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 600;
+}
+
+.stat__unit {
+  color: var(--muted);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.stat__note {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+a.stat__note {
+  color: var(--accent);
+}
+
+// Medidor: el tramo vacío es un tono claro del mismo azul
+.meter {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--tint-strong);
+  overflow: hidden;
+}
+
+.meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--gap);
+  align-items: start;
+}
+
+.chart h2 {
+  margin-bottom: 4px;
+}
+
+.chart__subtitle {
+  margin-bottom: 16px;
+  color: var(--muted);
+}
+
+.chart__table {
+  margin-top: 16px;
+}
+
+.chart__table summary {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.chart__table .data-table {
+  margin-top: 8px;
+}
+
+// Barras horizontales: 16px de grosor, punta redondeada, base recta sobre la línea de cero
+.hbars {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hbars__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(80px, 140px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 28px;
+  outline-offset: 2px;
+}
+
+.hbars__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hbars__track {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 1px solid var(--rule);
+}
+
+.hbars__bar {
+  height: 16px;
+  min-width: 2px;
+  border-radius: 0 4px 4px 0;
+  background: var(--accent);
+}
+
+.hbars__value {
+  color: var(--text);
+  font-size: 12px;
+}
+
+// Columnas: una por semana, la base sobre una línea fina
+.columns {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 8px;
+  height: 200px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.columns__item {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  outline-offset: 2px;
+}
+
+.columns__value {
+  font-size: 12px;
+}
+
+.columns__track {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  border-bottom: 1px solid var(--rule);
+}
+
+.columns__bar {
+  width: 24px;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--accent);
+}
+
+.columns__label {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+// Tooltip de cada marca: al pasar el ratón o al llegar con el teclado
+.chart-tip {
+  position: absolute;
+  z-index: 2;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  display: none;
+  padding: 6px 8px;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.hbars__row:hover .chart-tip,
+.hbars__row:focus-visible .chart-tip,
+.columns__item:hover .chart-tip,
+.columns__item:focus-visible .chart-tip {
+  display: block;
+}
+
+.hbars__row:hover .hbars__bar,
+.columns__item:hover .columns__bar {
+  background: var(--accent-ink);
+}
+
+@media (max-width: 1055px) {
+  .stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 671px) {
+  .stat-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// Los dos gráficos van uno al lado del otro: sin el margen que separa paneles apilados
+.dashboard-charts .panel + .panel {
+  margin-top: 0;
+}

@@ -56,6 +56,8 @@ public class SecurityConfig {
                         // Cerrar y reabrir informes es cosa de la administración ("fecha y firma de la Dirección
                         // del recurso"). Qué área redacta cada uno lo decide el dominio
                         .requestMatchers(HttpMethod.POST, "/api/reports/*/close", "/api/reports/*/reopen").hasRole("ADMINISTRATOR")
+                        // Memoria final, 5.1: un panel "al que solo esta [la administración] pudiese acceder"
+                        .requestMatchers("/api/dashboard", "/api/dashboard/**").hasRole("ADMINISTRATOR")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 // Sin httpBasic: con él, el navegador abre su propia ventana de usuario y contraseña
