@@ -21,9 +21,23 @@ public interface DashboardQueries {
     // Residentes en el centro a los que les falta alguno de sus dos tutores
     int activeResidentsWithoutBothTutors();
 
+    // Informes en elaboración de las estancias en curso
     int reportsInProgress();
 
     int interventionsBetween(LocalDate from, LocalDate to);
+
+    // Residentes en el centro cuyo informe de media estancia de la estancia en curso sigue en elaboración
+    List<OpenMidStayReport> openMidStayReports();
+
+    // Residentes en el centro con medida judicial y fecha de fin
+    List<CourtMeasure> courtMeasures();
+
+    // dueDate: cuándo toca, la que pone el informe (por defecto a mitad del programa, y se puede cambiar)
+    record OpenMidStayReport(Deadline.Resident resident, LocalDate dueDate, UUID reportId) {
+    }
+
+    record CourtMeasure(Deadline.Resident resident, LocalDate endDate, String court) {
+    }
 
     record ShiftCount(UUID employeeId, String name, String speciality, int morning, int afternoon, int night) {
         public int total() {

@@ -3,14 +3,18 @@ package com.viller.gespatiens.dashboard.application;
 import com.viller.gespatiens.dashboard.application.DashboardQueries.ShiftCount;
 import com.viller.gespatiens.dashboard.application.DashboardView.WeekCount;
 
+import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 // Memoria final, 5.1: "un panel de administración al que solo esta pudiese acceder y ver distinta información,
 // por ejemplo: la cantidad de turnos que realizan distintos trabajadores durante un mes, la cantidad de avisos
@@ -21,9 +25,14 @@ public class DashboardUseCase {
     public static final int TOTAL_PLACES = 32;
 
     private final DashboardQueries queries;
+    private final Clock clock;
+    // Con cuánta antelación se avisa de lo que vence
+    private final Period notice;
 
-    public DashboardUseCase(DashboardQueries queries) {
+    public DashboardUseCase(DashboardQueries queries, Clock clock, Period notice) {
         this.queries = queries;
+        this.clock = clock;
+        this.notice = notice;
     }
 
     public DashboardView execute(YearMonth month) {
@@ -49,6 +58,26 @@ public class DashboardUseCase {
 
         return new DashboardView(month, queries.activeResidents(), TOTAL_PLACES,
                 queries.activeResidentsWithoutBothTutors(), queries.reportsInProgress(),
-                queries.interventionsBetween(first, last), shifts, weeks);
+                queries.interventionsBetween(first, last), shifts, weeks, deadlines());
+    }
+
+    // Lo que vence en el plazo de aviso y lo que ya ha vencido, de lo más urgente a lo menos. No depende del
+    // mes elegido: es trabajo pendiente de hoy
+    private List<Deadline> deadlines() {
+        LocalDate today = LocalDate.now(clock);
+        LocalDate horizon = today.plus(notice);
+        Stream<Deadline> reports = queries.openMidStayReports().stream()
+                .map(r -> deadline(Deadline.Kind.MID_STAY_REPORT, r.resident(), r.dueDate(), today, r.reportId(), null));
+        Stream<Deadline> measures = queries.courtMeasures().stream()
+                .map(m -> deadline(Deadline.Kind.COURT_MEASURE_END, m.resident(), m.endDate(), today, null, m.court()));
+        return Stream.concat(reports, measures)
+                .filter(d -> !d.dueDate().isAfter(horizon))
+                .sorted(Comparator.comparing(Deadline::dueDate).thenComparing(d -> d.resident().surname()))
+                .toList();
+    }
+
+    private static Deadline deadline(Deadline.Kind kind, Deadline.Resident resident, LocalDate due, LocalDate today,
+                                     UUID reportId, String detail) {
+        return new Deadline(kind, resident, due, ChronoUnit.DAYS.between(today, due), reportId, detail);
     }
 }

@@ -71,6 +71,7 @@ public class ReportRepositoryJpaAdapter implements ReportRepository {
         entity.setEntryDate(header.entryDate());
         entity.setExitDate(header.exitDate());
         entity.setExitReason(header.exitReason());
+        entity.setDueDate(header.dueDate());
         entity.setHeaderVersion(report.getHeaderVersion());
         entity.setCreatedBy(report.getCreatedBy().orElse(null));
         entity.setCreatedAt(report.getCreatedAt());
@@ -95,7 +96,7 @@ public class ReportRepositoryJpaAdapter implements ReportRepository {
                 entity.getStayStart(),
                 entity.getState(),
                 new ReportHeader(entity.getRequestNumber(), entity.getReferenceCenter(), entity.getNip(),
-                        entity.getEntryDate(), entity.getExitDate(), entity.getExitReason()),
+                        entity.getEntryDate(), entity.getExitDate(), entity.getExitReason(), entity.getDueDate()),
                 entity.getHeaderVersion(),
                 sections,
                 entity.getCreatedBy(),

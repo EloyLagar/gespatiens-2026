@@ -123,6 +123,12 @@ export function PatientDetailPage() {
             <Link className="cds--btn cds--btn--ghost" to={`/intervenciones/${patient.id}`}>
               {t('detail.interventions')}
             </Link>
+            {/* RNF7: quién ha consultado o cambiado esta ficha */}
+            {isAdmin && (
+              <Link className="cds--btn cds--btn--ghost" to={`/registro?residente=${patient.id}`}>
+                {t('detail.auditLog')}
+              </Link>
+            )}
             {/* RF9: la baja es cosa de la administración. Al resto ni se le muestra el botón */}
             {patient.active && isAdmin && (
               <Button kind="danger--tertiary" onClick={() => setDialog('discharge')}>
@@ -152,6 +158,7 @@ export function PatientDetailPage() {
             {t('detail.days', { count: daysBetween(patient.entryDate, patient.exitDate ?? undefined) })}
           </Field>
         </dl>
+        <StayHistory patient={patient} />
       </section>
 
       <section className="panel" aria-labelledby="personal-title">
@@ -163,9 +170,7 @@ export function PatientDetailPage() {
           </Field>
           <Field label={t('patient.phoneNumber')}>{patient.phoneNumber}</Field>
           <Field label={t('patient.sip')}>{patient.sip}</Field>
-          <div className="kv-span kv-span--all">
-            <Field label={t('patient.address')}>{patient.address}</Field>
-          </div>
+          <Field label={t('patient.address')} span="all">{patient.address}</Field>
         </dl>
       </section>
 
@@ -174,12 +179,8 @@ export function PatientDetailPage() {
         <dl className="kv-list kv-list--four">
           <Field label={t('patient.visitCode')}>{patient.visitCode}</Field>
           <Field label={t('patient.abuseSubstances')}>{patient.abuseSubstances}</Field>
-          <div className="kv-span">
-            <Field label={t('patient.belongings')}>{patient.belongings}</Field>
-          </div>
-          <div className="kv-span">
-            <Field label={t('patient.extraInfo')}>{patient.extraInfo}</Field>
-          </div>
+          <Field label={t('patient.belongings')} span="two">{patient.belongings}</Field>
+          <Field label={t('patient.extraInfo')} span="two">{patient.extraInfo}</Field>
         </dl>
       </section>
 
@@ -261,5 +262,31 @@ export function PatientDetailPage() {
         />
       )}
     </>
+  )
+}
+
+// Las estancias anteriores (un reingreso ya no borra la anterior). Solo sale si ha estado más de una vez
+function StayHistory({ patient }: { patient: Patient }) {
+  const { t, i18n } = useTranslation()
+  const previous = (patient.stays ?? []).slice(0, -1)
+  if (previous.length === 0) return null
+  const total = (patient.stays ?? []).reduce((days, s) => days + daysBetween(s.entryDate, s.exitDate ?? undefined), 0)
+  return (
+    <div className="stay-history">
+      <h3>{t('detail.previousStays', { count: previous.length })}</h3>
+      <ol className="stay-history__list">
+        {[...previous].reverse().map((s) => (
+          <li key={s.entryDate}>
+            <span className="num">
+              {formatDate(s.entryDate, i18n.language)} – {s.exitDate ? formatDate(s.exitDate, i18n.language) : ''}
+            </span>
+            <span className="stay-history__days">
+              {t('detail.days', { count: daysBetween(s.entryDate, s.exitDate ?? undefined) })}
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p className="stay-history__total">{t('detail.totalDays', { count: total })}</p>
+    </div>
   )
 }

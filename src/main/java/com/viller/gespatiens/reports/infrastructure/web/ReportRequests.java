@@ -1,5 +1,7 @@
 package com.viller.gespatiens.reports.infrastructure.web;
 
+import java.time.LocalDate;
+
 // DTO de entrada de los informes
 public final class ReportRequests {
 
@@ -12,7 +14,8 @@ public final class ReportRequests {
 
     // Lo que se escribe a mano en la cabecera; las fechas salen de la ficha. nip solo cuenta en el de media
     // estancia y exitReason en el final. version: la que tenía la cabecera cuando se abrió para editarla
+    // dueDate: solo en el de media estancia; null vuelve a la de por defecto
     public record HeaderRequest(String requestNumber, String referenceCenter, String nip, String exitReason,
-                                int version) {
+                                LocalDate dueDate, int version) {
     }
 }

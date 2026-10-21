@@ -100,7 +100,7 @@ public class DiaryController {
                                      @PathVariable DayPart part,
                                      @RequestBody ShiftRequest request) {
         return ShiftResponse.from(recordShiftUseCase.execute(date, part, request.staffIds(), request.notes(),
-                currentUserId(principal), request.version()));
+                currentUserId(principal), DiaryRequests.requiredVersion(request.version())));
     }
 
     @PutMapping("/{date}/reductions/{patientId}")
@@ -131,7 +131,7 @@ public class DiaryController {
     public ActivityResponse rescheduleActivity(Principal principal, @PathVariable UUID activityId,
                                                @RequestBody ActivityRequest request) {
         return ActivityResponse.from(rescheduleActivityUseCase.execute(activityId, request.startTime(),
-                request.type(), request.title(), currentUserId(principal), request.version()));
+                request.type(), request.title(), currentUserId(principal), DiaryRequests.requiredVersion(request.version())));
     }
 
     @DeleteMapping("/activities/{activityId}")
@@ -144,7 +144,7 @@ public class DiaryController {
     public ActivityResponse recordAttendance(Principal principal, @PathVariable UUID activityId,
                                              @RequestBody AttendanceRequest request) {
         return ActivityResponse.from(recordAttendanceUseCase.execute(activityId, request.attendance(),
-                currentUserId(principal), request.version()));
+                currentUserId(principal), DiaryRequests.requiredVersion(request.version())));
     }
 
     @PutMapping("/activities/{activityId}/evaluations")
@@ -159,7 +159,7 @@ public class DiaryController {
             });
         }
         return ActivityResponse.from(recordEvaluationsUseCase.execute(activityId, evaluations,
-                currentUserId(principal), request.version()));
+                currentUserId(principal), DiaryRequests.requiredVersion(request.version())));
     }
 
     @PostMapping("/{date}/outings")

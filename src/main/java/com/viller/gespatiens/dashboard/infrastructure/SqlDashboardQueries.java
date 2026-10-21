@@ -1,6 +1,7 @@
 package com.viller.gespatiens.dashboard.infrastructure;
 
 import com.viller.gespatiens.dashboard.application.DashboardQueries;
+import com.viller.gespatiens.dashboard.application.Deadline;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
@@ -79,7 +80,15 @@ public class SqlDashboardQueries implements DashboardQueries {
 
     @Override
     public int reportsInProgress() {
-        return count(entityManager.createNativeQuery("SELECT COUNT(*) FROM reports WHERE state = 'DRAFT'")
+        // Solo los de la estancia en curso de quien sigue en el centro: los de estancias terminadas que nadie
+        // cerró inflaban la cifra y no son trabajo pendiente del día a día
+        return count(entityManager.createNativeQuery("""
+                        SELECT COUNT(*) FROM reports r
+                        JOIN patients p ON p.id = r.patient_id
+                        WHERE r.state = 'DRAFT'
+                          AND p.exit_date IS NULL
+                          AND r.stay_start = p.entry_date
+                        """)
                 .getSingleResult());
     }
 
@@ -90,6 +99,47 @@ public class SqlDashboardQueries implements DashboardQueries {
                 .setParameter("from", from)
                 .setParameter("to", to)
                 .getSingleResult());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<OpenMidStayReport> openMidStayReports() {
+        List<Object[]> rows = entityManager.createNativeQuery("""
+                        SELECT p.id, p.number, p.name, p.surname, r.due_date, r.id
+                        FROM reports r
+                        JOIN patients p ON p.id = r.patient_id
+                        WHERE r.type = 'MID_STAY'
+                          AND r.state = 'DRAFT'
+                          AND p.exit_date IS NULL
+                          AND r.stay_start = p.entry_date
+                          AND r.due_date IS NOT NULL
+                        """)
+                .getResultList();
+        return rows.stream()
+                .map(r -> new OpenMidStayReport(resident(r), ((Date) r[4]).toLocalDate(), (UUID) r[5]))
+                .toList();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<CourtMeasure> courtMeasures() {
+        List<Object[]> rows = entityManager.createNativeQuery("""
+                        SELECT p.id, p.number, p.name, p.surname, f.measure_end_date, f.court
+                        FROM patient_referrals f
+                        JOIN patients p ON p.id = f.patient_id
+                        WHERE p.exit_date IS NULL
+                          AND f.court_ordered
+                          AND f.measure_end_date IS NOT NULL
+                        """)
+                .getResultList();
+        return rows.stream()
+                .map(r -> new CourtMeasure(resident(r), ((Date) r[4]).toLocalDate(), (String) r[5]))
+                .toList();
+    }
+
+    private static Deadline.Resident resident(Object[] row) {
+        return new Deadline.Resident((UUID) row[0], row[1] == null ? null : ((Number) row[1]).intValue(),
+                (String) row[2], (String) row[3]);
     }
 
     private static int count(Object value) {

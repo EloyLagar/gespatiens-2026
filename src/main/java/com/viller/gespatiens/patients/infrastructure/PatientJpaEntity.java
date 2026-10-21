@@ -1,11 +1,18 @@
 package com.viller.gespatiens.patients.infrastructure;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -58,6 +65,20 @@ public class PatientJpaEntity {
     private LocalDate entryDate;
 
     private LocalDate exitDate;
+
+    // Las estancias anteriores. Pocas por residente y siempre se muestran con la ficha: se cargan con ella
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "patient_stays", joinColumns = @JoinColumn(name = "patient_id"))
+    @OrderBy("entryDate")
+    private List<StayEmbeddable> previousStays = new ArrayList<>();
+
+    public List<StayEmbeddable> getPreviousStays() {
+        return previousStays;
+    }
+
+    public void setPreviousStays(List<StayEmbeddable> previousStays) {
+        this.previousStays = previousStays;
+    }
 
     public UUID getId() {
         return id;

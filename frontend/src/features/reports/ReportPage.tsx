@@ -300,11 +300,10 @@ function HeaderPanel({ report, heldBy, onSaved, onDirty }: {
           <Field label={midStay ? t('reports.header.entryDateMidStay') : t('reports.header.entryDate')} numeric>
             {date(header.entryDate)}
           </Field>
+          {midStay && <Field label={t('reports.header.dueDate')} numeric>{header.dueDate ? date(header.dueDate) : null}</Field>}
           {!midStay && <Field label={t('reports.header.exitDate')} numeric>{date(header.exitDate)}</Field>}
           {!midStay && (
-            <div className="kv-span kv-span--all">
-              <Field label={t('reports.header.exitReason')}>{header.exitReason}</Field>
-            </div>
+            <Field label={t('reports.header.exitReason')} span="all">{header.exitReason}</Field>
           )}
         </dl>
       )}
@@ -327,6 +326,7 @@ function HeaderForm({ report, onSaved, onCancel, onDirty }: {
     referenceCenter: header.referenceCenter,
     nip: header.nip,
     exitReason: header.exitReason,
+    dueDate: header.dueDate ?? null,
   })
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
@@ -369,13 +369,25 @@ function HeaderForm({ report, onSaved, onCancel, onDirty }: {
         onChange={(e) => set('requestNumber', e.target.value)}
       />
       {midStay ? (
-        <TextInput
-          id="header-nip"
-          labelText={t('reports.header.nip')}
-          value={form.nip ?? ''}
-          maxLength={30}
-          onChange={(e) => set('nip', e.target.value)}
-        />
+        <>
+          <TextInput
+            id="header-nip"
+            labelText={t('reports.header.nip')}
+            value={form.nip ?? ''}
+            maxLength={30}
+            onChange={(e) => set('nip', e.target.value)}
+          />
+          {/* Decisión del centro: toca a mitad del programa, y se puede cambiar. Vacía vuelve a la de por defecto */}
+          <TextInput
+            id="header-due-date"
+            type="date"
+            labelText={t('reports.header.dueDate')}
+            helperText={t('reports.header.dueDateHelp')}
+            value={form.dueDate ?? ''}
+            min={header.entryDate ?? undefined}
+            onChange={(e) => set('dueDate', e.target.value)}
+          />
+        </>
       ) : (
         <TextInput
           id="header-exit-reason"

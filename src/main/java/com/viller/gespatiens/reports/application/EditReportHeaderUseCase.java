@@ -8,9 +8,11 @@ import com.viller.gespatiens.reports.domain.StaffDirectory;
 import com.viller.gespatiens.reports.domain.StaffMember;
 import com.viller.gespatiens.reports.domain.TutorDirectory;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
-// Completar la cabecera: nº de solicitud, centro de referencia, N.I.P. y motivo de salida
+// Completar la cabecera: nº de solicitud, centro de referencia, N.I.P., motivo de salida y, en el de media
+// estancia, cuándo toca
 public class EditReportHeaderUseCase {
 
     private final ReportRepository reportRepository;
@@ -30,11 +32,11 @@ public class EditReportHeaderUseCase {
     }
 
     public ReportView execute(UUID reportId, String requestNumber, String referenceCenter, String nip,
-                              String exitReason, int expectedVersion, UUID editorId) {
+                              String exitReason, LocalDate dueDate, int expectedVersion, UUID editorId) {
         Report report = ReportViews.report(reportRepository, reportId);
         StaffMember editor = ReportViews.member(staffDirectory, editorId);
         editingPresence.ensureNotEditedByOther(EditingPresence.header(reportId), editorId);
-        report.editHeader(requestNumber, referenceCenter, nip, exitReason, expectedVersion);
+        report.editHeader(requestNumber, referenceCenter, nip, exitReason, dueDate, expectedVersion);
         Report saved = reportRepository.save(report);
         return ReportViews.of(saved, ReportViews.resident(residentDirectory, saved.getPatientId()), staffDirectory,
                 tutorDirectory, editor);

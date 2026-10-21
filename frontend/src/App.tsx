@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAdmin, RequireAuth } from './auth/RequireAuth'
 import { LoginPage } from './features/auth/LoginPage'
+import { PasswordSetupPage } from './features/auth/PasswordSetupPage'
 import { DiaryPage } from './features/diary/DiaryPage'
 import { FollowUpPage } from './features/interventions/FollowUpPage'
 import { InterventionsPage } from './features/interventions/InterventionsPage'
@@ -15,8 +16,10 @@ import { EmployeesPage } from './features/users/EmployeesPage'
 import { ProfilePage } from './features/users/ProfilePage'
 import { EvaluationsPage } from './features/evaluations/EvaluationsPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
+import { AuditPage } from './features/audit/AuditPage'
 import { ReportPage } from './features/reports/ReportPage'
 import { ReportsPage } from './features/reports/ReportsPage'
+import { RotaPage } from './features/rota/RotaPage'
 import { AppShell } from './layout/AppShell'
 import { PageHeader } from './shared/ui'
 
@@ -24,6 +27,8 @@ export function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      {/* El enlace del correo para que el empleado nuevo cree su contraseña: sin sesión */}
+      <Route path="/crear-contrasena" element={<PasswordSetupPage />} />
       <Route
         element={
           <RequireAuth>
@@ -37,11 +42,20 @@ export function App() {
         <Route path="diario" element={<DiaryPage />} />
         <Route path="diario/:date" element={<DiaryPage />} />
         <Route path="valoraciones" element={<EvaluationsPage />} />
+        <Route path="turnos" element={<RotaPage />} />
         <Route
           path="panel"
           element={
             <RequireAdmin>
               <DashboardPage />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="registro"
+          element={
+            <RequireAdmin>
+              <AuditPage />
             </RequireAdmin>
           }
         />

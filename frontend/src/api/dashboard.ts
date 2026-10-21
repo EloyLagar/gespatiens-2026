@@ -13,6 +13,18 @@ export interface DashboardShifts {
   total: number
 }
 
+// Algo que vence pronto o ya ha vencido. reportId solo en el informe; detail (el juzgado) solo en la medida
+export interface DashboardDeadline {
+  kind: 'MID_STAY_REPORT' | 'COURT_MEASURE_END'
+  resident: { id: string; number: number | null; name: string; surname: string }
+  dueDate: IsoDate
+  // Negativo: vencido hace tantos días
+  daysLeft: number
+  overdue: boolean
+  reportId: string | null
+  detail: string | null
+}
+
 export interface Dashboard {
   // yyyy-MM
   month: string
@@ -27,6 +39,8 @@ export interface Dashboard {
   shifts: DashboardShifts[]
   // Semanas completas (de lunes a domingo) que tocan el mes
   noticesByWeek: { monday: IsoDate; notices: number }[]
+  // De lo más urgente a lo menos. No depende del mes: es lo pendiente de hoy
+  deadlines: DashboardDeadline[]
 }
 
 export function getDashboard(month: string) {

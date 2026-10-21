@@ -6,20 +6,35 @@ import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
+import com.viller.gespatiens.access.users.application.InviteUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
+import com.viller.gespatiens.access.users.application.LoginAttempts;
 import com.viller.gespatiens.access.users.application.LoginUseCase;
+import com.viller.gespatiens.access.users.application.PasswordSetupLinkSender;
+import com.viller.gespatiens.access.users.application.PasswordSetupLinks;
+import com.viller.gespatiens.access.users.application.PasswordSetupUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
+import com.viller.gespatiens.access.users.application.SendPasswordSetupLinkUseCase;
 import com.viller.gespatiens.access.users.application.SignatureUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.AdministratorGuard;
 import com.viller.gespatiens.access.users.domain.PasswordHasher;
+import com.viller.gespatiens.access.users.domain.PasswordSetupTokenRepository;
 import com.viller.gespatiens.access.users.domain.SignatureRepository;
 import com.viller.gespatiens.access.users.domain.UserRepository;
+import com.viller.gespatiens.access.users.infrastructure.mail.LoggingPasswordSetupLinkSender;
+import com.viller.gespatiens.access.users.infrastructure.security.InMemoryLoginAttempts;
+import com.viller.gespatiens.access.users.infrastructure.mail.MailPasswordSetupLinkSender;
+import com.viller.gespatiens.access.users.infrastructure.mail.PasswordSetupLinkFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.Clock;
+import java.time.Duration;
 
 // Los casos de uso no llevan anotaciones de Spring: se registran aquí,
 // así la capa de aplicación no depende del framework
@@ -36,6 +51,44 @@ public class UserBeanConfiguration {
     @Bean
     public RegisterUserUseCase registerUserUseCase(UserRepository userRepository, PasswordHasher passwordHasher) {
         return new RegisterUserUseCase(userRepository, passwordHasher);
+    }
+
+    // Con MAIL_HOST se envía un correo de verdad; sin él, el enlace sale en el log (para desarrollar)
+    @Bean
+    public PasswordSetupLinkSender passwordSetupLinkSender(ObjectProvider<JavaMailSender> mailSender,
+                                                           @Value("${spring.mail.host:}") String mailHost,
+                                                           @Value("${gespatiens.mail.from}") String from,
+                                                           @Value("${gespatiens.frontend-url}") String frontendUrl) {
+        PasswordSetupLinkFactory links = new PasswordSetupLinkFactory(frontendUrl);
+        if (mailHost.isBlank()) {
+            return new LoggingPasswordSetupLinkSender(links);
+        }
+        return new MailPasswordSetupLinkSender(mailSender.getObject(), links, from);
+    }
+
+    @Bean
+    public PasswordSetupLinks passwordSetupLinks(PasswordSetupTokenRepository tokenRepository,
+                                                 PasswordSetupLinkSender sender, Clock clock,
+                                                 @Value("${gespatiens.password-setup.validity}") Duration validity) {
+        return new PasswordSetupLinks(tokenRepository, sender, clock, validity);
+    }
+
+    @Bean
+    public InviteUserUseCase inviteUserUseCase(UserRepository userRepository, PasswordSetupLinks passwordSetupLinks) {
+        return new InviteUserUseCase(userRepository, passwordSetupLinks);
+    }
+
+    @Bean
+    public SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase(UserRepository userRepository,
+                                                                     PasswordSetupLinks passwordSetupLinks) {
+        return new SendPasswordSetupLinkUseCase(userRepository, passwordSetupLinks);
+    }
+
+    @Bean
+    public PasswordSetupUseCase passwordSetupUseCase(PasswordSetupTokenRepository tokenRepository,
+                                                     UserRepository userRepository, PasswordHasher passwordHasher,
+                                                     Clock clock) {
+        return new PasswordSetupUseCase(tokenRepository, userRepository, passwordHasher, clock);
     }
 
     @Bean
@@ -55,8 +108,15 @@ public class UserBeanConfiguration {
 
     @Bean
     public LoginUseCase loginUseCase(UserRepository userRepository, PasswordHasher passwordHasher,
-                                     AccessTokenIssuer accessTokenIssuer) {
-        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer);
+                                     AccessTokenIssuer accessTokenIssuer, LoginAttempts loginAttempts, Clock clock) {
+        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer, loginAttempts, clock);
+    }
+
+    // Decisión del centro: al menos 5 intentos antes de bloquear
+    @Bean
+    public LoginAttempts loginAttempts(@Value("${gespatiens.login.max-attempts}") int maxAttempts,
+                                       @Value("${gespatiens.login.lockout}") Duration lockout) {
+        return new InMemoryLoginAttempts(maxAttempts, lockout);
     }
 
     @Bean

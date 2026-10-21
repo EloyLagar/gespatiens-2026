@@ -68,10 +68,10 @@ public final class ReportResponses {
     }
 
     public record HeaderResponse(String requestNumber, String referenceCenter, String nip, LocalDate entryDate,
-                                 LocalDate exitDate, String exitReason, int version) {
+                                 LocalDate exitDate, String exitReason, LocalDate dueDate, int version) {
         static HeaderResponse from(ReportHeader h, int version) {
             return new HeaderResponse(h.requestNumber(), h.referenceCenter(), h.nip(), h.entryDate(), h.exitDate(),
-                    h.exitReason(), version);
+                    h.exitReason(), h.dueDate(), version);
         }
     }
 

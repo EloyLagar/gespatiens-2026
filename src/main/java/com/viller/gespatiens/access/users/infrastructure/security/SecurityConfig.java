@@ -26,6 +26,8 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         // El login es lo único accesible sin token
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        // Y crear la contraseña desde el enlace del correo: quien lo abre aún no puede entrar
+                        .requestMatchers("/api/auth/password-setup/*").permitAll()
                         // Solo la administración puede dar de alta empleados
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMINISTRATOR")
                         // RF4: cada empleado gestiona su propio perfil. Va antes que la regla de /api/users/*
@@ -37,6 +39,7 @@ public class SecurityConfig {
                         // RF7: editar, restablecer contraseñas y eliminar perfiles es cosa de la administración
                         .requestMatchers(HttpMethod.PUT, "/api/users/*", "/api/users/*/password").hasRole("ADMINISTRATOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.POST, "/api/users/*/password-setup").hasRole("ADMINISTRATOR")
                         // Memoria final: "La aplicación deberá proporcionar a la administración un menú de gestión de
                         // usuarios": dar de alta, modificar, reincorporar, dar de baja (RF9) y borrar fichas, y
                         // gestionar a quién se autoriza a visitar, es de la administración. Consultarlas, de todos
@@ -58,6 +61,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/reports/*/close", "/api/reports/*/reopen").hasRole("ADMINISTRATOR")
                         // Memoria final, 5.1: un panel "al que solo esta [la administración] pudiese acceder"
                         .requestMatchers("/api/dashboard", "/api/dashboard/**").hasRole("ADMINISTRATOR")
+                        // El registro de cambios de los datos de los residentes (RNF7): solo la administración
+                        .requestMatchers("/api/audit", "/api/audit/**").hasRole("ADMINISTRATOR")
+                        // Cuadrante de turnos: lo consulta todo el personal y lo planifica la administración. Los
+                        // cambios de turno los acuerdan los trabajadores entre ellos (decisión del centro)
+                        .requestMatchers("/api/rota/swaps", "/api/rota/swaps/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/rota", "/api/rota/**").authenticated()
+                        .requestMatchers("/api/rota", "/api/rota/**").hasRole("ADMINISTRATOR")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 // Sin httpBasic: con él, el navegador abre su propia ventana de usuario y contraseña

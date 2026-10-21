@@ -14,6 +14,12 @@ const DATA: Dashboard = {
     { employeeId: 'e2', name: 'Ana', speciality: 'SOCIAL_EDUCATOR', morning: 2, afternoon: 1, night: 0, total: 3 },
   ],
   noticesByWeek: [{ monday: '2026-09-28', notices: 3 }, { monday: '2026-10-05', notices: 7 }],
+  deadlines: [
+    { kind: 'MID_STAY_REPORT', resident: { id: 'p9', number: 9, name: 'Hugo', surname: 'Peña' }, dueDate: '2026-09-01',
+      daysLeft: -50, overdue: true, reportId: 'r9', detail: null },
+    { kind: 'COURT_MEASURE_END', resident: { id: 'p2', number: 2, name: 'Elena', surname: 'Mas' }, dueDate: '2026-10-25',
+      daysLeft: 4, overdue: false, reportId: null, detail: 'Juzgado de lo Penal nº 3' },
+  ],
 }
 
 describe('DashboardPage', () => {
@@ -32,6 +38,12 @@ describe('DashboardPage', () => {
     expect(screen.getByLabelText('Pablo: 9 · Mañana 4 · tarde 2 · noche 3')).toBeInTheDocument()
     expect(screen.getByLabelText(/Semana del .*: 7 avisos/)).toBeInTheDocument()
     expect(String(fetchMock.mock.calls[0][0])).toMatch(/^\/api\/dashboard\?month=\d{4}-\d{2}$/)
+
+    // Lo que vence: el informe enlaza al informe y la medida dice el juzgado
+    expect(screen.getByText('Vencido hace 50 días')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Informe de media estancia' })).toHaveAttribute('href', '/informes/r9')
+    expect(screen.getByText('Juzgado de lo Penal nº 3')).toBeInTheDocument()
+    expect(screen.getByText('En 4 días')).toBeInTheDocument()
 
     // El desglose, también como tabla
     await userEvent.click(screen.getByText('Ver como tabla'))

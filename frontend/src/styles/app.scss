@@ -361,6 +361,11 @@ button:focus-visible,
   line-height: 24px;
 }
 
+// Un enlace dentro del texto no puede distinguirse solo por el color (WCAG 1.4.1)
+.page-header__subtitle a {
+  text-decoration: underline;
+}
+
 .page-header__actions {
   display: flex;
   flex-wrap: wrap;
@@ -1033,6 +1038,46 @@ button:focus-visible,
   margin-top: 32px;
 }
 
+// Buscador y desplegables encima de una lista larga (Informes). En el móvil, uno debajo de otro
+.filters {
+  display: grid;
+  grid-template-columns: minmax(200px, 320px) minmax(160px, 220px) minmax(160px, 220px);
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 16px;
+}
+
+.filters--four {
+  grid-template-columns: minmax(200px, 1fr) minmax(180px, 1fr) minmax(140px, 180px) minmax(140px, 180px);
+}
+
+@media (max-width: 671px) {
+  .filters,
+  .filters--four {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Anterior / siguiente debajo de una lista por páginas
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.list-count {
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.list-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
 .toolbar {
   display: flex;
   align-items: center;
@@ -1130,6 +1175,11 @@ button:focus-visible,
 
 .you {
   color: var(--muted);
+}
+
+.person__tag {
+  margin: 0 0 0 8px;
+  vertical-align: middle;
 }
 
 .dash {
@@ -1310,6 +1360,28 @@ button:focus-visible,
   padding: var(--pad);
   border: 1px solid var(--border);
   background: var(--surface);
+}
+
+// Segunda forma de hacer lo mismo dentro del panel (p. ej. contraseña provisional si el correo no llega)
+.settings-row__subtitle {
+  margin: 32px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.settings-row__hint {
+  margin: 4px 0 16px;
+  color: var(--muted);
+}
+
+// Explicación breve encima de un formulario
+.form-intro {
+  max-width: 640px;
+  margin: 0 0 24px;
+  color: var(--muted);
 }
 
 // ---------------------------------------------------------------- Login
@@ -2064,6 +2136,11 @@ a.stat__note {
   background: var(--accent);
 }
 
+// Los vencimientos, entre las cifras y los gráficos: es lo primero que hay que atender
+.dashboard-deadlines {
+  margin-bottom: var(--gap);
+}
+
 .dashboard-charts {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
@@ -2230,4 +2307,423 @@ a.stat__note {
 // Los dos gráficos van uno al lado del otro: sin el margen que separa paneles apilados
 .dashboard-charts .panel + .panel {
   margin-top: 0;
+}
+
+// ---------------------------------------------------------------- Turnos (cuadrante)
+
+.rota-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+  margin-bottom: 24px;
+}
+
+.rota-month {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rota-month__label {
+  min-width: 160px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.rota-month .text-action {
+  margin-left: 8px;
+}
+
+// Mañana, tarde y noche: la letra dice qué turno es; el color solo ayuda a verlo de un vistazo
+.rota-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+button.rota-chip {
+  padding: 0;
+  background: none;
+  color: var(--faint);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.rota-chip:hover {
+  border-color: var(--control);
+}
+
+button.rota-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+button.rota-chip:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.rota-chip--MORNING.is-on,
+.rota-chip--MORNING[aria-pressed='true'] {
+  border-color: var(--notice-border);
+  background: var(--notice-bg);
+  color: var(--text);
+}
+
+.rota-chip--AFTERNOON.is-on,
+.rota-chip--AFTERNOON[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--tint-strong);
+  color: var(--accent-ink);
+}
+
+.rota-chip--NIGHT.is-on,
+.rota-chip--NIGHT[aria-pressed='true'] {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+
+.rota-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+}
+
+.rota-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// La tabla de todos: la persona fija a la izquierda y los días desplazándose
+.rota-grid {
+  overflow-x: auto;
+}
+
+.rota-grid .data-table {
+  width: auto;
+  min-width: 100%;
+}
+
+.rota-grid th,
+.rota-grid td {
+  padding: 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.rota-grid__employee {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 180px;
+  background: var(--surface);
+  text-align: left !important;
+}
+
+.rota-grid__name {
+  display: block;
+}
+
+.rota-grid__speciality,
+.rota-grid__weekday {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.rota-grid__day {
+  min-width: 28px;
+  font-weight: 400;
+}
+
+.rota-grid__day.is-weekend {
+  background: var(--ground);
+}
+
+.rota-grid thead .rota-grid__day.is-today {
+  box-shadow: inset 0 -3px 0 var(--accent);
+  font-weight: 600;
+}
+
+.rota-grid tr.is-me .rota-grid__employee {
+  box-shadow: inset 3px 0 0 var(--brand);
+  font-weight: 600;
+}
+
+.rota-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 66px;
+}
+
+.rota-grid tfoot th,
+.rota-grid tfoot td {
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.rota-grid__coverage {
+  font-weight: 400;
+}
+
+// Nadie en esa parte del día: se marca para que quien planifica lo vea
+.rota-grid tfoot td.is-uncovered {
+  color: var(--negative);
+  font-weight: 600;
+}
+
+// Mis turnos: un calendario de lunes a domingo
+.my-calendar {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  table-layout: fixed;
+}
+
+.my-calendar th {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 400;
+  text-align: left;
+  text-transform: capitalize;
+}
+
+.my-calendar td {
+  height: 96px;
+  padding: 6px 8px;
+  border: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.my-calendar__blank {
+  background: var(--ground);
+}
+
+.my-calendar__day.is-past {
+  color: var(--faint);
+}
+
+.my-calendar__day.is-today {
+  box-shadow: inset 0 3px 0 var(--accent);
+}
+
+.my-calendar__number {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.my-calendar__shifts {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.my-calendar__shifts li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+
+.my-calendar__swap,
+.my-calendar__asked {
+  flex-basis: 100%;
+  font-size: 12px;
+}
+
+.my-calendar__asked {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.swap-dialog {
+  display: grid;
+  gap: 16px;
+}
+
+.swaps {
+  margin-top: 32px;
+}
+
+.swaps__history {
+  margin: 24px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.swap-list {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  list-style: none;
+}
+
+.swap-list__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  min-height: var(--row);
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.swap-list__item.is-resolved {
+  color: var(--muted);
+}
+
+.swap-list__actions {
+  display: flex;
+  gap: 8px;
+}
+
+// Herramientas de la administración: plegadas para que el cuadrante sea lo primero
+.planning-tools {
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.planning-tools > summary {
+  padding: 12px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.planning-tools[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.planning-tools__block {
+  padding: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.planning-tools__block:last-of-type {
+  border-bottom: 0;
+}
+
+.planning-tools__block h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.planning-tools__row {
+  display: grid;
+  grid-template-columns: minmax(0, 240px) repeat(2, minmax(0, 180px));
+  gap: var(--gap);
+  margin-bottom: 12px;
+}
+
+.planning-tools__checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+}
+
+.planning-tools__checks legend {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.planning-tools__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.planning-tools .success-notice,
+.planning-tools > .form-error {
+  margin: 12px 16px 0;
+}
+
+@media (max-width: 671px) {
+  .planning-tools__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rota-grid__employee {
+    min-width: 120px;
+  }
+
+  .my-calendar td {
+    height: auto;
+    min-height: 64px;
+    padding: 4px;
+  }
+
+  .my-calendar__part {
+    display: none;
+  }
+}
+
+// Las casillas vacías del cuadrante, más discretas que las puestas
+button.rota-chip[aria-pressed='false'] {
+  font-weight: 400;
+}
+
+// Estancias anteriores de un residente, debajo de la actual
+.stay-history {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.stay-history h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.stay-history__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stay-history__list li {
+  display: flex;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.stay-history__days,
+.stay-history__total {
+  color: var(--muted);
+}
+
+.stay-history__total {
+  margin: 8px 0 0;
 }

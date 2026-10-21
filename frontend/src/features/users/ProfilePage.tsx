@@ -59,7 +59,7 @@ export function ProfilePage() {
           <form className="form form--compact" onSubmit={submit} noValidate>
             <ErrorNotice error={serverError} title={t('form.notSaved')} />
             <TextInput id="me-name" labelText={t('user.name')} value={name} onChange={(e) => setName(e.target.value)} maxLength={50} invalid={Boolean(errors.name)} invalidText={errors.name} autoComplete="name" />
-            <TextInput id="me-phone" type="tel" labelText={t('user.phoneNumber')} value={phone} onChange={(e) => setPhone(e.target.value)} invalid={Boolean(errors.phone)} invalidText={errors.phone} autoComplete="tel" />
+            <TextInput id="me-phone" type="tel" maxLength={20} labelText={t('user.phoneNumber')} value={phone} onChange={(e) => setPhone(e.target.value)} invalid={Boolean(errors.phone)} invalidText={errors.phone} autoComplete="tel" />
             <div className="form-actions">
               <Button type="submit" disabled={busy}>
                 {busy ? t('common.saving') : t('common.save')}

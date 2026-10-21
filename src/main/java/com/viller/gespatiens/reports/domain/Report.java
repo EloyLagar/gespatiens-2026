@@ -118,14 +118,16 @@ public class Report {
         }
     }
 
-    // Lo que se escribe a mano en la cabecera. La completa cualquier empleado: son datos administrativos
+    // Lo que se escribe a mano en la cabecera. La completa cualquier empleado: son datos administrativos.
+    // dueDate: cuándo toca el de media estancia (null: la de por defecto)
     public void editHeader(String requestNumber, String referenceCenter, String nip, String exitReason,
-                           int expectedVersion) {
+                           LocalDate dueDate, int expectedVersion) {
         ensureDraft();
         if (expectedVersion != headerVersion) {
             throw new HeaderConflictException();
         }
-        ReportHeader edited = header.withEditable(requestNumber, referenceCenter, nip, exitReason).forType(type);
+        ReportHeader edited = header.withEditable(requestNumber, referenceCenter, nip, exitReason, dueDate)
+                .forType(type);
         if (edited.equals(header)) {
             return;
         }

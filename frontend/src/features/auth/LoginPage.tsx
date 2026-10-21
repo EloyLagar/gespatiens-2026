@@ -10,7 +10,9 @@ export function LoginPage() {
   const { user, login, endedBecause } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const [email, setEmail] = useState('')
+  // Al volver de crear la contraseña desde el correo, el email ya viene puesto
+  const created = (location.state as { passwordCreatedFor?: string } | null)?.passwordCreatedFor
+  const [email, setEmail] = useState(created ?? '')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
@@ -43,6 +45,12 @@ export function LoginPage() {
 
         <h1>{t('login.title')}</h1>
         <p className="login__lead">{t('login.lead')}</p>
+
+        {created && (
+          <div role="status">
+            <InlineNotification kind="success" lowContrast hideCloseButton title={t('passwordSetup.done')} />
+          </div>
+        )}
 
         {endedBecause === 'expired' && (
           <div role="status">

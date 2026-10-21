@@ -19,7 +19,9 @@
     "interventions": "Intervenciones",
     "reports": "Informes",
     "evaluations": "Valoraciones",
-    "dashboard": "Panel de control"
+    "dashboard": "Panel de control",
+    "rota": "Turnos",
+    "audit": "Registro de cambios"
   },
   "language": {
     "label": "Idioma",
@@ -44,7 +46,7 @@
     "failed": "No se ha podido entrar",
     "entering": "Entrando…",
     "submit": "Entrar",
-    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te ponga una nueva."
+    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te envíe un enlace para crear una nueva."
   },
   "errors": {
     "title": "Algo ha fallado",
@@ -54,7 +56,10 @@
     "forbidden": "Tu especialidad no tiene permiso para hacer esto.",
     "notFound": "No existe o ya se ha borrado.",
     "conflict": "Choca con datos que ya existen.",
-    "generic": "Ha ocurrido un error inesperado. Vuelve a intentarlo."
+    "generic": "Ha ocurrido un error inesperado. Vuelve a intentarlo.",
+    "gone": "El enlace ya no es válido.",
+    "badGateway": "No se ha podido enviar el correo. Revisa la configuración del correo e inténtalo de nuevo.",
+    "tooManyAttempts": "Demasiados intentos fallidos. Espera unos minutos y vuelve a intentarlo."
   },
   "common": {
     "retry": "Reintentar",
@@ -147,7 +152,12 @@
       "saved": "Ficha guardada.",
       "discharged": "{{name}} ha pasado a antiguos residentes. Su ficha se conserva."
     },
-    "interventions": "Tutores e intervenciones"
+    "interventions": "Tutores e intervenciones",
+    "previousStays_one": "Estancia anterior",
+    "previousStays_other": "{{count}} estancias anteriores",
+    "totalDays_one": "En total, {{count}} día en el centro",
+    "totalDays_other": "En total, {{count}} días en el centro",
+    "auditLog": "Quién ha hecho cambios"
   },
   "discharge": {
     "title": "¿Dar de baja a {{name}}?",
@@ -198,7 +208,8 @@
     "tableCaption": "Empleados del centro, ordenados por nombre",
     "you": "tú",
     "myProfile": "Mi perfil",
-    "editWho": "Editar a {{name}}"
+    "editWho": "Editar a {{name}}",
+    "pending": "Sin contraseña todavía"
   },
   "user": {
     "name": "Nombre",
@@ -214,7 +225,7 @@
     "profileHelp": "La especialidad decide qué puede hacer en la aplicación. Solo la administración puede cambiarla, igual que el email.",
     "saved": "Perfil guardado.",
     "resetTitle": "Contraseña",
-    "resetHelp": "Si ha olvidado la suya, ponle una provisional y pídele que la cambie desde su perfil.",
+    "resetHelp": "Si el correo no le llega, ponle una provisional y pídele que la cambie desde su perfil.",
     "resetSubmit": "Poner contraseña nueva",
     "resetDone": "{{name}} ya puede entrar con la contraseña nueva.",
     "deleteTitle": "Eliminar empleado",
@@ -225,7 +236,18 @@
     "deleteConfirm": "Eliminar",
     "emailHelp": "Con él entra en la aplicación",
     "specialityHelp": "Administración puede gestionar empleados, dar bajas y borrar fichas",
-    "initialPassword": "Contraseña inicial"
+    "inviteHelp": "Le llegará un correo con un enlace para que cree su propia contraseña. Nadie más la conocerá.",
+    "invited": "Empleado dado de alta. Hemos enviado a {{email}} un correo para que cree su contraseña.",
+    "inviteFailedTitle": "Empleado dado de alta, pero el correo no ha salido",
+    "inviteFailed": "Reenvíalo desde el apartado Contraseña o ponle una contraseña provisional.",
+    "pendingHelp": "Todavía no ha creado su contraseña. El enlace del correo caduca a los 3 días: si no le ha llegado o ha caducado, reenvíaselo.",
+    "linkHelp": "Si ha olvidado la suya, envíale un enlace por correo para que cree una nueva. El enlace anterior deja de valer.",
+    "resendInvite": "Reenviar correo",
+    "sendLink": "Enviar enlace para nueva contraseña",
+    "sending": "Enviando…",
+    "linkSent": "Hemos enviado a {{email}} un enlace para crear la contraseña.",
+    "linkNotSent": "No se ha enviado el correo",
+    "resetManualTitle": "O ponle una contraseña provisional"
   },
   "password": {
     "current": "Contraseña actual",
@@ -567,7 +589,9 @@
       "entryDate": "Fecha de entrada",
       "exitDate": "Fecha de salida",
       "exitReason": "Motivo de salida",
-      "fromRecord": "Nombre, nacimiento, DNI y S.I.P. salen de la ficha del residente: se corrigen allí."
+      "fromRecord": "Nombre, nacimiento, DNI y S.I.P. salen de la ficha del residente: se corrigen allí.",
+      "dueDate": "Fecha prevista del informe",
+      "dueDateHelp": "A mitad del programa. Por defecto, a los 3 meses de la entrada; vacía vuelve a esa. El panel avisa 30 días antes."
     },
     "area": {
       "SOCIAL": "Área social",
@@ -660,7 +684,18 @@
     "othersEditing_other": "{{count}} apartados los están editando otras personas",
     "signaturesHelp": "En el PDF, cada profesional aparece con su firma escaneada. Quien todavía no la ha subido (Mi perfil) deja el hueco para firmar a mano.",
     "editSection": "Editar «{{section}}»",
-    "tutorsOfResident": "tutores del residente"
+    "tutorsOfResident": "tutores del residente",
+    "search": "Buscar residente",
+    "searchPlaceholder": "Nombre, DNI o nº de plaza",
+    "typeFilter": "Tipo",
+    "typeAll": "Los dos tipos",
+    "stayFilter": "Estancia",
+    "stayCurrent": "En curso",
+    "stayFinished": "Terminadas",
+    "stayAll": "Todas",
+    "noMatches": "Ningún informe coincide con la búsqueda y los filtros.",
+    "showing": "{{shown}} de {{count}}",
+    "showMore": "Mostrar {{count}} más"
   },
   "editing": {
     "editing": "{{name}} lo está editando",
@@ -741,6 +776,175 @@
     "noticesTitle": "Avisos por semana",
     "noticesSubtitle": "Avisos publicados cada semana (de lunes a domingo) que toca el mes",
     "weekOf_one": "Semana del {{date}}: {{count}} aviso",
-    "weekOf_other": "Semana del {{date}}: {{count}} avisos"
+    "weekOf_other": "Semana del {{date}}: {{count}} avisos",
+    "deadlines": {
+      "title": "Vencimientos",
+      "help": "Informes de media estancia que tocan (en la fecha prevista de cada uno, a mitad del programa) y medidas judiciales que terminan en los próximos 30 días, y lo que ya ha vencido.",
+      "none": "Nada vence en los próximos 30 días.",
+      "resident": "Residente",
+      "what": "Qué vence",
+      "date": "Fecha",
+      "when": "Plazo",
+      "MID_STAY_REPORT": "Informe de media estancia",
+      "COURT_MEASURE_END": "Fin de la medida judicial",
+      "overdue_one": "Vencido hace {{count}} día",
+      "overdue_other": "Vencido hace {{count}} días",
+      "today": "Vence hoy",
+      "inDays_one": "Mañana",
+      "inDays_other": "En {{count}} días"
+    }
+  },
+  "rota": {
+    "title": "Turnos",
+    "subtitle": "La planificación de los turnos del centro. No es un registro de horas: solo quién está previsto cada día",
+    "view": "Vista",
+    "mine": "Mis turnos",
+    "everyone": "Cuadrante",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "thisMonth": "Ir al mes actual",
+    "today": "hoy",
+    "employee": "Trabajador",
+    "legend": "Leyenda",
+    "part": {
+      "MORNING": "Mañana",
+      "AFTERNOON": "Tarde",
+      "NIGHT": "Noche"
+    },
+    "partShort": {
+      "MORNING": "M",
+      "AFTERNOON": "T",
+      "NIGHT": "N"
+    },
+    "weekday": {
+      "MONDAY": "Lunes",
+      "TUESDAY": "Martes",
+      "WEDNESDAY": "Miércoles",
+      "THURSDAY": "Jueves",
+      "FRIDAY": "Viernes",
+      "SATURDAY": "Sábado",
+      "SUNDAY": "Domingo"
+    },
+    "caption": "Cuadrante de turnos de {{month}}",
+    "myCaption": "Mis turnos de {{month}}",
+    "cellLabel": "{{part}} de {{name}} el día {{day}}",
+    "coverage": "Personas de {{part}}",
+    "helpEdit": "Pulsa M, T o N en la casilla de una persona para ponerle o quitarle ese turno. Abajo se ve cuántas personas hay en cada parte del día",
+    "helpView": "El cuadrante de toda la plantilla. Lo planifica la administración; los cambios entre compañeros se piden desde «Mis turnos»",
+    "noStaff": "Todavía no hay empleados",
+    "noShifts": "No tienes turnos planificados este mes",
+    "myCount_one": "Tienes {{count}} turno planificado este mes",
+    "myCount_other": "Tienes {{count}} turnos planificados este mes",
+    "askSwap": "Pedir cambio",
+    "askSwapFor": "Pedir un cambio del turno de {{part}} del {{date}}",
+    "swapAsked": "Cambio pedido",
+    "swapTitle": "Pedir un cambio de turno",
+    "swapMine": "Tu turno: {{shift}}",
+    "swapPartner": "Compañero o compañera",
+    "swapTheirs": "Su turno a cambio",
+    "swapTheirsHelp": "Si no eliges ninguno, solo se le pide que cubra el tuyo",
+    "justCover": "Ninguno: que cubra mi turno",
+    "choose": "Elige…",
+    "sendSwap": "Enviar la petición",
+    "swaps": "Cambios de turno",
+    "swapsHelp": "Los cambios se acuerdan entre compañeros: cuando la otra persona acepta, el cuadrante se actualiza solo",
+    "noPending": "No hay cambios pendientes",
+    "history": "Ya resueltos",
+    "ofDay": "del",
+    "goneShift": "turno (ya no está en el cuadrante)",
+    "incomingSwap": "{{name}} te propone cambiar su {{mine}} por tu {{theirs}}",
+    "incomingCover": "{{name}} te pide que cubras su {{mine}}",
+    "outgoingSwap": "Has propuesto a {{name}} cambiar tu {{mine}} por su {{theirs}}",
+    "outgoingCover": "Has pedido a {{name}} que cubra tu {{mine}}",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "cancelSwap": "Retirar",
+    "done": {
+      "accept": "Cambio aceptado: el cuadrante ya está actualizado",
+      "decline": "Cambio rechazado",
+      "cancel": "Petición retirada"
+    },
+    "status": {
+      "PENDING": "Pendiente",
+      "ACCEPTED": "Aceptado",
+      "DECLINED": "Rechazado",
+      "CANCELLED": "Retirado"
+    },
+    "tools": {
+      "title": "Herramientas de planificación",
+      "fillTitle": "Rellenar un periodo",
+      "fillHelp": "Pone a una persona los turnos elegidos en los días de la semana marcados. Los que ya tenga no se duplican",
+      "from": "Desde",
+      "to": "Hasta",
+      "weekdays": "Días de la semana",
+      "parts": "Turnos",
+      "fill": "Rellenar",
+      "clear": "Vaciar el periodo",
+      "fillMissing": "Elige una persona, algún día de la semana y algún turno",
+      "chooseEmployee": "Elige la persona cuyo periodo quieres vaciar",
+      "repeatTitle": "Repetir una semana",
+      "repeatHelp": "Copia los turnos de toda la plantilla de una semana en las siguientes, hasta la fecha indicada",
+      "week": "Semana que se copia",
+      "weekHelp": "Se toma desde su lunes",
+      "until": "Repetir hasta",
+      "repeat": "Repetir la semana",
+      "copyTitle": "Copiar el mes anterior",
+      "copyHelp": "Cada turno pasa al mismo día de la semana: el segundo martes de un mes, al segundo martes del otro",
+      "copy": "Copiar {{from}} en este mes",
+      "copyQuestion": "Se añadirán a {{to}} los turnos de {{from}}. Los que ya estén puestos se mantienen",
+      "copyConfirm": "Copiar",
+      "added_one": "Se ha añadido {{count}} turno",
+      "added_other": "Se han añadido {{count}} turnos",
+      "removed_one": "Se ha quitado {{count}} turno",
+      "removed_other": "Se han quitado {{count}} turnos"
+    }
+  },
+  "passwordSetup": {
+    "title": "Crea tu contraseña",
+    "lead": "Hola, {{name}}. Con esta contraseña y tu email ({{email}}) entrarás en la aplicación.",
+    "submit": "Crear contraseña",
+    "done": "Contraseña creada. Ya puedes entrar.",
+    "invalidTitle": "El enlace no sirve",
+    "invalid": "Puede que ya lo hayas usado, que haya caducado o que te hayan enviado otro más reciente. Pide a la administración un enlace nuevo.",
+    "toLogin": "Ir a iniciar sesión"
+  },
+  "forbidden": {
+    "title": "Solo para la administración",
+    "text": "Esta pantalla es de la administración del centro. Si crees que deberías poder entrar, pídeselo a la administración."
+  },
+  "audit": {
+    "title": "Registro de cambios",
+    "subtitle": "Quién ha cambiado los datos de cada residente, y cuándo. No se puede modificar y se conserva 2 años.",
+    "resident": "Residente",
+    "anyResident": "Todos los residentes",
+    "employee": "Empleado",
+    "anyEmployee": "Todo el personal",
+    "from": "Desde",
+    "to": "Hasta",
+    "when": "Cuándo",
+    "what": "Qué hizo",
+    "empty": "No hay ningún cambio con estos filtros.",
+    "count_one": "{{count}} cambio",
+    "count_other": "{{count}} cambios",
+    "formerEmployee": "Ya no está en la plantilla",
+    "deletedResident": "Ficha borrada",
+    "pages": "Páginas del registro",
+    "newer": "Más recientes",
+    "older": "Más antiguos",
+    "page": "Página {{page}} de {{total}}",
+    "action": {
+      "ADMIT": "Dio de alta",
+      "EDIT_RECORD": "Modificó la ficha",
+      "DISCHARGE": "Dio de baja",
+      "READMIT": "Reincorporó",
+      "DELETE_RECORD": "Borró la ficha",
+      "EDIT_VISITORS": "Cambió las visitas",
+      "EDIT_REFERRAL": "Cambió la derivación",
+      "EDIT_REPORT": "Redactó en un informe",
+      "CLOSE_REPORT": "Cerró un informe",
+      "REOPEN_REPORT": "Reabrió un informe",
+      "EDIT_FOLLOW_UP": "Cambió una intervención",
+      "ASSIGN_TUTORS": "Asignó los tutores"
+    }
   }
 }

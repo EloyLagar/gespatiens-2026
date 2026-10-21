@@ -7,6 +7,7 @@ import com.viller.gespatiens.patients.domain.PatientRepository;
 import com.viller.gespatiens.patients.domain.PatientStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -80,6 +81,8 @@ public class PatientRepositoryJpaAdapter implements PatientRepository {
         PatientJpaEntity entity = new PatientJpaEntity();
         entity.setId(patient.getId());
         entity.setNumber(patient.getNumber());
+        entity.setPreviousStays(new ArrayList<>(patient.getPreviousStays().stream()
+                .map(StayEmbeddable::from).toList()));
         entity.setName(details.name());
         entity.setSurname(details.surname());
         entity.setDni(details.dni().value());
@@ -114,6 +117,7 @@ public class PatientRepositoryJpaAdapter implements PatientRepository {
                 details,
                 entity.getNumber(),
                 entity.getEntryDate(),
-                entity.getExitDate());
+                entity.getExitDate(),
+                entity.getPreviousStays().stream().map(StayEmbeddable::toDomain).toList());
     }
 }

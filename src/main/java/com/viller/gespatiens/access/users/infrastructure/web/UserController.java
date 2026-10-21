@@ -6,8 +6,9 @@ import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
-import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
+import com.viller.gespatiens.access.users.application.InviteUserUseCase;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
+import com.viller.gespatiens.access.users.application.SendPasswordSetupLinkUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.User;
@@ -30,7 +31,7 @@ import java.util.UUID;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final RegisterUserUseCase registerUserUseCase;
+    private final InviteUserUseCase inviteUserUseCase;
     private final ListUsersUseCase listUsersUseCase;
     private final GetUserUseCase getUserUseCase;
     private final UpdateOwnProfileUseCase updateOwnProfileUseCase;
@@ -39,8 +40,9 @@ public class UserController {
     private final ResetUserPasswordUseCase resetUserPasswordUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
     private final ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
+    private final SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase;
 
-    public UserController(RegisterUserUseCase registerUserUseCase,
+    public UserController(InviteUserUseCase inviteUserUseCase,
                           ListUsersUseCase listUsersUseCase,
                           GetUserUseCase getUserUseCase,
                           UpdateOwnProfileUseCase updateOwnProfileUseCase,
@@ -48,8 +50,9 @@ public class UserController {
                           EditUserUseCase editUserUseCase,
                           ResetUserPasswordUseCase resetUserPasswordUseCase,
                           DeleteUserUseCase deleteUserUseCase,
-                          ChangeOwnLanguageUseCase changeOwnLanguageUseCase) {
-        this.registerUserUseCase = registerUserUseCase;
+                          ChangeOwnLanguageUseCase changeOwnLanguageUseCase,
+                          SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase) {
+        this.inviteUserUseCase = inviteUserUseCase;
         this.listUsersUseCase = listUsersUseCase;
         this.getUserUseCase = getUserUseCase;
         this.updateOwnProfileUseCase = updateOwnProfileUseCase;
@@ -58,6 +61,7 @@ public class UserController {
         this.resetUserPasswordUseCase = resetUserPasswordUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
         this.changeOwnLanguageUseCase = changeOwnLanguageUseCase;
+        this.sendPasswordSetupLinkUseCase = sendPasswordSetupLinkUseCase;
     }
 
     @GetMapping
@@ -121,16 +125,27 @@ public class UserController {
         deleteUserUseCase.execute(id);
     }
 
+    // Memoria final: el empleado nuevo recibe un correo para crear su contraseña. La administración ya
+    // no la conoce nunca. Si el correo no sale, el alta se hace igual y la respuesta lo indica
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse register(@RequestBody RegisterUserRequest request) {
-        User user = registerUserUseCase.execute(
+    public InvitationResponse register(@RequestBody RegisterUserRequest request) {
+        InviteUserUseCase.Invitation invitation = inviteUserUseCase.execute(
                 request.name(),
                 request.email(),
                 request.phoneNumber(),
-                request.speciality(),
-                request.password());
-        return UserResponse.from(user);
+                request.speciality());
+        return new InvitationResponse(UserResponse.from(invitation.user()), invitation.emailSent());
+    }
+
+    public record InvitationResponse(UserResponse user, boolean emailSent) {
+    }
+
+    // Vuelve a enviar el correo para crear la contraseña: al invitado que no lo recibió, o a quien la ha olvidado
+    @PostMapping("/{id}/password-setup")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void sendPasswordSetup(@PathVariable UUID id) {
+        sendPasswordSetupLinkUseCase.execute(id);
     }
 
     // CurrentUserJwtConverter pone el id del empleado como "name" de la autenticación

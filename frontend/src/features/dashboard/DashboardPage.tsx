@@ -1,9 +1,9 @@
-import { TextInput } from '@carbon/react'
+import { Tag, TextInput } from '@carbon/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { getDashboard, type Dashboard } from '../../api/dashboard'
-import { todayIso } from '../../shared/dates'
+import { formatDate, todayIso } from '../../shared/dates'
 import { ErrorNotice, LoadingRows, PageHeader } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
 
@@ -31,6 +31,7 @@ export function DashboardPage() {
       ) : data && (
         <>
           <Figures data={data} />
+          <Deadlines data={data} />
           <div className="dashboard-charts">
             <ShiftsChart data={data} />
             <NoticesChart data={data} />
@@ -38,6 +39,66 @@ export function DashboardPage() {
         </>
       )}
     </>
+  )
+}
+
+// Pregunta: ¿qué hay que tener listo pronto? El informe de media estancia que toca y las medidas judiciales que
+// terminan. Lo vencido primero
+function Deadlines({ data }: { data: Dashboard }) {
+  const { t, i18n } = useTranslation()
+  return (
+    <section className="panel dashboard-deadlines" aria-labelledby="deadlines-title">
+      <h2 id="deadlines-title">{t('dashboard.deadlines.title')}</h2>
+      <p className="section-help">{t('dashboard.deadlines.help')}</p>
+      {data.deadlines.length === 0 ? (
+        <p className="empty">{t('dashboard.deadlines.none')}</p>
+      ) : (
+        <div className="table-wrap">
+          <table className="data-table">
+            <caption className="visually-hidden">{t('dashboard.deadlines.title')}</caption>
+            <thead>
+              <tr>
+                <th scope="col" className="num col-number">{t('patient.number')}</th>
+                <th scope="col">{t('dashboard.deadlines.resident')}</th>
+                <th scope="col">{t('dashboard.deadlines.what')}</th>
+                <th scope="col" className="num">{t('dashboard.deadlines.date')}</th>
+                <th scope="col">{t('dashboard.deadlines.when')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.deadlines.map((d) => (
+                <tr key={`${d.kind}-${d.resident.id}`}>
+                  <td className="num col-number">{d.resident.number}</td>
+                  <td>
+                    <Link to={`/residentes/${d.resident.id}`}>{d.resident.name} {d.resident.surname}</Link>
+                  </td>
+                  <td>
+                    {d.kind === 'MID_STAY_REPORT' && d.reportId ? (
+                      <Link to={`/informes/${d.reportId}`}>{t('dashboard.deadlines.MID_STAY_REPORT')}</Link>
+                    ) : (
+                      <>
+                        {t(`dashboard.deadlines.${d.kind}`)}
+                        {d.detail && <span className="row-meta">{d.detail}</span>}
+                      </>
+                    )}
+                  </td>
+                  <td className="num">{formatDate(d.dueDate, i18n.language)}</td>
+                  <td>
+                    <Tag type={d.overdue ? 'red' : d.daysLeft <= 7 ? 'warm-gray' : 'cool-gray'} size="sm">
+                      {d.overdue
+                        ? t('dashboard.deadlines.overdue', { count: -d.daysLeft })
+                        : d.daysLeft === 0
+                          ? t('dashboard.deadlines.today')
+                          : t('dashboard.deadlines.inDays', { count: d.daysLeft })}
+                    </Tag>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -67,7 +128,7 @@ function Figures({ data }: { data: Dashboard }) {
       <div className="stat">
         <p className="stat__label">{t('dashboard.reportsInProgress')}</p>
         <p className="stat__value">{data.reportsInProgress}</p>
-        <Link className="stat__note" to="/informes">{t('dashboard.goReports')}</Link>
+        <Link className="stat__note" to="/informes?estado=DRAFT&estancia=current">{t('dashboard.goReports')}</Link>
       </div>
       <div className="stat">
         <p className="stat__label">{t('dashboard.interventions')}</p>

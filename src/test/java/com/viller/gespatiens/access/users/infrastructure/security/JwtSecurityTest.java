@@ -8,8 +8,9 @@ import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.LoginUseCase;
-import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
+import com.viller.gespatiens.access.users.application.InviteUserUseCase;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
+import com.viller.gespatiens.access.users.application.SendPasswordSetupLinkUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Speciality;
@@ -57,7 +58,7 @@ class JwtSecurityTest {
     @MockitoBean
     private LoginUseCase loginUseCase;
     @MockitoBean
-    private RegisterUserUseCase registerUserUseCase;
+    private InviteUserUseCase inviteUserUseCase;
     @MockitoBean
     private ListUsersUseCase listUsersUseCase;
     @MockitoBean
@@ -74,6 +75,8 @@ class JwtSecurityTest {
     private DeleteUserUseCase deleteUserUseCase;
     @MockitoBean
     private ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
+    @MockitoBean
+    private SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase;
 
     private final User ana = User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash");
 

@@ -18,11 +18,17 @@ export interface NewUser {
   email: string
   phoneNumber: string
   speciality: Speciality
-  password: string
 }
 
+// Memoria final: el empleado recibe un correo para crear su contraseña. emailSent = false si el
+// correo no ha salido: el alta está hecha y se puede reenviar desde su ficha
 export function registerUser(user: NewUser) {
-  return request<User>('/users', { method: 'POST', body: user })
+  return request<{ user: User; emailSent: boolean }>('/users', { method: 'POST', body: user })
+}
+
+// Vuelve a enviar el enlace para crear la contraseña (al invitado, o a quien la ha olvidado)
+export function sendPasswordSetup(id: string) {
+  return request<void>(`/users/${id}/password-setup`, { method: 'POST' })
 }
 
 export interface EditedUser {

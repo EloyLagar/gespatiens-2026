@@ -3,6 +3,7 @@ package com.viller.gespatiens.patients.domain;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -82,6 +83,18 @@ class PatientTest {
     }
 
     @Test
+    void entryDateCannotBeInTheFuture() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Patient.admit(details(), 5, LocalDate.now().plusDays(1)));
+        assertDoesNotThrow(() -> Patient.admit(details(), 5, LocalDate.now()));
+
+        Patient former = Patient.reconstitute(UUID.randomUUID(), details(), null,
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 1));
+        assertThrows(IllegalArgumentException.class, () -> former.readmit(7, LocalDate.now().plusDays(1)));
+        assertFalse(former.isActive());
+    }
+
+    @Test
     void cannotDischargeTwice() {
         Patient patient = Patient.reconstitute(UUID.randomUUID(), details(), null,
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 1));
@@ -105,6 +118,32 @@ class PatientTest {
         assertEquals(LocalDate.of(2026, 9, 1), patient.getEntryDate());
         assertNull(patient.getExitDate());
         assertEquals("Juan", patient.getDetails().name());
+    }
+
+    // La estancia que terminó no se pierde al volver: pasa al historial
+    @Test
+    void readmitKeepsThePreviousStayInTheHistory() {
+        Patient patient = Patient.reconstitute(UUID.randomUUID(), details(), null,
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 1),
+                List.of(new Stay(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 5, 1))));
+
+        patient.readmit(7, LocalDate.of(2026, 9, 1));
+
+        assertEquals(List.of(
+                        new Stay(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 5, 1)),
+                        new Stay(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 1)),
+                        new Stay(LocalDate.of(2026, 9, 1), null)),
+                patient.stays());
+        assertTrue(patient.stays().getLast().ongoing());
+    }
+
+    @Test
+    void previousStaysMustHaveEndedBeforeTheCurrentOne() {
+        assertThrows(IllegalArgumentException.class, () -> Patient.reconstitute(UUID.randomUUID(), details(), 3,
+                LocalDate.of(2026, 1, 1), null, List.of(new Stay(LocalDate.of(2025, 12, 1), LocalDate.of(2026, 2, 1)))));
+        assertThrows(IllegalArgumentException.class, () -> Patient.reconstitute(UUID.randomUUID(), details(), 3,
+                LocalDate.of(2026, 1, 1), null, List.of(new Stay(LocalDate.of(2025, 12, 1), null))));
+        assertThrows(IllegalArgumentException.class, () -> new Stay(LocalDate.of(2026, 2, 1), LocalDate.of(2026, 1, 1)));
     }
 
     @Test
