@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface ActivityJpaRepository extends JpaRepository<ActivityJpaEntity, UUID> {
     List<ActivityJpaEntity> findByDateOrderByStartTime(LocalDate date);
+
+    List<ActivityJpaEntity> findByDateBetweenOrderByDateAscStartTimeAsc(LocalDate from, LocalDate to);
 }

@@ -165,3 +165,42 @@ export function updateOuting(outingId: string, leftAt: LocalTime, returnedAt: Lo
 export function deleteOuting(outingId: string) {
   return request<void>(`/diary/outings/${outingId}`, { method: 'DELETE' })
 }
+
+// RF6 en tabla mensual (memoria final): MonthlyEvaluationsController en Spring
+export interface MonthlyActivityRef {
+  id: string
+  startTime: LocalTime
+  title: string | null
+  // RF8: la que se manda al cambiar una nota
+  version: number
+}
+
+export interface MonthlyCell {
+  // La nota; la media si ese día hubo varias actividades del tipo
+  mark: number | null
+  attended: boolean
+  // La actividad cuya nota se cambia desde la tabla. null: ese día no asistió o hubo varias
+  activityId: string | null
+}
+
+export interface MonthlyEvaluations {
+  // yyyy-MM
+  month: string
+  type: ActivityType
+  // Todos los días del mes, en orden
+  days: { date: IsoDate; activities: MonthlyActivityRef[] }[]
+  // Una celda por día, en el mismo orden que days
+  rows: { resident: DiaryResident; cells: MonthlyCell[] }[]
+}
+
+export function getMonthlyEvaluations(month: string, type: ActivityType) {
+  return request<MonthlyEvaluations>(`/diary/evaluations?month=${month}&type=${type}`)
+}
+
+// La nota de un residente en una actividad (null: quitarla). Devuelve la versión nueva de la actividad
+export function recordMark(activityId: string, patientId: string, mark: number | null, version: number) {
+  return request<{ version: number }>(`/diary/activities/${activityId}/evaluations/${patientId}`, {
+    method: 'PUT',
+    body: { mark, version },
+  })
+}

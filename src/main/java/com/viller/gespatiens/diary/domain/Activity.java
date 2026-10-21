@@ -1,5 +1,6 @@
 package com.viller.gespatiens.diary.domain;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -69,6 +70,21 @@ public class Activity {
     // Valorar: sustituye todas las valoraciones. Solo se valora a quien asistió
     public void recordEvaluations(Map<UUID, Evaluation> newEvaluations) {
         evaluate(newEvaluations);
+    }
+
+    // La nota de un solo residente (la tabla mensual). Conserva la satisfacción y la utilidad que diera él;
+    // sin nota ni nada más, se queda sin valorar
+    public void recordMark(UUID patientId, BigDecimal mark) {
+        Evaluation current = evaluations.get(patientId);
+        BigDecimal satisfaction = current == null ? null : current.satisfaction();
+        BigDecimal utility = current == null ? null : current.utility();
+        Map<UUID, Evaluation> changed = new HashMap<>(evaluations);
+        if (mark == null && satisfaction == null && utility == null) {
+            changed.remove(patientId);
+        } else {
+            changed.put(patientId, new Evaluation(mark, satisfaction, utility));
+        }
+        evaluate(changed);
     }
 
     public boolean attended(UUID patientId) {

@@ -48,7 +48,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/diary/*/reductions/*").hasAnyRole("MEDICAL_TEAM", "ADMINISTRATOR")
                         // RF6: las notas y valoraciones de las actividades las pasan los educadores y la
                         // administración (decisión del centro). Los demás solo las consultan
-                        .requestMatchers(HttpMethod.PUT, "/api/diary/activities/*/evaluations").hasAnyRole("SOCIAL_EDUCATOR", "ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/diary/activities/*/evaluations",
+                                "/api/diary/activities/*/evaluations/*").hasAnyRole("SOCIAL_EDUCATOR", "ADMINISTRATOR")
                         // Los tutores de cada residente los asignan la administración y los educadores (decisión del centro)
                         .requestMatchers(HttpMethod.PUT, "/api/interventions/residents/*/tutors").hasAnyRole("ADMINISTRATOR", "SOCIAL_EDUCATOR")
                         // Cerrar y reabrir informes es cosa de la administración ("fecha y firma de la Dirección

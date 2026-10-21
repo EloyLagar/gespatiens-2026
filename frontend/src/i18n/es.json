@@ -17,7 +17,8 @@
     "notices": "Avisos",
     "diary": "Diario",
     "interventions": "Intervenciones",
-    "reports": "Informes"
+    "reports": "Informes",
+    "evaluations": "Valoraciones"
   },
   "language": {
     "label": "Idioma",
@@ -675,5 +676,24 @@
     "revokeWho": "Quitar a {{name}}",
     "revokeTitle": "¿Quitar a {{name}} de las personas autorizadas?",
     "revokeBody": "Dejará de figurar como autorizada para visitar al residente."
+  },
+  "evaluations": {
+    "title": "Valoraciones",
+    "subtitle": "Las notas de un tipo de actividad durante un mes, con la media de cada semana y la del mes",
+    "month": "Mes",
+    "type": "Actividad",
+    "helpEdit": "Escribe la nota (de 0 a 10) en la casilla y se guarda al salir de ella o con Intro; Escape la deshace. Los días con varias actividades del mismo tipo muestran la media y se valoran desde el diario.",
+    "helpView": "Las notas las ponen los educadores y la administración. Los días en gris no hubo esta actividad.",
+    "none": "En este mes no hubo ninguna actividad de {{type}}.",
+    "caption": "Notas de {{type}} en {{month}}, por residente y día",
+    "weekShort": "S{{week}}",
+    "weekAverage": "Media de la semana {{week}}",
+    "monthShort": "Mes",
+    "monthAverage": "Media del mes",
+    "markOf": "Nota de {{name}} el día {{day}}",
+    "invalidMark": "La nota va de 0 a 10, con un decimal como mucho.",
+    "beingEdited": "{{name}} tiene abierta esa actividad en el diario. Vuelve a intentarlo cuando termine.",
+    "changed": "Otra persona ha cambiado esa actividad. La tabla se ha recargado: revisa la nota.",
+    "notSaved": "No se ha podido guardar la nota."
   }
 }

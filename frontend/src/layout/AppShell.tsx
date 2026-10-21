@@ -1,4 +1,4 @@
-import { Archive, Close, Collaborate, Document, Group, Logout, Menu, Notebook, Notification, UserMultiple, UserProfile } from '@carbon/icons-react'
+import { Archive, ChartLine, Close, Collaborate, Document, Group, Logout, Menu, Notebook, Notification, UserMultiple, UserProfile } from '@carbon/icons-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
@@ -42,6 +42,7 @@ export function AppShell() {
     { to: '/avisos', label: t('nav.notices'), icon: <Notification size={16} /> },
     { to: '/diario', label: t('nav.diary'), icon: <Notebook size={16} /> },
     { to: '/informes', label: t('nav.reports'), icon: <Document size={16} /> },
+    { to: '/valoraciones', label: t('nav.evaluations'), icon: <ChartLine size={16} /> },
     { to: '/intervenciones', label: t('nav.interventions'), icon: <Collaborate size={16} /> },
     { to: '/residentes', label: t('nav.residents'), icon: <UserMultiple size={16} /> },
     { to: '/antiguos', label: t('nav.formerResidents'), icon: <Archive size={16} /> },
