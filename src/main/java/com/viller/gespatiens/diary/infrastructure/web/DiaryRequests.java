@@ -15,22 +15,23 @@ public final class DiaryRequests {
     private DiaryRequests() {
     }
 
-    public record ShiftRequest(Set<UUID> staffIds, String notes) {
+    // version: la que tenía el turno en pantalla (0 si estaba sin rellenar). RF8: si no coincide, 409
+    public record ShiftRequest(Set<UUID> staffIds, String notes, Long version) {
     }
 
     public record ReductionRequest(String partial, boolean total, boolean sport) {
     }
 
-    // Sirve para programar y para cambiar una actividad
-    public record ActivityRequest(LocalTime startTime, ActivityType type, String title) {
+    // Sirve para programar y para cambiar una actividad. version: solo al cambiarla
+    public record ActivityRequest(LocalTime startTime, ActivityType type, String title, Long version) {
     }
 
     // Residente -> lo anotado. Quien no aparece (o va a null) queda sin anotar
-    public record AttendanceRequest(Map<UUID, AttendanceStatus> attendance) {
+    public record AttendanceRequest(Map<UUID, AttendanceStatus> attendance, Long version) {
     }
 
     // Residente -> su valoración. Quien no aparece (o va a null, o con todo a null) queda sin valorar
-    public record EvaluationsRequest(Map<UUID, EvaluationRequest> evaluations) {
+    public record EvaluationsRequest(Map<UUID, EvaluationRequest> evaluations, Long version) {
     }
 
     // De 0 a 10 con un decimal; lo que no se tenga, a null

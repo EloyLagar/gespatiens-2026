@@ -20,7 +20,8 @@ public class ShiftLogRepositoryJpaAdapter implements ShiftLogRepository {
 
     @Override
     public ShiftLog save(ShiftLog shiftLog) {
-        return toDomain(shiftLogJpaRepository.save(toEntity(shiftLog)));
+        // saveAndFlush: el choque de versiones salta aquí y se traduce a un 409 claro
+        return toDomain(shiftLogJpaRepository.saveAndFlush(toEntity(shiftLog)));
     }
 
     @Override
@@ -44,6 +45,7 @@ public class ShiftLogRepositoryJpaAdapter implements ShiftLogRepository {
         entity.setNotes(log.getNotes().orElse(null));
         entity.setUpdatedBy(log.getUpdatedBy().orElse(null));
         entity.setUpdatedAt(log.getUpdatedAt());
+        entity.setRevision(log.getRevision().orElse(null));
         return entity;
     }
 
@@ -55,6 +57,7 @@ public class ShiftLogRepositoryJpaAdapter implements ShiftLogRepository {
                 entity.getStaffIds(),
                 entity.getNotes(),
                 entity.getUpdatedBy(),
-                entity.getUpdatedAt());
+                entity.getUpdatedAt(),
+                entity.getRevision());
     }
 }

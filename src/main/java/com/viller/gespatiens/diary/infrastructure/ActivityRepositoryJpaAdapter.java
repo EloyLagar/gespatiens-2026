@@ -23,7 +23,8 @@ public class ActivityRepositoryJpaAdapter implements ActivityRepository {
 
     @Override
     public Activity save(Activity activity) {
-        return toDomain(activityJpaRepository.save(toEntity(activity)));
+        // saveAndFlush: el choque de versiones salta aquí y se traduce a un 409 claro
+        return toDomain(activityJpaRepository.saveAndFlush(toEntity(activity)));
     }
 
     @Override
@@ -51,6 +52,7 @@ public class ActivityRepositoryJpaAdapter implements ActivityRepository {
         entity.setType(activity.getType());
         entity.setTitle(activity.getTitle().orElse(null));
         entity.setAttendance(activity.getAttendance());
+        entity.setRevision(activity.getRevision().orElse(null));
         entity.setEvaluations(activity.getEvaluations().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> new EvaluationEmbeddable(
                         e.getValue().mark(), e.getValue().satisfaction(), e.getValue().utility()))));
@@ -67,6 +69,7 @@ public class ActivityRepositoryJpaAdapter implements ActivityRepository {
                 entity.getAttendance(),
                 entity.getEvaluations().entrySet().stream()
                         .collect(Collectors.toMap(Map.Entry::getKey, e -> new Evaluation(
-                                e.getValue().getMark(), e.getValue().getSatisfaction(), e.getValue().getUtility()))));
+                                e.getValue().getMark(), e.getValue().getSatisfaction(), e.getValue().getUtility()))),
+                entity.getRevision());
     }
 }

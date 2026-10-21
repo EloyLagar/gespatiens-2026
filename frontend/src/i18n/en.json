@@ -652,11 +652,11 @@
     "othersEditing_other": "{{count}} sections are being edited by other people",
     "signaturesHelp": "In the PDF, each professional appears with their scanned signature. Anyone who hasn't uploaded it yet (My profile) gets a blank line to sign by hand.",
     "editSection": "Edit “{{section}}”",
-    "tutorsOfResident": "the resident's tutors",
-    "lock": {
-      "editing": "{{name}} is editing it",
-      "busy": "{{name}} is editing it right now. You can edit it when they finish.",
-      "lost": "{{name}} has started editing it (your editing session expired). Copy your text before leaving so you don't lose it."
-    }
+    "tutorsOfResident": "the resident's tutors"
+  },
+  "editing": {
+    "editing": "{{name}} is editing it",
+    "busy": "{{name}} is editing it right now. You can edit it when they finish.",
+    "lost": "{{name}} has started editing it (your editing session expired). Copy your text before leaving so you don't lose it."
   }
 }

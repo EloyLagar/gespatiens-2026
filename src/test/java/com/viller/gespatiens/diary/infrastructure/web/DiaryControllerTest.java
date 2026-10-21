@@ -23,7 +23,9 @@ import com.viller.gespatiens.diary.application.UpdateOutingUseCase;
 import com.viller.gespatiens.diary.domain.ActivityType;
 import com.viller.gespatiens.diary.domain.AttendanceStatus;
 import com.viller.gespatiens.diary.domain.Evaluation;
+import com.viller.gespatiens.diary.domain.DiaryConflictException;
 import com.viller.gespatiens.diary.domain.DiaryEntryNotFoundException;
+import com.viller.gespatiens.editing.domain.ResourceBeingEditedException;
 import com.viller.gespatiens.diary.domain.Resident;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,7 +178,7 @@ class DiaryControllerTest {
                 .thenReturn(new ActivityView(id, LocalTime.of(10, 30), ActivityType.OTHER,
                         Optional.of("Taller de cerámica"),
                         List.of(new AttendanceRow(lucia, Optional.empty(), true, Optional.empty(), Optional.empty())),
-                        NO_AVERAGES));
+                        NO_AVERAGES, 3));
 
         mockMvc.perform(post("/api/diary/2026-10-20/activities")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -192,9 +194,9 @@ class DiaryControllerTest {
     @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
     void attendanceIsSentAsResidentToStatus() throws Exception {
         UUID activity = UUID.randomUUID();
-        when(recordAttendanceUseCase.execute(activity, Map.of(PATIENT, AttendanceStatus.EXCUSED_ABSENCE)))
+        when(recordAttendanceUseCase.execute(activity, Map.of(PATIENT, AttendanceStatus.EXCUSED_ABSENCE), UUID.fromString(ME), null))
                 .thenReturn(new ActivityView(activity, LocalTime.of(17, 0), ActivityType.WALK, Optional.empty(), List.of(),
-                        NO_AVERAGES));
+                        NO_AVERAGES, 3));
 
         mockMvc.perform(put("/api/diary/activities/{id}/attendance", activity)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -209,12 +211,12 @@ class DiaryControllerTest {
         Resident lucia = new Resident(PATIENT, 5, "Lucía", "Martínez", true);
         UUID activity = UUID.randomUUID();
         Evaluation evaluation = new Evaluation(new BigDecimal("7.5"), new BigDecimal("9"), null);
-        when(recordEvaluationsUseCase.execute(activity, Map.of(PATIENT, evaluation)))
+        when(recordEvaluationsUseCase.execute(activity, Map.of(PATIENT, evaluation), UUID.fromString(ME), null))
                 .thenReturn(new ActivityView(activity, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, Optional.empty(),
                         List.of(new AttendanceRow(lucia, Optional.of(AttendanceStatus.ATTENDED), false, Optional.empty(),
                                 Optional.of(evaluation))),
                         new EvaluationAverages(Optional.of(new BigDecimal("7.5")), Optional.of(new BigDecimal("9.0")),
-                                Optional.empty())));
+                                Optional.empty()), 3));
 
         mockMvc.perform(put("/api/diary/activities/{id}/evaluations", activity)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -228,9 +230,9 @@ class DiaryControllerTest {
     @WithMockUser(username = ME, roles = "ADMINISTRATOR")
     void anEmptyEvaluationIsLeftOutAndAnOutOfRangeOneIsBadRequest() throws Exception {
         UUID activity = UUID.randomUUID();
-        when(recordEvaluationsUseCase.execute(activity, Map.of()))
+        when(recordEvaluationsUseCase.execute(activity, Map.of(), UUID.fromString(ME), null))
                 .thenReturn(new ActivityView(activity, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, Optional.empty(),
-                        List.of(), NO_AVERAGES));
+                        List.of(), NO_AVERAGES, 3));
 
         mockMvc.perform(put("/api/diary/activities/{id}/evaluations", activity)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -275,11 +277,39 @@ class DiaryControllerTest {
                 .andExpect(jsonPath("$.returnedAt").value("19:00:00"));
     }
 
+    // RF8: la versión que tenía la pantalla llega al caso de uso, y un choque es un 409
+    @Test
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
+    void theVersionOnScreenTravelsWithTheSaveAndAClashIsAConflict() throws Exception {
+        UUID activity = UUID.randomUUID();
+        when(recordAttendanceUseCase.execute(activity, Map.of(PATIENT, AttendanceStatus.ATTENDED),
+                UUID.fromString(ME), 3L)).thenThrow(new DiaryConflictException("la actividad"));
+
+        mockMvc.perform(put("/api/diary/activities/{id}/attendance", activity)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"attendance\":{\"" + PATIENT + "\":\"ATTENDED\"},\"version\":3}"))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
+    void anActivityBeingEditedBySomeoneElseSaysWho() throws Exception {
+        UUID activity = UUID.randomUUID();
+        when(recordAttendanceUseCase.execute(activity, Map.of(), UUID.fromString(ME), 1L))
+                .thenThrow(new ResourceBeingEditedException("Pablo", java.time.Instant.parse("2026-10-21T10:00:00Z")));
+
+        mockMvc.perform(put("/api/diary/activities/{id}/attendance", activity)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"attendance\":{},\"version\":1}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.beingEditedBy").value("Pablo"));
+    }
+
     @Test
     @WithMockUser(username = ME, roles = "SOCIAL_EDUCATOR")
     void deletingAnUnknownActivityIsNotFound() throws Exception {
         UUID activity = UUID.randomUUID();
-        doThrow(new DiaryEntryNotFoundException("actividad", activity)).when(deleteActivityUseCase).execute(activity);
+        doThrow(new DiaryEntryNotFoundException("actividad", activity)).when(deleteActivityUseCase).execute(activity, UUID.fromString(ME));
 
         mockMvc.perform(delete("/api/diary/activities/{id}", activity)).andExpect(status().isNotFound());
     }

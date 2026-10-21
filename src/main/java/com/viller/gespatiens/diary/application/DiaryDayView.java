@@ -20,16 +20,17 @@ import java.util.UUID;
 public record DiaryDayView(LocalDate date, List<ShiftView> shifts, List<ReductionView> reductions,
                            List<ActivityView> activities, List<OutingView> outings) {
 
-    // updatedAt vacío: nadie ha rellenado todavía ese turno
+    // updatedAt vacío: nadie ha rellenado todavía ese turno. version: la que hay que mandar al guardarlo (RF8)
     public record ShiftView(DayPart part, List<StaffMember> staff, Optional<String> notes,
-                            Optional<StaffMember> updatedBy, Optional<Instant> updatedAt) {
+                            Optional<StaffMember> updatedBy, Optional<Instant> updatedAt, long version) {
     }
 
     public record ReductionView(Resident resident, Optional<String> partial, boolean total, boolean sport) {
     }
 
+    // version: la que hay que mandar al guardar la actividad, su lista o sus valoraciones (RF8)
     public record ActivityView(UUID id, LocalTime startTime, ActivityType type, Optional<String> title,
-                               List<AttendanceRow> attendance, EvaluationAverages averages) {
+                               List<AttendanceRow> attendance, EvaluationAverages averages, long version) {
     }
 
     // Un residente en la lista de una actividad. reduced: su rebaja le libra de esta actividad (se muestra

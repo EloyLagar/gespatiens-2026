@@ -652,11 +652,11 @@
     "othersEditing_other": "{{count}} apartados los están editando otras personas",
     "signaturesHelp": "En el PDF, cada profesional aparece con su firma escaneada. Quien todavía no la ha subido (Mi perfil) deja el hueco para firmar a mano.",
     "editSection": "Editar «{{section}}»",
-    "tutorsOfResident": "tutores del residente",
-    "lock": {
-      "editing": "{{name}} lo está editando",
-      "busy": "{{name}} lo está editando ahora mismo. Podrás editarlo cuando termine.",
-      "lost": "{{name}} ha empezado a editarlo (tu sesión de edición caducó). Copia tu texto antes de salir para no perderlo."
-    }
+    "tutorsOfResident": "tutores del residente"
+  },
+  "editing": {
+    "editing": "{{name}} lo está editando",
+    "busy": "{{name}} lo está editando ahora mismo. Podrás editarlo cuando termine.",
+    "lost": "{{name}} ha empezado a editarlo (tu sesión de edición caducó). Copia tu texto antes de salir para no perderlo."
   }
 }

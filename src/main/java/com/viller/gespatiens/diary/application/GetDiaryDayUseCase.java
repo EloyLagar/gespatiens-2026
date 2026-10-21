@@ -53,7 +53,7 @@ public class GetDiaryDayUseCase {
         List<ShiftView> shifts = Arrays.stream(DayPart.values())
                 .map(part -> Optional.ofNullable(logs.get(part))
                         .map(log -> shiftView(log, staffDirectory))
-                        .orElseGet(() -> new ShiftView(part, List.of(), Optional.empty(), Optional.empty(), Optional.empty())))
+                        .orElseGet(() -> new ShiftView(part, List.of(), Optional.empty(), Optional.empty(), Optional.empty(), 0)))
                 .toList();
 
         List<Reduction> dayReductions = reductionRepository.findByDate(date);
@@ -84,7 +84,7 @@ public class GetDiaryDayUseCase {
                 .sorted(Comparator.comparing(StaffMember::name))
                 .toList();
         return new ShiftView(log.getPart(), staff, log.getNotes(),
-                log.getUpdatedBy().flatMap(staffDirectory::find), Optional.of(log.getUpdatedAt()));
+                log.getUpdatedBy().flatMap(staffDirectory::find), Optional.of(log.getUpdatedAt()), log.version());
     }
 
     static Optional<ReductionView> reductionView(Reduction reduction, ResidentDirectory residentDirectory) {

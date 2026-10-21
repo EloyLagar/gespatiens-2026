@@ -2,8 +2,11 @@ import { Button, Checkbox, TextArea } from '@carbon/react'
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { recordShift, SHIFT_NOTES_MAX_LENGTH, type Shift } from '../../api/diary'
+import { diaryResources, type EditLock } from '../../api/editLocks'
 import type { User } from '../../api/types'
+import { EditingBadge, LockNotice } from '../../shared/editing'
 import { ErrorNotice } from '../../shared/ui'
+import { useEditLock } from '../../shared/useEditLock'
 import { whenPosted } from '../../shared/times'
 import { initialOf, tintFor } from '../users/people'
 
@@ -12,24 +15,36 @@ interface Props {
   shift: Shift
   // Toda la plantilla, para elegir quién trabajó
   staff: User[]
+  // RF8: otra persona lo está editando ahora
+  heldBy: EditLock | undefined
   onSaved: (shift: Shift) => void
 }
 
-// Un turno del día: quién trabajó y la información de interés. Cualquier empleado puede rellenarlo
-export function ShiftPanel({ date, shift, staff, onSaved }: Props) {
+// Un turno del día: quién trabajó y la información de interés. Cualquier empleado puede rellenarlo.
+// RF8: mientras alguien lo edita, nadie más puede; y se guarda con la versión que se tenía delante
+export function ShiftPanel({ date, shift, staff, heldBy, onSaved }: Props) {
   const { t, i18n } = useTranslation()
+  const lock = useEditLock(diaryResources.shift(date, shift.part))
   const [editing, setEditing] = useState(false)
+  const [version, setVersion] = useState(shift.version)
   const [chosen, setChosen] = useState<Set<string>>(new Set())
   const [notes, setNotes] = useState('')
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
   const titleId = `shift-${shift.part}`
 
-  function startEditing() {
+  async function startEditing() {
+    if (!(await lock.acquire())) return
     setChosen(new Set(shift.staff.map((s) => s.id)))
     setNotes(shift.notes ?? '')
+    setVersion(shift.version)
     setError(null)
     setEditing(true)
+  }
+
+  function stopEditing() {
+    setEditing(false)
+    lock.stop()
   }
 
   function toggle(id: string, checked: boolean) {
@@ -44,8 +59,8 @@ export function ShiftPanel({ date, shift, staff, onSaved }: Props) {
     setBusy(true)
     setError(null)
     try {
-      onSaved(await recordShift(date, shift.part, [...chosen], notes))
-      setEditing(false)
+      onSaved(await recordShift(date, shift.part, [...chosen], notes, version))
+      stopEditing()
     } catch (err) {
       setError(err)
     } finally {
@@ -92,7 +107,7 @@ export function ShiftPanel({ date, shift, staff, onSaved }: Props) {
             enableCounter
           />
           <div className="form-actions">
-            <Button kind="secondary" size="sm" type="button" onClick={() => setEditing(false)} disabled={busy}>
+            <Button kind="secondary" size="sm" type="button" onClick={stopEditing} disabled={busy}>
               {t('common.cancel')}
             </Button>
             <Button size="sm" type="submit" disabled={busy}>
@@ -126,10 +141,15 @@ export function ShiftPanel({ date, shift, staff, onSaved }: Props) {
                 })}
               </p>
             )}
-            <button type="button" className="text-action" onClick={startEditing}>
-              {shift.updatedAt ? t('common.edit') : t('diary.fill')}
-            </button>
+            {heldBy ? (
+              <EditingBadge name={heldBy.holderName} />
+            ) : (
+              <button type="button" className="text-action" onClick={startEditing} disabled={lock.state.status === 'acquiring'}>
+                {shift.updatedAt ? t('common.edit') : t('diary.fill')}
+              </button>
+            )}
           </footer>
+          <LockNotice state={lock.state} />
         </>
       )}
     </section>

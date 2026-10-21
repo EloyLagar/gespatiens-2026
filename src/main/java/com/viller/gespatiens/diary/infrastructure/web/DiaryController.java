@@ -100,7 +100,7 @@ public class DiaryController {
                                      @PathVariable DayPart part,
                                      @RequestBody ShiftRequest request) {
         return ShiftResponse.from(recordShiftUseCase.execute(date, part, request.staffIds(), request.notes(),
-                currentUserId(principal)));
+                currentUserId(principal), request.version()));
     }
 
     @PutMapping("/{date}/reductions/{patientId}")
@@ -128,24 +128,28 @@ public class DiaryController {
     }
 
     @PutMapping("/activities/{activityId}")
-    public ActivityResponse rescheduleActivity(@PathVariable UUID activityId, @RequestBody ActivityRequest request) {
+    public ActivityResponse rescheduleActivity(Principal principal, @PathVariable UUID activityId,
+                                               @RequestBody ActivityRequest request) {
         return ActivityResponse.from(rescheduleActivityUseCase.execute(activityId, request.startTime(),
-                request.type(), request.title()));
+                request.type(), request.title(), currentUserId(principal), request.version()));
     }
 
     @DeleteMapping("/activities/{activityId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteActivity(@PathVariable UUID activityId) {
-        deleteActivityUseCase.execute(activityId);
+    public void deleteActivity(Principal principal, @PathVariable UUID activityId) {
+        deleteActivityUseCase.execute(activityId, currentUserId(principal));
     }
 
     @PutMapping("/activities/{activityId}/attendance")
-    public ActivityResponse recordAttendance(@PathVariable UUID activityId, @RequestBody AttendanceRequest request) {
-        return ActivityResponse.from(recordAttendanceUseCase.execute(activityId, request.attendance()));
+    public ActivityResponse recordAttendance(Principal principal, @PathVariable UUID activityId,
+                                             @RequestBody AttendanceRequest request) {
+        return ActivityResponse.from(recordAttendanceUseCase.execute(activityId, request.attendance(),
+                currentUserId(principal), request.version()));
     }
 
     @PutMapping("/activities/{activityId}/evaluations")
-    public ActivityResponse recordEvaluations(@PathVariable UUID activityId, @RequestBody EvaluationsRequest request) {
+    public ActivityResponse recordEvaluations(Principal principal, @PathVariable UUID activityId,
+                                              @RequestBody EvaluationsRequest request) {
         Map<UUID, Evaluation> evaluations = new HashMap<>();
         if (request.evaluations() != null) {
             request.evaluations().forEach((patientId, e) -> {
@@ -154,7 +158,8 @@ public class DiaryController {
                 }
             });
         }
-        return ActivityResponse.from(recordEvaluationsUseCase.execute(activityId, evaluations));
+        return ActivityResponse.from(recordEvaluationsUseCase.execute(activityId, evaluations,
+                currentUserId(principal), request.version()));
     }
 
     @PostMapping("/{date}/outings")

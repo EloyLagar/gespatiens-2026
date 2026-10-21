@@ -9,7 +9,9 @@ import com.viller.gespatiens.diary.domain.ActivityRepository;
 import com.viller.gespatiens.diary.domain.ActivityType;
 import com.viller.gespatiens.diary.domain.AttendanceStatus;
 import com.viller.gespatiens.diary.domain.DayPart;
+import com.viller.gespatiens.diary.domain.DiaryConflictException;
 import com.viller.gespatiens.diary.domain.DiaryEntryNotFoundException;
+import com.viller.gespatiens.diary.domain.EditingPresence;
 import com.viller.gespatiens.diary.domain.Evaluation;
 import com.viller.gespatiens.diary.domain.Reduction;
 import com.viller.gespatiens.diary.domain.ReductionNotFoundException;
@@ -73,6 +75,9 @@ class DiaryUseCasesTest {
         }
     };
 
+    // RF8: aquí nadie más está editando; los bloqueos se prueban en el módulo editing
+    private final List<String> lockChecks = new ArrayList<>();
+    private final EditingPresence editing = (resource, employeeId) -> lockChecks.add(resource);
     private final InMemoryShifts shifts = new InMemoryShifts();
     private final InMemoryReductions reductions = new InMemoryReductions();
     private final InMemoryActivities activities = new InMemoryActivities();
@@ -80,17 +85,17 @@ class DiaryUseCasesTest {
 
     private final GetDiaryDayUseCase getDay =
             new GetDiaryDayUseCase(shifts, reductions, activities, outings, staff, residents);
-    private final RecordShiftUseCase recordShift = new RecordShiftUseCase(shifts, staff, CLOCK);
+    private final RecordShiftUseCase recordShift = new RecordShiftUseCase(shifts, staff, editing, CLOCK);
     private final RecordReductionUseCase recordReduction = new RecordReductionUseCase(reductions, residents, CLOCK);
     private final DeleteReductionUseCase deleteReduction = new DeleteReductionUseCase(reductions);
     private final ScheduleActivityUseCase scheduleActivity =
             new ScheduleActivityUseCase(activities, reductions, residents);
     private final RescheduleActivityUseCase rescheduleActivity =
-            new RescheduleActivityUseCase(activities, reductions, residents);
+            new RescheduleActivityUseCase(activities, reductions, residents, editing);
     private final RecordAttendanceUseCase recordAttendance =
-            new RecordAttendanceUseCase(activities, reductions, residents, CLOCK);
+            new RecordAttendanceUseCase(activities, reductions, residents, editing, CLOCK);
     private final RecordEvaluationsUseCase recordEvaluations =
-            new RecordEvaluationsUseCase(activities, reductions, residents);
+            new RecordEvaluationsUseCase(activities, reductions, residents, editing);
     private final RecordOutingUseCase recordOuting = new RecordOutingUseCase(outings, residents);
     private final UpdateOutingUseCase updateOuting = new UpdateOutingUseCase(outings, residents);
     private final DeleteOutingUseCase deleteOuting = new DeleteOutingUseCase(outings);
@@ -109,19 +114,51 @@ class DiaryUseCasesTest {
 
     @Test
     void recordingAShiftTwiceUpdatesTheSameRecord() {
-        recordShift.execute(DAY, DayPart.MORNING, Set.of(pablo.id()), "Sin incidencias", pablo.id());
+        recordShift.execute(DAY, DayPart.MORNING, Set.of(pablo.id()), "Sin incidencias", pablo.id(), null);
         ShiftView updated = recordShift.execute(DAY, DayPart.MORNING, Set.of(pablo.id(), ana.id()),
-                "Sin incidencias. Llamó la familia de Juan", ana.id());
+                "Sin incidencias. Llamó la familia de Juan", ana.id(), null);
 
         assertEquals(1, shifts.logs.size());
         assertEquals(List.of("Ana", "Pablo"), updated.staff().stream().map(StaffMember::name).toList());
         assertEquals("Ana", updated.updatedBy().orElseThrow().name());
     }
 
+    // RF8: quien guarda con la versión que tenía delante no pisa lo que otra persona guardó entretanto
+    @Test
+    void aShiftSavedOverSomeoneElsesChangeIsAConflict() {
+        ShiftView first = recordShift.execute(DAY, DayPart.MORNING, Set.of(pablo.id()), "Sin incidencias",
+                pablo.id(), 0L);
+        assertEquals(1, first.version());
+        // Ana vio el turno vacío (versión 0) y guarda después de Pablo
+        assertThrows(DiaryConflictException.class, () ->
+                recordShift.execute(DAY, DayPart.MORNING, Set.of(ana.id()), "Otra cosa", ana.id(), 0L));
+
+        ShiftView second = recordShift.execute(DAY, DayPart.MORNING, Set.of(ana.id()), "Otra cosa", ana.id(), 1L);
+        assertEquals(2, second.version());
+        assertEquals(List.of("shift:" + DAY + ":MORNING", "shift:" + DAY + ":MORNING", "shift:" + DAY + ":MORNING"),
+                lockChecks);
+        assertEquals(0, getDay.execute(DAY).shifts().get(1).version());
+    }
+
+    @Test
+    void anActivityListSavedOverSomeoneElsesChangeIsAConflict() {
+        ActivityView activity = scheduleActivity.execute(DAY, LocalTime.of(10, 0), ActivityType.SPORT, null);
+        ActivityView marked = recordAttendance.execute(activity.id(),
+                Map.of(juan.id(), AttendanceStatus.ATTENDED), pablo.id(), activity.version());
+
+        assertThrows(DiaryConflictException.class, () -> recordAttendance.execute(activity.id(),
+                Map.of(juan.id(), AttendanceStatus.EXCUSED_ABSENCE), ana.id(), activity.version()));
+        assertThrows(DiaryConflictException.class, () -> recordEvaluations.execute(activity.id(),
+                Map.of(juan.id(), new Evaluation(new BigDecimal("7"), null, null)), ana.id(), activity.version()));
+        recordEvaluations.execute(activity.id(), Map.of(juan.id(), new Evaluation(new BigDecimal("7"), null, null)),
+                ana.id(), marked.version());
+        assertEquals("activity:" + activity.id(), lockChecks.getLast());
+    }
+
     @Test
     void unknownEmployeeInAShiftIsRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                recordShift.execute(DAY, DayPart.NIGHT, Set.of(UUID.randomUUID()), null, pablo.id()));
+                recordShift.execute(DAY, DayPart.NIGHT, Set.of(UUID.randomUUID()), null, pablo.id(), null));
     }
 
     @Test
@@ -166,7 +203,7 @@ class DiaryUseCasesTest {
         UUID walk = scheduleActivity.execute(DAY, LocalTime.of(17, 0), ActivityType.WALK, null).id();
 
         ActivityView marked = recordAttendance.execute(walk, Map.of(
-                juan.id(), AttendanceStatus.ATTENDED, lucia.id(), AttendanceStatus.UNEXCUSED_ABSENCE));
+                juan.id(), AttendanceStatus.ATTENDED, lucia.id(), AttendanceStatus.UNEXCUSED_ABSENCE), pablo.id(), null);
 
         AttendanceRow juanRow = marked.attendance().get(0);
         AttendanceRow luciaRow = marked.attendance().get(1);
@@ -193,11 +230,11 @@ class DiaryUseCasesTest {
     @Test
     void evaluationsAreShownWithTheirAverages() {
         UUID id = scheduleActivity.execute(DAY, LocalTime.of(10, 0), ActivityType.VIDEO_FORUM, null).id();
-        recordAttendance.execute(id, Map.of(juan.id(), AttendanceStatus.ATTENDED, lucia.id(), AttendanceStatus.ATTENDED));
+        recordAttendance.execute(id, Map.of(juan.id(), AttendanceStatus.ATTENDED, lucia.id(), AttendanceStatus.ATTENDED), pablo.id(), null);
 
         ActivityView evaluated = recordEvaluations.execute(id, Map.of(
                 juan.id(), new Evaluation(new BigDecimal("8"), new BigDecimal("9"), null),
-                lucia.id(), new Evaluation(new BigDecimal("6.5"), new BigDecimal("6"), null)));
+                lucia.id(), new Evaluation(new BigDecimal("6.5"), new BigDecimal("6"), null)), pablo.id(), null);
 
         assertEquals(new BigDecimal("8.0"), evaluated.attendance().get(0).evaluation().orElseThrow().mark());
         assertEquals(new BigDecimal("7.3"), evaluated.averages().mark().orElseThrow());
@@ -210,12 +247,12 @@ class DiaryUseCasesTest {
     void absentOrReducedResidentsCannotBeEvaluated() {
         recordReduction.execute(DAY, lucia.id(), null, true, false, laura.id());
         UUID id = scheduleActivity.execute(DAY, LocalTime.of(10, 0), ActivityType.MAINTENANCE, null).id();
-        recordAttendance.execute(id, Map.of(juan.id(), AttendanceStatus.UNEXCUSED_ABSENCE));
+        recordAttendance.execute(id, Map.of(juan.id(), AttendanceStatus.UNEXCUSED_ABSENCE), pablo.id(), null);
         Evaluation five = new Evaluation(new BigDecimal("5"), null, null);
 
-        assertThrows(IllegalArgumentException.class, () -> recordEvaluations.execute(id, Map.of(juan.id(), five)));
-        assertThrows(IllegalArgumentException.class, () -> recordEvaluations.execute(id, Map.of(lucia.id(), five)));
-        assertThrows(DiaryEntryNotFoundException.class, () -> recordEvaluations.execute(UUID.randomUUID(), Map.of()));
+        assertThrows(IllegalArgumentException.class, () -> recordEvaluations.execute(id, Map.of(juan.id(), five), pablo.id(), null));
+        assertThrows(IllegalArgumentException.class, () -> recordEvaluations.execute(id, Map.of(lucia.id(), five), pablo.id(), null));
+        assertThrows(DiaryEntryNotFoundException.class, () -> recordEvaluations.execute(UUID.randomUUID(), Map.of(), pablo.id(), null));
     }
 
     @Test
@@ -223,15 +260,15 @@ class DiaryUseCasesTest {
         UUID tomorrow = scheduleActivity.execute(DAY.plusDays(1), LocalTime.of(10, 0), ActivityType.SPORT, null).id();
 
         assertThrows(IllegalArgumentException.class, () ->
-                recordAttendance.execute(tomorrow, Map.of(juan.id(), AttendanceStatus.ATTENDED)));
+                recordAttendance.execute(tomorrow, Map.of(juan.id(), AttendanceStatus.ATTENDED), pablo.id(), null));
     }
 
     @Test
     void reschedulingKeepsTheListAlreadyTaken() {
         UUID id = scheduleActivity.execute(DAY, LocalTime.of(10, 0), ActivityType.SPORT, null).id();
-        recordAttendance.execute(id, Map.of(juan.id(), AttendanceStatus.EXCUSED_ABSENCE));
+        recordAttendance.execute(id, Map.of(juan.id(), AttendanceStatus.EXCUSED_ABSENCE), pablo.id(), null);
 
-        ActivityView moved = rescheduleActivity.execute(id, LocalTime.of(11, 30), ActivityType.OTHER, "Piscina");
+        ActivityView moved = rescheduleActivity.execute(id, LocalTime.of(11, 30), ActivityType.OTHER, "Piscina", pablo.id(), null);
 
         assertEquals("Piscina", moved.title().orElseThrow());
         assertEquals(AttendanceStatus.EXCUSED_ABSENCE, moved.attendance().get(0).status().orElseThrow());
@@ -240,7 +277,7 @@ class DiaryUseCasesTest {
     @Test
     void unknownActivityOrOutingIsNotFound() {
         assertThrows(DiaryEntryNotFoundException.class, () ->
-                rescheduleActivity.execute(UUID.randomUUID(), LocalTime.NOON, ActivityType.WALK, null));
+                rescheduleActivity.execute(UUID.randomUUID(), LocalTime.NOON, ActivityType.WALK, null, pablo.id(), null));
         assertThrows(DiaryEntryNotFoundException.class, () -> deleteOuting.execute(UUID.randomUUID()));
     }
 
@@ -264,9 +301,13 @@ class DiaryUseCasesTest {
 
         @Override
         public ShiftLog save(ShiftLog shiftLog) {
-            logs.removeIf(l -> l.getId().equals(shiftLog.getId()));
-            logs.add(shiftLog);
-            return shiftLog;
+            // Como JPA: cada guardado sube la revisión (la primera es 0)
+            ShiftLog saved = ShiftLog.reconstitute(shiftLog.getId(), shiftLog.getDate(), shiftLog.getPart(),
+                    shiftLog.getStaffIds(), shiftLog.getNotes().orElse(null), shiftLog.getUpdatedBy().orElse(null),
+                    shiftLog.getUpdatedAt(), shiftLog.getRevision().map(r -> r + 1).orElse(0L));
+            logs.removeIf(l -> l.getId().equals(saved.getId()));
+            logs.add(saved);
+            return saved;
         }
 
         @Override
@@ -311,8 +352,12 @@ class DiaryUseCasesTest {
 
         @Override
         public Activity save(Activity activity) {
-            all.put(activity.getId(), activity);
-            return activity;
+            // Como JPA: cada guardado sube la revisión (la primera es 0)
+            Activity saved = Activity.reconstitute(activity.getId(), activity.getDate(), activity.getStartTime(),
+                    activity.getType(), activity.getTitle().orElse(null), activity.getAttendance(),
+                    activity.getEvaluations(), activity.getRevision().map(r -> r + 1).orElse(0L));
+            all.put(saved.getId(), saved);
+            return saved;
         }
 
         @Override

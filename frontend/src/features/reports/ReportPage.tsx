@@ -3,7 +3,7 @@ import { Download, Edit, View } from '@carbon/icons-react'
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
-import { beingEditedBy, listLocks, reportResources, type EditLock } from '../../api/editLocks'
+import { beingEditedBy, reportResources, type EditLock } from '../../api/editLocks'
 import {
   closeReport,
   editReportHeader,
@@ -24,14 +24,12 @@ import { previewFile, saveFile } from '../../shared/files'
 import { whenPosted } from '../../shared/times'
 import { ConfirmDialog, ErrorNotice, Field, LoadingRows, PageHeader } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
-import { useEditLock, type LockState } from '../../shared/useEditLock'
+import { EditingBadge, LockNotice, useOthersEditing } from '../../shared/editing'
+import { useEditLock } from '../../shared/useEditLock'
 import { initialOf, tintFor } from '../users/people'
 import { ReportStateTag } from './ReportsPage'
 
 type Dialog = 'close' | 'reopen' | null
-
-// Cada cuánto se mira quién está editando qué en el informe
-const LOCKS_POLL_MS = 15_000
 
 // Un informe de media estancia o de fin de programa, con las áreas y apartados del modelo del centro.
 // RF8: cada apartado se edita por separado y mientras alguien lo edita nadie más puede; los demás ven quién es
@@ -40,7 +38,6 @@ export function ReportPage() {
   const { t, i18n } = useTranslation()
   const { data, error, loading, reload } = useApi(() => getReport(id), [id])
   const [report, setReport] = useState<Report | null>(null)
-  const [others, setOthers] = useState<Map<string, EditLock>>(new Map())
   const [dirty, setDirty] = useState<Set<string>>(new Set())
   const [dialog, setDialog] = useState<Dialog>(null)
   const [busy, setBusy] = useState(false)
@@ -50,27 +47,7 @@ export function ReportPage() {
   useEffect(() => setReport(data), [data])
 
   // Quién está editando qué. Cuando alguien termina, se recarga el informe para ver lo que ha guardado
-  useEffect(() => {
-    let cancelled = false
-    let previous = ''
-    const poll = () =>
-      listLocks(reportResources.prefix(id))
-        .then((locks) => {
-          if (cancelled) return
-          const theirs = locks.filter((lock) => !lock.mine)
-          const key = theirs.map((lock) => lock.resource).join('|')
-          if (previous && key !== previous) reload()
-          previous = key
-          setOthers(new Map(theirs.map((lock) => [lock.resource, lock])))
-        })
-        .catch(() => {})
-    poll()
-    const timer = window.setInterval(poll, LOCKS_POLL_MS)
-    return () => {
-      cancelled = true
-      window.clearInterval(timer)
-    }
-  }, [id, reload])
+  const others = useOthersEditing([reportResources.prefix(id)], reload)
 
   const markDirty = useCallback((key: string, isDirty: boolean) => {
     setDirty((current) => {
@@ -259,31 +236,6 @@ export function ReportPage() {
       </ConfirmDialog>
     </>
   )
-}
-
-// "Marta lo está editando": lo ve quien no lo tiene abierto
-function EditingBadge({ name }: { name: string | null }) {
-  const { t } = useTranslation()
-  return (
-    <span className="editing-badge">
-      <Edit size={16} aria-hidden="true" />
-      {t('reports.lock.editing', { name: name ?? t('notices.formerEmployee') })}
-    </span>
-  )
-}
-
-// El aviso cuando no se ha podido empezar a editar o se ha perdido el bloqueo
-function LockNotice({ state }: { state: LockState }) {
-  const { t } = useTranslation()
-  if (state.status === 'busy') {
-    return (
-      <p className="form-error" role="alert">
-        {t('reports.lock.busy', { name: state.holderName ?? t('notices.formerEmployee') })}
-      </p>
-    )
-  }
-  if (state.status === 'error') return <ErrorNotice error={state.error} />
-  return null
 }
 
 // La cabecera: los datos personales y las fechas salen de la ficha; el resto lo completa cualquier empleado
@@ -636,7 +588,7 @@ export function SectionEditor({ reportId, section, editable, heldBy, onSaved, on
       )}
       {lockLost ? (
         <p className="form-error" role="alert">
-          {t('reports.lock.lost', { name: lockLost.name ?? t('notices.formerEmployee') })}
+          {t('editing.lost', { name: lockLost.name ?? t('notices.formerEmployee') })}
         </p>
       ) : (
         <ErrorNotice error={error} title={t('form.notSaved')} />
