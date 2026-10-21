@@ -62,17 +62,23 @@ class InterventionDomainTest {
         assertFalse(orphan.canBeManagedBy(author, false));
     }
 
+    // Memoria final: un tutor educador social y un tutor psicólogo; se sustituyen los dos a la vez
     @Test
-    void tutorsAreReplacedAsAWhole() {
-        UUID ana = UUID.randomUUID();
-        UUID pablo = UUID.randomUUID();
+    void tutorsAreOneEducatorAndOnePsychologistReplacedTogether() {
+        StaffMember ana = new StaffMember(UUID.randomUUID(), "Ana", "SOCIAL_EDUCATOR", false);
+        StaffMember pablo = new StaffMember(UUID.randomUUID(), "Pablo", "SOCIAL_EDUCATOR", false);
+        StaffMember marcos = new StaffMember(UUID.randomUUID(), "Marcos", "PSYCHOLOGIST", false);
         ResidentTutors tutors = ResidentTutors.none(patient);
 
-        tutors.assign(Set.of(ana, pablo));
-        assertTrue(tutors.isTutor(ana));
-        tutors.assign(Set.of(pablo));
-        assertFalse(tutors.isTutor(ana));
-        tutors.assign(null);
+        tutors.assign(ana, marcos);
+        assertTrue(tutors.isTutor(ana.id()));
+        assertTrue(tutors.isTutor(marcos.id()));
+        tutors.assign(pablo, null);
+        assertFalse(tutors.isTutor(ana.id()));
+        assertFalse(tutors.isTutor(marcos.id()));
+        assertThrows(IllegalArgumentException.class, () -> tutors.assign(marcos, null));
+        assertThrows(IllegalArgumentException.class, () -> tutors.assign(null, pablo));
+        tutors.assign(null, null);
         assertTrue(tutors.getTutorIds().isEmpty());
     }
 }

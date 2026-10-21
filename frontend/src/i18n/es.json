@@ -484,9 +484,8 @@
     "former": "Antiguo residente: su historial se conserva",
     "openRecord": "Ver ficha",
     "changeTutors": "Cambiar tutores",
-    "whoTutors": "Educadores que tutelan a este residente",
     "noTutorsYet": "Todavía no tiene tutores. Los asignan la administración y los educadores.",
-    "noTutorsAdmin": "Todavía no tiene tutores. Asígnale educadores para que puedan registrar sus intervenciones.",
+    "noTutorsAdmin": "Todavía no tiene tutores. Asígnale un educador social y un psicólogo para que puedan registrar sus intervenciones.",
     "historyTitle": "Intervenciones",
     "historyCount_one": "{{count}} intervención",
     "historyCount_other": "{{count}} intervenciones",
@@ -500,7 +499,10 @@
     "textNeeded": "Describe la intervención antes de guardarla.",
     "delete": "Eliminar",
     "deleteTitle": "¿Eliminar esta intervención?",
-    "deleteBody": "Desaparecerá del historial de {{name}}. No se puede deshacer."
+    "deleteBody": "Desaparecerá del historial de {{name}}. No se puede deshacer.",
+    "educatorTutor": "Tutor/a educador/a social",
+    "psychologistTutor": "Tutor/a psicólogo/a",
+    "unassigned": "Sin asignar"
   },
   "reports": {
     "title": "Informes",

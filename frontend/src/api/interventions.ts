@@ -64,9 +64,12 @@ export function getFollowUp(patientId: string) {
   return request<FollowUp>(`/interventions/residents/${patientId}`)
 }
 
-// Sustituye a todos los tutores. Solo la administración
-export function assignTutors(patientId: string, tutorIds: string[]) {
-  return request<FollowUpStaff[]>(`/interventions/residents/${patientId}/tutors`, { method: 'PUT', body: { tutorIds } })
+// Los dos tutores: un educador social y un psicólogo (null: sin asignar). La administración y los educadores
+export function assignTutors(patientId: string, educatorId: string | null, psychologistId: string | null) {
+  return request<FollowUpStaff[]>(`/interventions/residents/${patientId}/tutors`, {
+    method: 'PUT',
+    body: { educatorId, psychologistId },
+  })
 }
 
 // Solo los tutores del residente

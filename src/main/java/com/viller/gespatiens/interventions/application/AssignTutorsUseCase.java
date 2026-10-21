@@ -10,11 +10,12 @@ import com.viller.gespatiens.interventions.domain.StaffMember;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
-// Asignar los tutores de un residente. Quién puede (la administración y los educadores) lo comprueba
-// SecurityConfig. Por decisión del centro, solo los educadores sociales son tutores
+// Asignar los tutores de un residente: un educador social y un psicólogo (memoria final). Quién puede
+// (la administración y los educadores) lo comprueba SecurityConfig
 public class AssignTutorsUseCase {
 
     private final ResidentDirectory residentDirectory;
@@ -28,26 +29,28 @@ public class AssignTutorsUseCase {
         this.staffDirectory = staffDirectory;
     }
 
-    public List<StaffMember> execute(UUID patientId, Set<UUID> tutorIds) {
+    // null: ese tutor queda sin asignar
+    public List<StaffMember> execute(UUID patientId, UUID educatorId, UUID psychologistId) {
         Resident resident = residentDirectory.find(patientId)
                 .orElseThrow(() -> new ResidentNotFoundException(patientId));
         if (!resident.active()) {
             throw new IllegalArgumentException("Solo se asignan tutores a residentes que están en el centro");
         }
-        Set<UUID> ids = tutorIds == null ? Set.of() : tutorIds;
-        Map<UUID, StaffMember> staff = FollowUpViews.staffOf(staffDirectory, ids);
-        for (UUID id : ids) {
-            StaffMember member = staff.get(id);
-            if (member == null) {
-                throw new IllegalArgumentException("No existe ningún empleado con id " + id);
-            }
-            if (!member.isSocialEducator()) {
-                throw new IllegalArgumentException("Solo los educadores sociales pueden ser tutores: " + member.name()
-                        + " no lo es");
-            }
-        }
+        Map<UUID, StaffMember> staff = FollowUpViews.staffOf(staffDirectory,
+                Stream.of(educatorId, psychologistId).filter(Objects::nonNull).toList());
         ResidentTutors tutors = tutorsRepository.findByPatient(patientId);
-        tutors.assign(ids);
+        tutors.assign(member(staff, educatorId), member(staff, psychologistId));
         return FollowUpViews.tutors(tutorsRepository.save(tutors), staff);
+    }
+
+    private static StaffMember member(Map<UUID, StaffMember> staff, UUID id) {
+        if (id == null) {
+            return null;
+        }
+        StaffMember member = staff.get(id);
+        if (member == null) {
+            throw new IllegalArgumentException("No existe ningún empleado con id " + id);
+        }
+        return member;
     }
 }
