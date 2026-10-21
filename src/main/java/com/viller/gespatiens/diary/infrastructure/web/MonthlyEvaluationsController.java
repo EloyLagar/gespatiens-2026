@@ -49,7 +49,7 @@ public class MonthlyEvaluationsController {
     public MarkResponse recordMark(Principal principal, @PathVariable UUID activityId, @PathVariable UUID patientId,
                                    @RequestBody MarkRequest request) {
         return new MarkResponse(recordMarkUseCase.execute(activityId, patientId, request.mark(),
-                UUID.fromString(principal.getName()), request.version()));
+                UUID.fromString(principal.getName()), DiaryRequests.requiredVersion(request.version())));
     }
 
     // mark null: quitar la nota

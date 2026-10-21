@@ -36,6 +36,7 @@ public class Patient {
 
     // Dar de alta a un residente nuevo: el número se lo asigna ResidentNumberAssigner
     public static Patient admit(PatientDetails details, int number, LocalDate entryDate) {
+        checkNotFuture(entryDate);
         return new Patient(UUID.randomUUID(), details, number, entryDate, null);
     }
 
@@ -86,6 +87,7 @@ public class Patient {
         if (entryDate == null) {
             throw new IllegalArgumentException("La fecha de entrada no puede estar vacía");
         }
+        checkNotFuture(entryDate);
         if (entryDate.isBefore(exitDate)) {
             throw new IllegalArgumentException(
                     "La fecha de reingreso no puede ser anterior a la última salida (" + exitDate + ")");
@@ -94,6 +96,13 @@ public class Patient {
         this.number = number;
         this.entryDate = entryDate;
         this.exitDate = null;
+    }
+
+    // Un alta futura ocuparía plaza y número (RF10, RF11) antes de que la persona llegue, y abriría ya sus informes
+    private static void checkNotFuture(LocalDate entryDate) {
+        if (entryDate != null && entryDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("La fecha de entrada no puede ser futura");
+        }
     }
 
     // Invariante: activo <=> tiene número y no tiene fecha de salida

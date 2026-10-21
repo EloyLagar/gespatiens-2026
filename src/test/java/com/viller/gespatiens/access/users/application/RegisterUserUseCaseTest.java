@@ -41,6 +41,18 @@ class RegisterUserUseCaseTest {
                 useCase.execute("Otra", "otra@vientos.es", "600111222", Speciality.SOCIAL_WORKER, "secreto123"));
     }
 
+    // Antes llegaban a la base de datos y la API respondía 409 "conflicto" en vez de 400
+    @Test
+    void rejectsFieldsLongerThanTheirColumns() {
+        assertThrows(IllegalArgumentException.class, () ->
+                useCase.execute("A".repeat(51), "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "secreto123"));
+        assertThrows(IllegalArgumentException.class, () ->
+                useCase.execute("Ana", "ana@vientos.es", "6".repeat(21), Speciality.PSYCHOLOGIST, "secreto123"));
+        assertThrows(IllegalArgumentException.class, () ->
+                useCase.execute("Ana", "a".repeat(250) + "@vientos.es", "600111222", Speciality.PSYCHOLOGIST,
+                        "secreto123"));
+    }
+
     @Test
     void rejectsShortPassword() {
         assertThrows(IllegalArgumentException.class, () ->

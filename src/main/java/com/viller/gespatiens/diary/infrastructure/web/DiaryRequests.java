@@ -15,6 +15,15 @@ public final class DiaryRequests {
     private DiaryRequests() {
     }
 
+    // RF8: al cambiar algo que ya existe, el frontend manda siempre la versión que tenía en pantalla. Sin ella
+    // la comprobación se saltaba y se podía pisar lo que otra persona acababa de guardar
+    static long requiredVersion(Long version) {
+        if (version == null) {
+            throw new IllegalArgumentException("Falta la versión de lo que tenías en pantalla. Recarga la página");
+        }
+        return version;
+    }
+
     // version: la que tenía el turno en pantalla (0 si estaba sin rellenar). RF8: si no coincide, 409
     public record ShiftRequest(Set<UUID> staffIds, String notes, Long version) {
     }

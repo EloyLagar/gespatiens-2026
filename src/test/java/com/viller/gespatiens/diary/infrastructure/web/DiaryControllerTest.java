@@ -194,13 +194,13 @@ class DiaryControllerTest {
     @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
     void attendanceIsSentAsResidentToStatus() throws Exception {
         UUID activity = UUID.randomUUID();
-        when(recordAttendanceUseCase.execute(activity, Map.of(PATIENT, AttendanceStatus.EXCUSED_ABSENCE), UUID.fromString(ME), null))
+        when(recordAttendanceUseCase.execute(activity, Map.of(PATIENT, AttendanceStatus.EXCUSED_ABSENCE), UUID.fromString(ME), 2L))
                 .thenReturn(new ActivityView(activity, LocalTime.of(17, 0), ActivityType.WALK, Optional.empty(), List.of(),
                         NO_AVERAGES, 3));
 
         mockMvc.perform(put("/api/diary/activities/{id}/attendance", activity)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"attendance\":{\"" + PATIENT + "\":\"EXCUSED_ABSENCE\"}}"))
+                        .content("{\"attendance\":{\"" + PATIENT + "\":\"EXCUSED_ABSENCE\"},\"version\":2}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.type").value("WALK"));
     }
@@ -211,7 +211,7 @@ class DiaryControllerTest {
         Resident lucia = new Resident(PATIENT, 5, "Lucía", "Martínez", true);
         UUID activity = UUID.randomUUID();
         Evaluation evaluation = new Evaluation(new BigDecimal("7.5"), new BigDecimal("9"), null);
-        when(recordEvaluationsUseCase.execute(activity, Map.of(PATIENT, evaluation), UUID.fromString(ME), null))
+        when(recordEvaluationsUseCase.execute(activity, Map.of(PATIENT, evaluation), UUID.fromString(ME), 2L))
                 .thenReturn(new ActivityView(activity, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, Optional.empty(),
                         List.of(new AttendanceRow(lucia, Optional.of(AttendanceStatus.ATTENDED), false, Optional.empty(),
                                 Optional.of(evaluation))),
@@ -220,7 +220,7 @@ class DiaryControllerTest {
 
         mockMvc.perform(put("/api/diary/activities/{id}/evaluations", activity)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":7.5,\"satisfaction\":9,\"utility\":null}}}"))
+                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":7.5,\"satisfaction\":9,\"utility\":null}},\"version\":2}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.attendance[0].evaluation.mark").value(7.5))
                 .andExpect(jsonPath("$.averages.satisfaction").value(9.0));
@@ -230,18 +230,33 @@ class DiaryControllerTest {
     @WithMockUser(username = ME, roles = "ADMINISTRATOR")
     void anEmptyEvaluationIsLeftOutAndAnOutOfRangeOneIsBadRequest() throws Exception {
         UUID activity = UUID.randomUUID();
-        when(recordEvaluationsUseCase.execute(activity, Map.of(), UUID.fromString(ME), null))
+        when(recordEvaluationsUseCase.execute(activity, Map.of(), UUID.fromString(ME), 2L))
                 .thenReturn(new ActivityView(activity, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, Optional.empty(),
                         List.of(), NO_AVERAGES, 3));
 
         mockMvc.perform(put("/api/diary/activities/{id}/evaluations", activity)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":null}}}"))
+                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":null}},\"version\":2}"))
                 .andExpect(status().isOk());
         mockMvc.perform(put("/api/diary/activities/{id}/evaluations", activity)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":11}}}"))
+                        .content("{\"evaluations\":{\"" + PATIENT + "\":{\"mark\":11}},\"version\":2}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    // RF8: sin la versión que tenía en pantalla no se puede comprobar si otra persona lo ha cambiado entretanto
+    @Test
+    @WithMockUser(username = ME, roles = "SOCIAL_EDUCATOR")
+    void changesWithoutTheVersionOnScreenAreBadRequest() throws Exception {
+        mockMvc.perform(put("/api/diary/activities/{id}/attendance", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"attendance\":{\"" + PATIENT + "\":\"ATTENDED\"}}"))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(put("/api/diary/2026-10-21/shifts/MORNING")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"staffIds\":[],\"notes\":\"pisando\"}"))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(recordAttendanceUseCase, recordShiftUseCase);
     }
 
     @Test

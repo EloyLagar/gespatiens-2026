@@ -871,5 +871,9 @@
     "invalidTitle": "This link does not work",
     "invalid": "You may have used it already, it may have expired, or a newer one may have been sent. Ask administration for a new link.",
     "toLogin": "Go to sign in"
+  },
+  "forbidden": {
+    "title": "Administration only",
+    "text": "This screen belongs to the centre administration. If you think you should have access, ask administration."
   }
 }
