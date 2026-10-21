@@ -1,5 +1,6 @@
 # Integración continua: en cada push y pull request se pasan todos los tests, también los que necesitan
-# PostgreSQL (contra una base de datos de usar y tirar), y se comprueba que el frontend compila
+# PostgreSQL (contra una base de datos de usar y tirar, con el mismo nombre y el mismo esquema de tests que en
+# local), y se comprueba que el frontend compila
 name: CI
 
 on:
@@ -14,7 +15,7 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_DB: gespatiens-test
+          POSTGRES_DB: gespatiens-refactor
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:

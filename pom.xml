@@ -28,9 +28,10 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
-		<!-- Los tests que usan PostgreSQL van a su propia base de datos, nunca a la de desarrollo.
-		     Se cambia con -Dtest.db.url=... (la integración continua usa la de su contenedor) -->
-		<test.db.url>jdbc:postgresql://localhost:5432/gespatiens-test</test.db.url>
+		<!-- Los tests que usan PostgreSQL trabajan en su propio esquema, nunca en el de la app: Flyway lo crea
+		     y lo migra solo. Se cambia con -Dtest.db.url=... y -Dtest.db.schema=... -->
+		<test.db.schema>gespatiens_test</test.db.schema>
+		<test.db.url>jdbc:postgresql://localhost:5432/gespatiens-refactor?currentSchema=${test.db.schema}</test.db.url>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -104,6 +105,7 @@
 				<configuration>
 					<systemPropertyVariables>
 						<spring.datasource.url>${test.db.url}</spring.datasource.url>
+						<spring.flyway.schemas>${test.db.schema}</spring.flyway.schemas>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
