@@ -14,8 +14,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-// Asignar los tutores de un residente: un educador social y un psicólogo (memoria final). Quién puede
-// (la administración y los educadores) lo comprueba SecurityConfig
+// Asignar los tutores de un residente: un educador social y un psicólogo (memoria final). Solo la
+// administración (decisión del centro): lo comprueba SecurityConfig
 public class AssignTutorsUseCase {
 
     private final ResidentDirectory residentDirectory;

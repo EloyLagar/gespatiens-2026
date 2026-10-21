@@ -134,15 +134,15 @@ class InterventionControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Pablo"));
     }
 
+    // Los tutores los asigna solo la administración (decisión del centro)
     @Test
     @WithMockUser(username = ME, roles = "SOCIAL_EDUCATOR")
-    void educatorsAlsoAssignTutors() throws Exception {
-        when(assignTutorsUseCase.execute(PATIENT, ME_ID, null)).thenReturn(List.of(pablo));
-
+    void educatorsCannotAssignTutors() throws Exception {
         mockMvc.perform(put("/api/interventions/residents/{id}/tutors", PATIENT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"educatorId\":\"" + ME + "\",\"psychologistId\":null}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(assignTutorsUseCase);
     }
 
     @Test

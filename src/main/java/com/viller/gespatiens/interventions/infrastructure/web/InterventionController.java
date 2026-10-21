@@ -27,8 +27,8 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
-// El apartado "Intervenciones". Todo el personal consulta; los tutores los asignan la administración y
-// los educadores (ver SecurityConfig) y quién registra, corrige o elimina cada intervención lo decide el dominio
+// El apartado "Intervenciones". Todo el personal consulta; los tutores los asigna solo la administración
+// (ver SecurityConfig) y quién registra, corrige o elimina cada intervención lo decide el dominio
 @RestController
 @RequestMapping("/api/interventions")
 public class InterventionController {

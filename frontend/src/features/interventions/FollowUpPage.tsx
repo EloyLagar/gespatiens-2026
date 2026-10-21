@@ -25,9 +25,9 @@ import { initialOf, tintFor } from '../users/people'
 export function FollowUpPage() {
   const { patientId = '' } = useParams()
   const { t } = useTranslation()
-  const { user, isAdmin } = useAuth()
-  // Asignan tutores la administración y los educadores (decisión del centro)
-  const canAssignTutors = isAdmin || user?.speciality === 'SOCIAL_EDUCATOR'
+  const { isAdmin } = useAuth()
+  // Los tutores los asigna solo la administración (decisión del centro)
+  const canAssignTutors = isAdmin
   const { data, error, loading, reload } = useApi(() => getFollowUp(patientId), [patientId])
   const [followUp, setFollowUp] = useState<FollowUp | null>(null)
   const [deleting, setDeleting] = useState<Intervention | null>(null)
