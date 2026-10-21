@@ -14,6 +14,7 @@ import { EmployeeFormPage } from './features/users/EmployeeFormPage'
 import { EmployeesPage } from './features/users/EmployeesPage'
 import { ProfilePage } from './features/users/ProfilePage'
 import { EvaluationsPage } from './features/evaluations/EvaluationsPage'
+import { DashboardPage } from './features/dashboard/DashboardPage'
 import { ReportPage } from './features/reports/ReportPage'
 import { ReportsPage } from './features/reports/ReportsPage'
 import { AppShell } from './layout/AppShell'
@@ -36,6 +37,14 @@ export function App() {
         <Route path="diario" element={<DiaryPage />} />
         <Route path="diario/:date" element={<DiaryPage />} />
         <Route path="valoraciones" element={<EvaluationsPage />} />
+        <Route
+          path="panel"
+          element={
+            <RequireAdmin>
+              <DashboardPage />
+            </RequireAdmin>
+          }
+        />
         <Route path="informes" element={<ReportsPage />} />
         <Route path="informes/:id" element={<ReportPage />} />
         <Route path="intervenciones" element={<InterventionsPage />} />

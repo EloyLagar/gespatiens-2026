@@ -18,7 +18,8 @@
     "diary": "Diary",
     "interventions": "Interventions",
     "reports": "Reports",
-    "evaluations": "Evaluations"
+    "evaluations": "Evaluations",
+    "dashboard": "Dashboard"
   },
   "language": {
     "label": "Language",
@@ -715,5 +716,31 @@
     "measureEndDate": "Order ends",
     "notes": "Information from the institution",
     "notesHelp": "What the referring institution provides: conditions, follow-up, reports it requires…"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "The figures at the top are today's; the charts are for the month you choose",
+    "month": "Month",
+    "figures": "Today's figures",
+    "places": "Places taken",
+    "freePlaces_one": "{{count}} place left",
+    "freePlaces_other": "{{count}} places left",
+    "withoutTutors": "Residents missing a tutor",
+    "goTutors": "Assign tutors",
+    "reportsInProgress": "Reports in progress",
+    "goReports": "See reports",
+    "interventions": "Interventions",
+    "inMonth": "In the chosen month",
+    "shiftsTitle": "Shifts per employee",
+    "shiftsSubtitle": "Diary shifts each employee appears in during the month",
+    "shiftsDetail": "Morning {{morning}} · afternoon {{afternoon}} · night {{night}}",
+    "noShifts": "Nobody appears in any shift this month yet.",
+    "asTable": "Show as a table",
+    "employee": "Employee",
+    "total": "Total",
+    "noticesTitle": "Notices per week",
+    "noticesSubtitle": "Notices posted each week (Monday to Sunday) that touches the month",
+    "weekOf_one": "Week of {{date}}: {{count}} notice",
+    "weekOf_other": "Week of {{date}}: {{count}} notices"
   }
 }

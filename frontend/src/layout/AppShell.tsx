@@ -1,4 +1,4 @@
-import { Archive, ChartLine, Close, Collaborate, Document, Group, Logout, Menu, Notebook, Notification, UserMultiple, UserProfile } from '@carbon/icons-react'
+import { Archive, ChartLine, Close, Dashboard, Collaborate, Document, Group, Logout, Menu, Notebook, Notification, UserMultiple, UserProfile } from '@carbon/icons-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
@@ -14,7 +14,7 @@ interface NavItem {
 
 export function AppShell() {
   const { t } = useTranslation()
-  const { user, logout } = useAuth()
+  const { user, isAdmin, logout } = useAuth()
   const saveLanguage = useSaveLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
@@ -49,6 +49,8 @@ export function AppShell() {
     { to: '/residentes', label: t('nav.residents'), icon: <UserMultiple size={16} /> },
     { to: '/antiguos', label: t('nav.formerResidents'), icon: <Archive size={16} /> },
     { to: '/empleados', label: t('nav.employees'), icon: <Group size={16} /> },
+    // Memoria final, 5.1: el panel de control solo lo ve la administración
+    ...(isAdmin ? [{ to: '/panel', label: t('nav.dashboard'), icon: <Dashboard size={16} /> }] : []),
   ]
 
   const nav = (

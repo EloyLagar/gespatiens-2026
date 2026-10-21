@@ -18,7 +18,8 @@
     "diary": "Diario",
     "interventions": "Intervenciones",
     "reports": "Informes",
-    "evaluations": "Valoraciones"
+    "evaluations": "Valoraciones",
+    "dashboard": "Panel de control"
   },
   "language": {
     "label": "Idioma",
@@ -715,5 +716,31 @@
     "measureEndDate": "Fin de la medida",
     "notes": "Información de la institución",
     "notesHelp": "Lo que aporta la institución que lo deriva: condiciones, seguimiento, informes que pide…"
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "subtitle": "Las cifras de arriba son las de hoy; los gráficos, los del mes que elijas",
+    "month": "Mes",
+    "figures": "Cifras de hoy",
+    "places": "Plazas ocupadas",
+    "freePlaces_one": "Queda {{count}} plaza libre",
+    "freePlaces_other": "Quedan {{count}} plazas libres",
+    "withoutTutors": "Residentes sin sus dos tutores",
+    "goTutors": "Asignar tutores",
+    "reportsInProgress": "Informes en elaboración",
+    "goReports": "Ver informes",
+    "interventions": "Intervenciones",
+    "inMonth": "En el mes elegido",
+    "shiftsTitle": "Turnos por trabajador",
+    "shiftsSubtitle": "Turnos del diario en los que figura cada empleado durante el mes",
+    "shiftsDetail": "Mañana {{morning}} · tarde {{afternoon}} · noche {{night}}",
+    "noShifts": "Nadie figura todavía en ningún turno de este mes.",
+    "asTable": "Ver como tabla",
+    "employee": "Empleado",
+    "total": "Total",
+    "noticesTitle": "Avisos por semana",
+    "noticesSubtitle": "Avisos publicados cada semana (de lunes a domingo) que toca el mes",
+    "weekOf_one": "Semana del {{date}}: {{count}} aviso",
+    "weekOf_other": "Semana del {{date}}: {{count}} avisos"
   }
 }
