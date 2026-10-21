@@ -55,6 +55,9 @@ export interface Patient {
   extraInfo: string | null
   entryDate: IsoDate
   exitDate: IsoDate | null
+  // Todas sus estancias, de la más antigua a la actual (o la última). exitDate null: sigue en el centro.
+  // Puede faltar en respuestas de antes del historial
+  stays?: { entryDate: IsoDate; exitDate: IsoDate | null }[]
 }
 
 // La ficha editable: lo que envían el alta (POST) y la edición (PUT)

@@ -152,6 +152,7 @@ export function PatientDetailPage() {
             {t('detail.days', { count: daysBetween(patient.entryDate, patient.exitDate ?? undefined) })}
           </Field>
         </dl>
+        <StayHistory patient={patient} />
       </section>
 
       <section className="panel" aria-labelledby="personal-title">
@@ -255,5 +256,31 @@ export function PatientDetailPage() {
         />
       )}
     </>
+  )
+}
+
+// Las estancias anteriores (un reingreso ya no borra la anterior). Solo sale si ha estado más de una vez
+function StayHistory({ patient }: { patient: Patient }) {
+  const { t, i18n } = useTranslation()
+  const previous = (patient.stays ?? []).slice(0, -1)
+  if (previous.length === 0) return null
+  const total = (patient.stays ?? []).reduce((days, s) => days + daysBetween(s.entryDate, s.exitDate ?? undefined), 0)
+  return (
+    <div className="stay-history">
+      <h3>{t('detail.previousStays', { count: previous.length })}</h3>
+      <ol className="stay-history__list">
+        {[...previous].reverse().map((s) => (
+          <li key={s.entryDate}>
+            <span className="num">
+              {formatDate(s.entryDate, i18n.language)} – {s.exitDate ? formatDate(s.exitDate, i18n.language) : ''}
+            </span>
+            <span className="stay-history__days">
+              {t('detail.days', { count: daysBetween(s.entryDate, s.exitDate ?? undefined) })}
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p className="stay-history__total">{t('detail.totalDays', { count: total })}</p>
+    </div>
   )
 }

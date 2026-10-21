@@ -4,6 +4,7 @@ import com.viller.gespatiens.patients.domain.Patient;
 import com.viller.gespatiens.patients.domain.PatientDetails;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 // DTO de salida: aplana el agregado para el JSON
@@ -23,7 +24,12 @@ public record PatientResponse(
         String abuseSubstances,
         String extraInfo,
         LocalDate entryDate,
-        LocalDate exitDate) {
+        LocalDate exitDate,
+        // Todas sus estancias, de la más antigua a la actual (o la última). exitDate null: sigue en el centro
+        List<StayResponse> stays) {
+
+    public record StayResponse(LocalDate entryDate, LocalDate exitDate) {
+    }
 
     public static PatientResponse from(Patient patient) {
         PatientDetails details = patient.getDetails();
@@ -43,6 +49,7 @@ public record PatientResponse(
                 details.abuseSubstances(),
                 details.extraInfo(),
                 patient.getEntryDate(),
-                patient.getExitDate());
+                patient.getExitDate(),
+                patient.stays().stream().map(s -> new StayResponse(s.entryDate(), s.exitDate())).toList());
     }
 }

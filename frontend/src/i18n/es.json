@@ -150,7 +150,11 @@
       "saved": "Ficha guardada.",
       "discharged": "{{name}} ha pasado a antiguos residentes. Su ficha se conserva."
     },
-    "interventions": "Tutores e intervenciones"
+    "interventions": "Tutores e intervenciones",
+    "previousStays_one": "Estancia anterior",
+    "previousStays_other": "{{count}} estancias anteriores",
+    "totalDays_one": "En total, {{count}} día en el centro",
+    "totalDays_other": "En total, {{count}} días en el centro"
   },
   "discharge": {
     "title": "¿Dar de baja a {{name}}?",
