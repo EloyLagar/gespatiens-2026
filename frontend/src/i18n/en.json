@@ -660,5 +660,20 @@
     "editing": "{{name}} is editing it",
     "busy": "{{name}} is editing it right now. You can edit it when they finish.",
     "lost": "{{name}} has started editing it (your editing session expired). Copy your text before leaving so you don't lose it."
+  },
+  "visitors": {
+    "title": "People authorised to visit",
+    "add": "Add person",
+    "authorize": "Authorise",
+    "none": "Nobody authorised yet.",
+    "name": "Name",
+    "relationship": "Relationship",
+    "relationshipHint": "Mother, brother, partner…",
+    "phoneNumber": "Phone",
+    "editWho": "Edit {{name}}",
+    "revoke": "Remove",
+    "revokeWho": "Remove {{name}}",
+    "revokeTitle": "Remove {{name}} from the authorised people?",
+    "revokeBody": "They will no longer be listed as authorised to visit the resident."
   }
 }

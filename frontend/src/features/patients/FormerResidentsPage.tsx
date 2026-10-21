@@ -9,11 +9,14 @@ import { ErrorNotice, LoadingRows, PageHeader } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
 import { bedsOf, nextFreeNumber } from './beds'
 import { ReadmitDialog } from './ReadmitDialog'
+import { useAuth } from '../../auth/AuthContext'
 import { matches } from './search'
 
 // Pregunta de la pantalla: ¿quién ha pasado por el centro y puede volver?
 export function FormerResidentsPage() {
   const { t, i18n } = useTranslation()
+  // Memoria final: reincorporar es de la administración
+  const { isAdmin } = useAuth()
   const navigate = useNavigate()
   const former = useApi(() => listPatients('FORMER'), [])
   // Las plazas libres deciden si se puede reincorporar a alguien (RF10) y con qué número
@@ -74,9 +77,11 @@ export function FormerResidentsPage() {
                   <th scope="col" className="num">{t('patient.entryDate')}</th>
                   <th scope="col" className="num">{t('patient.exitDate')}</th>
                   <th scope="col" className="num">{t('patient.stay')}</th>
-                  <th scope="col" className="col-action">
-                    <span className="visually-hidden">{t('common.actions')}</span>
-                  </th>
+                  {isAdmin && (
+                    <th scope="col" className="col-action">
+                      <span className="visually-hidden">{t('common.actions')}</span>
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -105,17 +110,19 @@ export function FormerResidentsPage() {
                         <span className="dash">—</span>
                       )}
                     </td>
-                    <td className="col-action">
-                      <Button
-                        kind="ghost"
-                        size="sm"
-                        disabled={centreFull}
-                        onClick={() => setReadmitting(p)}
-                        aria-label={t('former.readmitWho', { name: `${p.name} ${p.surname}` })}
-                      >
-                        {t('former.readmit')}
-                      </Button>
-                    </td>
+                    {isAdmin && (
+                      <td className="col-action">
+                        <Button
+                          kind="ghost"
+                          size="sm"
+                          disabled={centreFull}
+                          onClick={() => setReadmitting(p)}
+                          aria-label={t('former.readmitWho', { name: `${p.name} ${p.surname}` })}
+                        >
+                          {t('former.readmit')}
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

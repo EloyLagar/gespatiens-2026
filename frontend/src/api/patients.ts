@@ -28,3 +28,30 @@ export function readmitPatient(id: string, entryDate: IsoDate) {
 export function deletePatient(id: string) {
   return request<void>(`/patients/${id}`, { method: 'DELETE' })
 }
+
+// Personas autorizadas a visitar a un residente (memoria final). Las ve todo el personal; las gestiona la
+// administración
+export interface Visitor {
+  id: string
+  name: string
+  relationship: string
+  phoneNumber: string
+}
+
+export type VisitorInput = Omit<Visitor, 'id'>
+
+export function listVisitors(patientId: string) {
+  return request<Visitor[]>(`/patients/${patientId}/visitors`)
+}
+
+export function authorizeVisitor(patientId: string, visitor: VisitorInput) {
+  return request<Visitor>(`/patients/${patientId}/visitors`, { method: 'POST', body: visitor })
+}
+
+export function updateVisitor(patientId: string, visitorId: string, visitor: VisitorInput) {
+  return request<Visitor>(`/patients/${patientId}/visitors/${visitorId}`, { method: 'PUT', body: visitor })
+}
+
+export function revokeVisitor(patientId: string, visitorId: string) {
+  return request<void>(`/patients/${patientId}/visitors/${visitorId}`, { method: 'DELETE' })
+}

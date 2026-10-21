@@ -1,5 +1,6 @@
 package com.viller.gespatiens.patients.infrastructure.web;
 
+import com.viller.gespatiens.patients.domain.AuthorizedVisitorNotFoundException;
 import com.viller.gespatiens.patients.domain.CenterFullException;
 import com.viller.gespatiens.patients.domain.PatientAlreadyActiveException;
 import com.viller.gespatiens.patients.domain.PatientAlreadyDischargedException;
@@ -24,8 +25,8 @@ public class PatientExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    @ExceptionHandler(PatientNotFoundException.class)
-    public ProblemDetail handleNotFound(PatientNotFoundException ex) {
+    @ExceptionHandler({PatientNotFoundException.class, AuthorizedVisitorNotFoundException.class})
+    public ProblemDetail handleNotFound(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 }

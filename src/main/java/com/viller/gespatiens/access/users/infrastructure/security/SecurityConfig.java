@@ -36,10 +36,11 @@ public class SecurityConfig {
                         // RF7: editar, restablecer contraseñas y eliminar perfiles es cosa de la administración
                         .requestMatchers(HttpMethod.PUT, "/api/users/*", "/api/users/*/password").hasRole("ADMINISTRATOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMINISTRATOR")
-                        // RF9: solo la administración puede dar de baja residentes
-                        .requestMatchers(HttpMethod.POST, "/api/patients/*/discharge").hasRole("ADMINISTRATOR")
-                        // El borrado definitivo es irreversible: también solo la administración
-                        .requestMatchers(HttpMethod.DELETE, "/api/patients/*").hasRole("ADMINISTRATOR")
+                        // Memoria final: "La aplicación deberá proporcionar a la administración un menú de gestión de
+                        // usuarios": dar de alta, modificar, reincorporar, dar de baja (RF9) y borrar fichas, y
+                        // gestionar a quién se autoriza a visitar, es de la administración. Consultarlas, de todos
+                        .requestMatchers(HttpMethod.GET, "/api/patients/**").authenticated()
+                        .requestMatchers("/api/patients", "/api/patients/**").hasRole("ADMINISTRATOR")
                         // Diario: "un espacio para que el equipo médico pueda registrar los pacientes rebajados
                         // con su tipo de rebaja. Los demás usuarios solo deben poder verlo". Por decisión del
                         // centro, la administración también puede registrarlas

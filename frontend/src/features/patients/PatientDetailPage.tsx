@@ -13,6 +13,7 @@ import { ResidentReportsPanel } from '../reports/ResidentReportsPanel'
 import { bedsOf, nextFreeNumber } from './beds'
 import { detailsOf, PatientForm } from './PatientForm'
 import { ReadmitDialog } from './ReadmitDialog'
+import { VisitorsPanel } from './VisitorsPanel'
 
 type Flash = 'admitted' | 'readmitted' | 'saved' | 'discharged' | null
 
@@ -112,9 +113,12 @@ export function PatientDetailPage() {
         subtitle={status}
         actions={
           <>
-            <Button kind="tertiary" renderIcon={Edit} onClick={() => setEditing(true)}>
-              {t('common.edit')}
-            </Button>
+            {/* Memoria final: la ficha la gestiona la administración; los demás la consultan */}
+            {isAdmin && (
+              <Button kind="tertiary" renderIcon={Edit} onClick={() => setEditing(true)}>
+                {t('common.edit')}
+              </Button>
+            )}
             <Link className="cds--btn cds--btn--ghost" to={`/intervenciones/${patient.id}`}>
               {t('detail.interventions')}
             </Link>
@@ -124,7 +128,7 @@ export function PatientDetailPage() {
                 {t('detail.discharge')}
               </Button>
             )}
-            {!patient.active && (
+            {!patient.active && isAdmin && (
               <Button onClick={() => setDialog('readmit')} disabled={active.data !== null && nextNumber === null}>
                 {t('former.readmit')}
               </Button>
@@ -177,6 +181,8 @@ export function PatientDetailPage() {
           </div>
         </dl>
       </section>
+
+      <VisitorsPanel patientId={patient.id} canManage={isAdmin} />
 
       <ResidentReportsPanel patientId={patient.id} active={patient.active} />
 
