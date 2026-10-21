@@ -51,17 +51,17 @@ class AuditControllerTest {
         when(searchAuditLog.execute(LUCIA, null, LocalDate.of(2026, 10, 1), null, 0)).thenReturn(
                 new SearchAuditLogUseCase.Result(List.of(
                         new SearchAuditLogUseCase.Line(
-                                AuditEntry.record(Instant.parse("2026-10-21T09:00:00Z"), ANA, AuditAction.VIEW_REFERRAL, LUCIA, null),
+                                AuditEntry.record(Instant.parse("2026-10-21T09:00:00Z"), ANA, AuditAction.EDIT_REFERRAL, LUCIA, null),
                                 "Ana", new AuditDirectory.Resident(LUCIA, 5, "Lucía", "Martínez")),
                         new SearchAuditLogUseCase.Line(
-                                AuditEntry.record(Instant.parse("2026-10-20T09:00:00Z"), ANA, AuditAction.VIEW_RECORD, deleted, null),
+                                AuditEntry.record(Instant.parse("2026-10-20T09:00:00Z"), ANA, AuditAction.EDIT_RECORD, deleted, null),
                                 "Ana", null)),
                         0, 1, 2));
 
         mockMvc.perform(get("/api/audit").param("patientId", LUCIA.toString()).param("from", "2026-10-01"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalEntries").value(2))
-                .andExpect(jsonPath("$.entries[0].action").value("VIEW_REFERRAL"))
+                .andExpect(jsonPath("$.entries[0].action").value("EDIT_REFERRAL"))
                 .andExpect(jsonPath("$.entries[0].actor.name").value("Ana"))
                 .andExpect(jsonPath("$.entries[0].resident.number").value(5))
                 // Residente borrado: queda el id, sin nombre

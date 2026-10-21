@@ -4,10 +4,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-// Repositorio del registro de accesos: solo se añade y se consulta
+// Repositorio del registro de cambios: se añade, se consulta y se borra lo que ha pasado el plazo
 public interface AuditLog {
 
     void append(AuditEntry entry);
+
+    // Borra lo anterior a limit (excluido). Devuelve cuántas líneas
+    long deleteBefore(Instant limit);
 
     // Del más reciente al más antiguo. page empieza en 0
     Page search(Filter filter, int page, int size);

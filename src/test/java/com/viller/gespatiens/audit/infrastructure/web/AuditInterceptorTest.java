@@ -39,6 +39,11 @@ class AuditInterceptorTest {
         }
 
         @Override
+        public long deleteBefore(Instant limit) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public Page search(Filter filter, int page, int size) {
             throw new UnsupportedOperationException();
         }
@@ -84,22 +89,22 @@ class AuditInterceptorTest {
     }
 
     @Test
-    void openingARecordIsLoggedWithWhoAndWhen() {
-        perform("GET", "/api/patients/" + PATIENT, 200, () -> { });
+    void editingARecordIsLoggedWithWhoAndWhen() {
+        perform("PUT", "/api/patients/" + PATIENT, 200, () -> { });
 
         assertEquals(1, log.size());
         AuditEntry entry = log.getFirst();
         assertEquals(ME, entry.getActorId());
-        assertEquals(AuditAction.VIEW_RECORD, entry.getAction());
+        assertEquals(AuditAction.EDIT_RECORD, entry.getAction());
         assertEquals(PATIENT, entry.getPatientId());
         assertEquals(Instant.parse("2026-10-21T10:00:00Z"), entry.getOccurredAt());
     }
 
     @Test
     void aReportIsLoggedUnderItsResident() {
-        perform("GET", "/api/reports/" + REPORT + "/pdf", 200, () -> { });
+        perform("PUT", "/api/reports/" + REPORT + "/header", 200, () -> { });
 
-        assertEquals(AuditAction.DOWNLOAD_REPORT, log.getFirst().getAction());
+        assertEquals(AuditAction.EDIT_REPORT, log.getFirst().getAction());
         assertEquals(PATIENT, log.getFirst().getPatientId());
         assertEquals(REPORT, log.getFirst().getResourceId());
     }
@@ -113,13 +118,26 @@ class AuditInterceptorTest {
         assertEquals(PATIENT, log.getFirst().getPatientId());
     }
 
+    // Decisión del centro: que alguien consulte los datos no se anota, solo los cambios
+    @Test
+    void viewsAreNotLogged() {
+        perform("GET", "/api/patients/" + PATIENT, 200, () -> { });
+        perform("GET", "/api/patients/" + PATIENT + "/referral", 200, () -> { });
+        perform("GET", "/api/patients/" + PATIENT + "/visitors", 200, () -> { });
+        perform("GET", "/api/reports/" + REPORT, 200, () -> { });
+        perform("GET", "/api/reports/" + REPORT + "/pdf", 200, () -> { });
+        perform("GET", "/api/interventions/residents/" + PATIENT, 200, () -> { });
+
+        assertTrue(log.isEmpty());
+    }
+
     @Test
     void failedRequestsAndListsAreNotLogged() {
-        perform("GET", "/api/patients/" + PATIENT, 404, () -> { });
+        perform("PUT", "/api/patients/" + PATIENT, 404, () -> { });
         perform("PUT", "/api/patients/" + PATIENT, 400, () -> { });
         perform("GET", "/api/patients", 200, () -> { });
         perform("GET", "/api/notices", 200, () -> { });
-        perform("GET", "/api/patients/no-es-un-id", 200, () -> { });
+        perform("PUT", "/api/patients/no-es-un-id", 200, () -> { });
 
         assertEquals(1, log.size());
         assertNull(log.getFirst().getPatientId());
@@ -128,10 +146,9 @@ class AuditInterceptorTest {
     @Test
     void matchesTheRightRule() {
         assertEquals(AuditAction.ADMIT, AuditRules.match("POST", "/api/patients").orElseThrow().rule().action());
-        assertEquals(AuditAction.VIEW_REFERRAL,
-                AuditRules.match("GET", "/api/patients/" + PATIENT + "/referral").orElseThrow().rule().action());
-        assertEquals(AuditAction.DOWNLOAD_REPORT,
-                AuditRules.match("GET", "/api/reports/residents/" + PATIENT + "/pdf").orElseThrow().rule().action());
+        assertEquals(AuditAction.EDIT_REFERRAL,
+                AuditRules.match("PUT", "/api/patients/" + PATIENT + "/referral").orElseThrow().rule().action());
+        assertTrue(AuditRules.match("GET", "/api/reports/residents/" + PATIENT + "/pdf").isEmpty());
         assertEquals(AuditAction.ASSIGN_TUTORS,
                 AuditRules.match("PUT", "/api/interventions/residents/" + PATIENT + "/tutors").orElseThrow().rule().action());
         assertTrue(AuditRules.match("GET", "/api/reports").isEmpty());

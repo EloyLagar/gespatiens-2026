@@ -7,7 +7,7 @@ import com.viller.gespatiens.audit.domain.AuditLog;
 import java.time.Clock;
 import java.util.UUID;
 
-// Anota en el registro una consulta o un cambio de los datos de un residente. Lo llama la capa web después
+// Anota en el registro un cambio de los datos de un residente. Lo llama la capa web después
 // de cada petición que ha ido bien (AuditInterceptor)
 public class RecordAuditEntryUseCase {
 

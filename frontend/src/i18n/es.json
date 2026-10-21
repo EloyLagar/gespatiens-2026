@@ -21,7 +21,7 @@
     "evaluations": "Valoraciones",
     "dashboard": "Panel de control",
     "rota": "Turnos",
-    "audit": "Registro de accesos"
+    "audit": "Registro de cambios"
   },
   "language": {
     "label": "Idioma",
@@ -157,7 +157,7 @@
     "previousStays_other": "{{count}} estancias anteriores",
     "totalDays_one": "En total, {{count}} día en el centro",
     "totalDays_other": "En total, {{count}} días en el centro",
-    "auditLog": "Quién ha accedido"
+    "auditLog": "Quién ha hecho cambios"
   },
   "discharge": {
     "title": "¿Dar de baja a {{name}}?",
@@ -913,8 +913,8 @@
     "text": "Esta pantalla es de la administración del centro. Si crees que deberías poder entrar, pídeselo a la administración."
   },
   "audit": {
-    "title": "Registro de accesos",
-    "subtitle": "Quién ha consultado o cambiado los datos de cada residente, y cuándo. No se puede modificar ni borrar.",
+    "title": "Registro de cambios",
+    "subtitle": "Quién ha cambiado los datos de cada residente, y cuándo. No se puede modificar y se conserva 2 años.",
     "resident": "Residente",
     "anyResident": "Todos los residentes",
     "employee": "Empleado",
@@ -923,9 +923,9 @@
     "to": "Hasta",
     "when": "Cuándo",
     "what": "Qué hizo",
-    "empty": "No hay ningún acceso con estos filtros.",
-    "count_one": "{{count}} acceso",
-    "count_other": "{{count}} accesos",
+    "empty": "No hay ningún cambio con estos filtros.",
+    "count_one": "{{count}} cambio",
+    "count_other": "{{count}} cambios",
     "formerEmployee": "Ya no está en la plantilla",
     "deletedResident": "Ficha borrada",
     "pages": "Páginas del registro",
@@ -933,22 +933,16 @@
     "older": "Más antiguos",
     "page": "Página {{page}} de {{total}}",
     "action": {
-      "VIEW_RECORD": "Consultó la ficha",
       "ADMIT": "Dio de alta",
       "EDIT_RECORD": "Modificó la ficha",
       "DISCHARGE": "Dio de baja",
       "READMIT": "Reincorporó",
       "DELETE_RECORD": "Borró la ficha",
-      "VIEW_VISITORS": "Consultó las visitas",
       "EDIT_VISITORS": "Cambió las visitas",
-      "VIEW_REFERRAL": "Consultó la derivación",
       "EDIT_REFERRAL": "Cambió la derivación",
-      "VIEW_REPORT": "Abrió un informe",
-      "DOWNLOAD_REPORT": "Descargó un informe en PDF",
       "EDIT_REPORT": "Redactó en un informe",
       "CLOSE_REPORT": "Cerró un informe",
       "REOPEN_REPORT": "Reabrió un informe",
-      "VIEW_FOLLOW_UP": "Consultó el seguimiento",
       "EDIT_FOLLOW_UP": "Cambió una intervención",
       "ASSIGN_TUTORS": "Asignó los tutores"
     }

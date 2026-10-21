@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-// El registro de accesos. Solo la administración (SecurityConfig)
+// El registro de cambios. Solo la administración (SecurityConfig)
 @RestController
 @RequestMapping("/api/audit")
 public class AuditController {

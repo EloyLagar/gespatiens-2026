@@ -31,12 +31,17 @@ class SearchAuditLogUseCaseTest {
         }
 
         @Override
+        public long deleteBefore(Instant limit) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public Page search(Filter filter, int page, int size) {
             asked = filter;
             return new Page(List.of(
-                    AuditEntry.record(Instant.parse("2026-10-21T09:00:00Z"), ANA, AuditAction.VIEW_RECORD, LUCIA, null),
+                    AuditEntry.record(Instant.parse("2026-10-21T09:00:00Z"), ANA, AuditAction.EDIT_VISITORS, LUCIA, null),
                     AuditEntry.record(Instant.parse("2026-10-20T09:00:00Z"), GONE, AuditAction.EDIT_RECORD, LUCIA, null),
-                    AuditEntry.record(Instant.parse("2026-10-19T09:00:00Z"), ANA, AuditAction.VIEW_REPORT, null, null)),
+                    AuditEntry.record(Instant.parse("2026-10-19T09:00:00Z"), ANA, AuditAction.EDIT_REPORT, null, null)),
                     page, 1, 3);
         }
     };

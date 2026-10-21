@@ -66,7 +66,7 @@ Requisitos: JDK 25, Node.js 24 y PostgreSQL.
 6. El panel de control avisa de los informes de media estancia que tocan (a mitad del programa: por defecto a los
    3 meses de la entrada, y la fecha se cambia en la cabecera de cada informe) y de las
    medidas judiciales que terminan en los próximos 30 días.
-7. El registro de accesos (solo administración) dice quién ha consultado o cambiado los datos de cada residente.
+7. El registro de cambios (solo administración) dice quién ha cambiado los datos de cada residente; se conserva 2 años.
 
 > [!NOTE]
 > Al dar de alta a un empleado, le llega un correo con un enlace para crear su contraseña. El enlace caduca a los
