@@ -302,9 +302,7 @@ function HeaderPanel({ report, heldBy, onSaved, onDirty }: {
           </Field>
           {!midStay && <Field label={t('reports.header.exitDate')} numeric>{date(header.exitDate)}</Field>}
           {!midStay && (
-            <div className="kv-span kv-span--all">
-              <Field label={t('reports.header.exitReason')}>{header.exitReason}</Field>
-            </div>
+            <Field label={t('reports.header.exitReason')} span="all">{header.exitReason}</Field>
           )}
         </dl>
       )}

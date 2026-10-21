@@ -29,7 +29,8 @@ export function PageHeader({ title, subtitle, actions, breadcrumb }: PageHeaderP
       <div className="page-header__row">
         <div className="page-header__text">
           <h1>{title}</h1>
-          {subtitle && <p className="page-header__subtitle">{subtitle}</p>}
+          {/* div y no p: el subtítulo a veces lleva una etiqueta de Carbon (Tag), que es un div */}
+          {subtitle && <div className="page-header__subtitle">{subtitle}</div>}
         </div>
         {actions && <div className="page-header__actions">{actions}</div>}
       </div>
@@ -164,10 +165,13 @@ export function LanguageSwitch({ onChange }: { onChange?: (language: (typeof LAN
 }
 
 // Rótulo de dato: etiqueta gris encima, valor en tinta. Un valor vacío es una raya gris
-export function Field({ label, children, numeric }: { label: string; children: ReactNode; numeric?: boolean }) {
+// span: el dato ocupa dos columnas ('two') o toda la fila ('all'). Va en el propio div del par dt/dd: un <dl>
+// solo admite un nivel de div entre él y sus dt/dd (WCAG, regla definition-list)
+export function Field({ label, children, numeric, span }: { label: string; children: ReactNode; numeric?: boolean; span?: 'two' | 'all' }) {
   const empty = children === null || children === undefined || children === ''
+  const spanClass = span === 'all' ? ' kv-span kv-span--all' : span === 'two' ? ' kv-span' : ''
   return (
-    <div className="kv">
+    <div className={`kv${spanClass}`}>
       <dt>{label}</dt>
       <dd className={numeric ? 'num' : undefined}>{empty ? <span className="dash">—</span> : children}</dd>
     </div>

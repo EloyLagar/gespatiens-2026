@@ -47,14 +47,17 @@ public class User {
         return new User(id, name, email, phoneNumber, speciality, passwordHash, language);
     }
 
+    // Lo que cabe en la columna users.name. Sin esta comprobación, un nombre más largo llegaba a la base de
+    // datos y la API respondía 409 "conflicto" en vez de explicar el error
+    public static final int MAX_NAME_LENGTH = 50;
+    // Como el de los residentes. El estándar no admite direcciones de correo más largas de 254
+    public static final int MAX_PHONE_LENGTH = 20;
+    public static final int MAX_EMAIL_LENGTH = 254;
+
     // Método auxiliar compartido, para no repetir los tres "if" en ambos constructores
     private void validateFields(String name, String phoneNumber, Speciality speciality) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("El nombre no puede estar vacío");
-        }
-        if (phoneNumber == null || phoneNumber.isBlank()) {
-            throw new IllegalArgumentException("El número de teléfono no puede estar vacío");
-        }
+        validateName(name);
+        validatePhoneNumber(phoneNumber);
         if (speciality == null) {
             throw new IllegalArgumentException("El campo de especialidad no puede estar vacío");
         }
@@ -70,6 +73,7 @@ public class User {
     private boolean isValidEmail(String email) {
         return email != null
                 && !email.isBlank()
+                && email.length() <= MAX_EMAIL_LENGTH
                 && email.matches("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
     }
 
@@ -85,15 +89,30 @@ public class User {
     }
 
     public void changeName(String newName) {
-        if (newName == null || newName.isBlank()) {
-            throw new IllegalArgumentException("El nombre no puede estar vacío");
-        }
+        validateName(newName);
         this.name = newName;
     }
-    public void changePhoneNumber(String newPhoneNumber) {
-        if (newPhoneNumber == null || newPhoneNumber.isBlank()) {
+
+    private static void validatePhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.isBlank()) {
             throw new IllegalArgumentException("El número de teléfono no puede estar vacío");
         }
+        if (phoneNumber.length() > MAX_PHONE_LENGTH) {
+            throw new IllegalArgumentException(
+                    "El número de teléfono no puede tener más de " + MAX_PHONE_LENGTH + " caracteres");
+        }
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
+        }
+        if (name.length() > MAX_NAME_LENGTH) {
+            throw new IllegalArgumentException("El nombre no puede tener más de " + MAX_NAME_LENGTH + " caracteres");
+        }
+    }
+    public void changePhoneNumber(String newPhoneNumber) {
+        validatePhoneNumber(newPhoneNumber);
         this.phoneNumber = newPhoneNumber;
     }
 

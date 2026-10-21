@@ -110,9 +110,9 @@ function EditEmployee({ id }: { id: string }) {
         <div className="settings-row__panel">
           <div className="form form--compact">
             {user.passwordPending && (
-              <p>
+              <div>
                 <Tag type="warm-gray" size="sm">{t('employees.pending')}</Tag>
-              </p>
+              </div>
             )}
             <ErrorNotice error={sendError} title={t('employeeForm.linkNotSent')} />
             <div className="form-actions">
@@ -234,7 +234,7 @@ function EmployeeForm({ initial, submitLabel, onSubmit }: FormProps) {
       <ErrorNotice error={serverError} title={t('form.notSaved')} />
       <TextInput id="employee-name" labelText={`${t('user.name')} (${t('form.requiredMark')})`} value={values.name} onChange={set('name')} maxLength={50} invalid={Boolean(errors.name)} invalidText={errors.name} autoComplete="off" />
       <TextInput id="employee-email" type="email" labelText={`${t('user.email')} (${t('form.requiredMark')})`} value={values.email} onChange={set('email')} invalid={Boolean(errors.email)} invalidText={errors.email} helperText={t('employeeForm.emailHelp')} autoComplete="off" />
-      <TextInput id="employee-phoneNumber" type="tel" labelText={`${t('user.phoneNumber')} (${t('form.requiredMark')})`} value={values.phoneNumber} onChange={set('phoneNumber')} invalid={Boolean(errors.phoneNumber)} invalidText={errors.phoneNumber} autoComplete="off" />
+      <TextInput id="employee-phoneNumber" type="tel" maxLength={20} labelText={`${t('user.phoneNumber')} (${t('form.requiredMark')})`} value={values.phoneNumber} onChange={set('phoneNumber')} invalid={Boolean(errors.phoneNumber)} invalidText={errors.phoneNumber} autoComplete="off" />
       <Select id="employee-speciality" labelText={t('user.speciality')} value={values.speciality} onChange={set('speciality')} helperText={t('employeeForm.specialityHelp')}>
         {SPECIALITIES.map((s) => (
           <SelectItem key={s} value={s} text={t(`speciality.${s}`)} />

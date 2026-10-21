@@ -871,5 +871,9 @@
     "invalidTitle": "El enlace no sirve",
     "invalid": "Puede que ya lo hayas usado, que haya caducado o que te hayan enviado otro más reciente. Pide a la administración un enlace nuevo.",
     "toLogin": "Ir a iniciar sesión"
+  },
+  "forbidden": {
+    "title": "Solo para la administración",
+    "text": "Esta pantalla es de la administración del centro. Si crees que deberías poder entrar, pídeselo a la administración."
   }
 }

@@ -50,19 +50,15 @@ export function ReferralPanel({ patientId, canManage }: { patientId: string; can
             <Field label={t('referral.courtOrdered')}>{referral.courtOrdered ? t('referral.yes') : t('referral.no')}</Field>
             {referral.courtOrdered && (
               <>
-                <div className="kv-span">
-                  <Field label={t('referral.court')}>{referral.court}</Field>
-                </div>
+                <Field label={t('referral.court')} span="two">{referral.court}</Field>
                 <Field label={t('referral.measureEndDate')} numeric>
                   {referral.measureEndDate ? formatDate(referral.measureEndDate, i18n.language) : null}
                 </Field>
               </>
             )}
-            <div className="kv-span kv-span--all">
-              <Field label={t('referral.notes')}>
-                {referral.notes && <span className="pre-line">{referral.notes}</span>}
-              </Field>
-            </div>
+            <Field label={t('referral.notes')} span="all">
+              {referral.notes && <span className="pre-line">{referral.notes}</span>}
+            </Field>
           </dl>
         )
       )}

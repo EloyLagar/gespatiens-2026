@@ -361,6 +361,11 @@ button:focus-visible,
   line-height: 24px;
 }
 
+// Un enlace dentro del texto no puede distinguirse solo por el color (WCAG 1.4.1)
+.page-header__subtitle a {
+  text-decoration: underline;
+}
+
 .page-header__actions {
   display: flex;
   flex-wrap: wrap;

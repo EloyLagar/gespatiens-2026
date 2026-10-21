@@ -163,9 +163,7 @@ export function PatientDetailPage() {
           </Field>
           <Field label={t('patient.phoneNumber')}>{patient.phoneNumber}</Field>
           <Field label={t('patient.sip')}>{patient.sip}</Field>
-          <div className="kv-span kv-span--all">
-            <Field label={t('patient.address')}>{patient.address}</Field>
-          </div>
+          <Field label={t('patient.address')} span="all">{patient.address}</Field>
         </dl>
       </section>
 
@@ -174,12 +172,8 @@ export function PatientDetailPage() {
         <dl className="kv-list kv-list--four">
           <Field label={t('patient.visitCode')}>{patient.visitCode}</Field>
           <Field label={t('patient.abuseSubstances')}>{patient.abuseSubstances}</Field>
-          <div className="kv-span">
-            <Field label={t('patient.belongings')}>{patient.belongings}</Field>
-          </div>
-          <div className="kv-span">
-            <Field label={t('patient.extraInfo')}>{patient.extraInfo}</Field>
-          </div>
+          <Field label={t('patient.belongings')} span="two">{patient.belongings}</Field>
+          <Field label={t('patient.extraInfo')} span="two">{patient.extraInfo}</Field>
         </dl>
       </section>
 

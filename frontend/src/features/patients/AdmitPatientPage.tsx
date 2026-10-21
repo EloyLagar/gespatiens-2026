@@ -41,6 +41,7 @@ export function AdmitPatientPage() {
               labelText={t('patient.entryDate')}
               helperText={t('admit.entryDateHelp')}
               value={entryDate}
+              max={todayIso()}
               onChange={(e) => setEntryDate(e.target.value)}
             />
           </div>

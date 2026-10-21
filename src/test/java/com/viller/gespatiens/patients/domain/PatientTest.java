@@ -82,6 +82,18 @@ class PatientTest {
     }
 
     @Test
+    void entryDateCannotBeInTheFuture() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Patient.admit(details(), 5, LocalDate.now().plusDays(1)));
+        assertDoesNotThrow(() -> Patient.admit(details(), 5, LocalDate.now()));
+
+        Patient former = Patient.reconstitute(UUID.randomUUID(), details(), null,
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 1));
+        assertThrows(IllegalArgumentException.class, () -> former.readmit(7, LocalDate.now().plusDays(1)));
+        assertFalse(former.isActive());
+    }
+
+    @Test
     void cannotDischargeTwice() {
         Patient patient = Patient.reconstitute(UUID.randomUUID(), details(), null,
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 1));

@@ -1,8 +1,9 @@
+import { InlineNotification } from '@carbon/react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { checkPasswordSetup, completePasswordSetup } from '../../api/auth'
 import { PasswordForm } from '../users/EmployeeFormPage'
-import { ErrorNotice, LanguageSwitch, LoadingRows, Wordmark } from '../../shared/ui'
+import { LanguageSwitch, LoadingRows, Wordmark } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
 
 // Memoria final: el empleado nuevo recibe un correo y desde su enlace crea sus credenciales de acceso.
@@ -33,8 +34,11 @@ export function PasswordSetupPage() {
           <LoadingRows rows={3} label={t('common.loading')} />
         ) : error || !account ? (
           <>
-            {/* El enlace no existe, ya se usó, lo sustituyó otro o caducó: siempre el mismo mensaje */}
-            <ErrorNotice error={token ? error : null} title={t('passwordSetup.invalidTitle')} />
+            {/* El enlace no existe, ya se usó, lo sustituyó otro o caducó: siempre el mismo mensaje. El de la API
+                diría lo mismo que el párrafo de debajo, así que solo se muestra el título */}
+            <div role="alert">
+              <InlineNotification kind="error" lowContrast hideCloseButton title={t('passwordSetup.invalidTitle')} />
+            </div>
             <p className="login__lead">{t('passwordSetup.invalid')}</p>
             <Link to="/login">{t('passwordSetup.toLogin')}</Link>
           </>
