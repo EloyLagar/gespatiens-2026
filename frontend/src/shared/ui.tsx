@@ -53,6 +53,7 @@ export function useErrorMessage() {
         404: t('errors.notFound'),
         409: t('errors.conflict'),
         410: t('errors.gone'),
+        429: t('errors.tooManyAttempts'),
         502: t('errors.badGateway'),
       }
       return byStatus[error.status] ?? t('errors.generic')

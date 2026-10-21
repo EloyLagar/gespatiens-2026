@@ -2,6 +2,7 @@ package com.viller.gespatiens.access.users.infrastructure.web;
 
 import com.viller.gespatiens.access.users.application.AccessToken;
 import com.viller.gespatiens.access.users.application.InvalidCredentialsException;
+import com.viller.gespatiens.access.users.application.LoginBlockedException;
 import com.viller.gespatiens.access.users.application.LoginUseCase;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
@@ -63,5 +64,17 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.detail").value("Email o contraseña incorrectos"));
+    }
+
+    @Test
+    void blockedEmailReturnsTooManyRequests() throws Exception {
+        Instant now = Instant.parse("2026-10-21T10:00:00Z");
+        when(loginUseCase.execute("ana@vientos.es", "secreto123"))
+                .thenThrow(new LoginBlockedException(now.plusSeconds(15 * 60), now));
+
+        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content(BODY))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.detail").value("Demasiados intentos fallidos. Vuelve a intentarlo dentro de 15 minutos"))
+                .andExpect(jsonPath("$.retryAfter").value("2026-10-21T10:15:00Z"));
     }
 }

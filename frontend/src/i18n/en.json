@@ -58,7 +58,8 @@
     "conflict": "It clashes with data that already exists.",
     "generic": "An unexpected error occurred. Try again.",
     "gone": "The link is no longer valid.",
-    "badGateway": "The email could not be sent. Check the mail configuration and try again."
+    "badGateway": "The email could not be sent. Check the mail configuration and try again.",
+    "tooManyAttempts": "Too many failed attempts. Wait a few minutes and try again."
   },
   "common": {
     "retry": "Retry",
