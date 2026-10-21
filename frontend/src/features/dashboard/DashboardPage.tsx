@@ -67,7 +67,7 @@ function Figures({ data }: { data: Dashboard }) {
       <div className="stat">
         <p className="stat__label">{t('dashboard.reportsInProgress')}</p>
         <p className="stat__value">{data.reportsInProgress}</p>
-        <Link className="stat__note" to="/informes">{t('dashboard.goReports')}</Link>
+        <Link className="stat__note" to="/informes?estado=DRAFT&estancia=current">{t('dashboard.goReports')}</Link>
       </div>
       <div className="stat">
         <p className="stat__label">{t('dashboard.interventions')}</p>

@@ -675,7 +675,18 @@
     "othersEditing_other": "{{count}} apartados los están editando otras personas",
     "signaturesHelp": "En el PDF, cada profesional aparece con su firma escaneada. Quien todavía no la ha subido (Mi perfil) deja el hueco para firmar a mano.",
     "editSection": "Editar «{{section}}»",
-    "tutorsOfResident": "tutores del residente"
+    "tutorsOfResident": "tutores del residente",
+    "search": "Buscar residente",
+    "searchPlaceholder": "Nombre, DNI o nº de plaza",
+    "typeFilter": "Tipo",
+    "typeAll": "Los dos tipos",
+    "stayFilter": "Estancia",
+    "stayCurrent": "En curso",
+    "stayFinished": "Terminadas",
+    "stayAll": "Todas",
+    "noMatches": "Ningún informe coincide con la búsqueda y los filtros.",
+    "showing": "{{shown}} de {{count}}",
+    "showMore": "Mostrar {{count}} más"
   },
   "editing": {
     "editing": "{{name}} lo está editando",

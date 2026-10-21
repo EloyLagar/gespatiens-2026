@@ -21,6 +21,7 @@ public interface DashboardQueries {
     // Residentes en el centro a los que les falta alguno de sus dos tutores
     int activeResidentsWithoutBothTutors();
 
+    // Informes en elaboración de las estancias en curso
     int reportsInProgress();
 
     int interventionsBetween(LocalDate from, LocalDate to);
