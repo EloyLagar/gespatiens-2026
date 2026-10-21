@@ -484,9 +484,8 @@
     "former": "Former resident: their history is kept",
     "openRecord": "Open record",
     "changeTutors": "Change tutors",
-    "whoTutors": "Social educators who tutor this resident",
     "noTutorsYet": "No tutors yet. Administration and social educators assign them.",
-    "noTutorsAdmin": "No tutors yet. Assign social educators so they can record interventions.",
+    "noTutorsAdmin": "No tutors yet. Assign a social educator and a psychologist so they can record interventions.",
     "historyTitle": "Interventions",
     "historyCount_one": "{{count}} intervention",
     "historyCount_other": "{{count}} interventions",
@@ -500,7 +499,10 @@
     "textNeeded": "Describe the intervention before saving it.",
     "delete": "Delete",
     "deleteTitle": "Delete this intervention?",
-    "deleteBody": "It will disappear from the history of {{name}}. This cannot be undone."
+    "deleteBody": "It will disappear from the history of {{name}}. This cannot be undone.",
+    "educatorTutor": "Social educator tutor",
+    "psychologistTutor": "Psychologist tutor",
+    "unassigned": "Not assigned"
   },
   "reports": {
     "title": "Reports",

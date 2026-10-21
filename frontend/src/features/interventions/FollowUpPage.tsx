@@ -1,4 +1,4 @@
-import { Button, Checkbox, TextArea, TextInput } from '@carbon/react'
+import { Button, Select, SelectItem, TextArea, TextInput } from '@carbon/react'
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
@@ -202,28 +202,21 @@ function TutorsForm({ patientId, current, onSaved, onCancel }: {
 }) {
   const { t } = useTranslation()
   const staff = useApi(listUsers, [])
-  const [chosen, setChosen] = useState(() => new Set(current.map((tutor) => tutor.id)))
+  // Memoria final: un tutor educador social y un tutor psicólogo
+  const [educator, setEducator] = useState(() => current.find((t) => t.speciality === 'SOCIAL_EDUCATOR')?.id ?? '')
+  const [psychologist, setPsychologist] = useState(() => current.find((t) => t.speciality === 'PSYCHOLOGIST')?.id ?? '')
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
 
-  // Solo los educadores sociales son tutores (decisión del centro)
-  const candidates = (staff.data ?? [])
-    .filter((u) => u.speciality === 'SOCIAL_EDUCATOR')
-    .sort((a, b) => a.name.localeCompare(b.name))
-
-  function toggle(id: string, checked: boolean) {
-    const next = new Set(chosen)
-    if (checked) next.add(id)
-    else next.delete(id)
-    setChosen(next)
-  }
+  const of = (speciality: string) =>
+    (staff.data ?? []).filter((u) => u.speciality === speciality).sort((a, b) => a.name.localeCompare(b.name))
 
   async function save(event: FormEvent) {
     event.preventDefault()
     setBusy(true)
     setError(null)
     try {
-      onSaved(await assignTutors(patientId, [...chosen]))
+      onSaved(await assignTutors(patientId, educator || null, psychologist || null))
     } catch (err) {
       setError(err)
     } finally {
@@ -237,18 +230,18 @@ function TutorsForm({ patientId, current, onSaved, onCancel }: {
       {staff.loading && !staff.data ? (
         <LoadingRows rows={3} label={t('common.loading')} />
       ) : (
-        <fieldset className="staff-picker">
-          <legend>{t('interventions.whoTutors')}</legend>
-          {candidates.map((u) => (
-            <Checkbox
-              key={u.id}
-              id={`tutor-${u.id}`}
-              labelText={u.name}
-              checked={chosen.has(u.id)}
-              onChange={(_, { checked }) => toggle(u.id, checked)}
-            />
-          ))}
-        </fieldset>
+        <div className="tutor-picker">
+          <Select id="tutor-educator" labelText={t('interventions.educatorTutor')} value={educator}
+            onChange={(e) => setEducator(e.target.value)}>
+            <SelectItem value="" text={t('interventions.unassigned')} />
+            {of('SOCIAL_EDUCATOR').map((u) => <SelectItem key={u.id} value={u.id} text={u.name} />)}
+          </Select>
+          <Select id="tutor-psychologist" labelText={t('interventions.psychologistTutor')} value={psychologist}
+            onChange={(e) => setPsychologist(e.target.value)}>
+            <SelectItem value="" text={t('interventions.unassigned')} />
+            {of('PSYCHOLOGIST').map((u) => <SelectItem key={u.id} value={u.id} text={u.name} />)}
+          </Select>
+        </div>
       )}
       <div className="form-actions">
         <Button kind="secondary" size="sm" type="button" onClick={onCancel} disabled={busy}>

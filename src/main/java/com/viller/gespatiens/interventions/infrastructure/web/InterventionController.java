@@ -68,7 +68,8 @@ public class InterventionController {
 
     @PutMapping("/residents/{patientId}/tutors")
     public List<StaffResponse> assignTutors(@PathVariable UUID patientId, @RequestBody TutorsRequest request) {
-        return StaffResponse.from(assignTutorsUseCase.execute(patientId, request.tutorIds()));
+        return StaffResponse.from(assignTutorsUseCase.execute(patientId, request.educatorId(),
+                request.psychologistId()));
     }
 
     @PostMapping("/residents/{patientId}")

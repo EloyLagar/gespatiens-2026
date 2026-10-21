@@ -35,10 +35,16 @@ function followUp(overrides: Partial<FollowUp> = {}): FollowUp {
   }
 }
 
-// Responde según la URL: el seguimiento al cargar y lo que devuelva la API al guardar
-function api(page: FollowUp, saved?: Intervention) {
+const STAFF = [
+  { id: 'u1', name: 'Pablo', email: 'p@v.es', phoneNumber: '1', speciality: 'SOCIAL_EDUCATOR' },
+  { id: 'u2', name: 'Ana', email: 'a@v.es', phoneNumber: '2', speciality: 'PSYCHOLOGIST' },
+  { id: 'u3', name: 'Rosa', email: 'r@v.es', phoneNumber: '3', speciality: 'ADMINISTRATOR' },
+]
+
+// Responde según la URL: la plantilla, el seguimiento al cargar y lo que devuelva la API al guardar
+function api(page: FollowUp, saved?: unknown) {
   return vi.fn().mockImplementation(async (url: string, init?: RequestInit) => {
-    const body = init?.method === 'POST' ? saved : page
+    const body = url === '/api/users' ? STAFF : init?.method === 'POST' || init?.method === 'PUT' ? saved : page
     return new Response(JSON.stringify(body), { status: init?.method === 'POST' ? 201 : 200,
       headers: { 'Content-Type': 'application/json' } })
   })
@@ -97,6 +103,28 @@ describe('FollowUpPage', () => {
     renderPage()
 
     expect(await screen.findByRole('button', { name: 'Cambiar tutores' })).toBeInTheDocument()
-    expect(screen.getByText(/Asígnale educadores para que puedan registrar/)).toBeInTheDocument()
+    expect(screen.getByText(/Asígnale un educador social y un psicólogo/)).toBeInTheDocument()
+  })
+
+  // Memoria final: un tutor educador social y un tutor psicólogo, cada uno elegido entre los de su especialidad
+  it('se asigna un educador social y un psicólogo', async () => {
+    auth.isAdmin = true
+    const fetchMock = api(followUp({ tutors: [], tutor: false, canRecord: false }), [pablo, ana])
+    vi.stubGlobal('fetch', fetchMock)
+    renderPage()
+    const user = userEvent.setup()
+
+    await user.click(await screen.findByRole('button', { name: 'Cambiar tutores' }))
+    const educator = await screen.findByLabelText('Tutor/a educador/a social')
+    await waitFor(() => expect(educator).toHaveTextContent('Pablo'))
+    expect(educator).not.toHaveTextContent('Ana')
+    await user.selectOptions(educator, 'u1')
+    await user.selectOptions(screen.getByLabelText('Tutor/a psicólogo/a'), 'u2')
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+
+    await waitFor(() => expect(fetchMock.mock.calls.some(([, init]) => init?.method === 'PUT')).toBe(true))
+    const [url, init] = fetchMock.mock.calls.find(([, i]) => i?.method === 'PUT')!
+    expect(url).toBe('/api/interventions/residents/p1/tutors')
+    expect(JSON.parse(init.body)).toEqual({ educatorId: 'u1', psychologistId: 'u2' })
   })
 })

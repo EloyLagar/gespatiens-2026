@@ -90,15 +90,15 @@ class InterventionUseCasesTest {
 
     @Test
     void theListHasTheResidentsInTheCentreWithTheirTutorsAndLastIntervention() {
-        assign.execute(lucia.id(), Set.of(pablo.id(), ana.id()));
+        assign.execute(lucia.id(), pablo.id(), marcos.id());
         record.execute(lucia.id(), pablo.id(), TODAY.minusDays(2), "Tutoría");
-        record.execute(lucia.id(), ana.id(), TODAY, "Sesión de psicoterapia");
+        record.execute(lucia.id(), marcos.id(), TODAY, "Sesión de psicoterapia");
 
         List<FollowUpSummary> summaries = list.execute(pablo.id());
 
         assertEquals(List.of("Juan", "Lucía"), summaries.stream().map(s -> s.resident().name()).toList());
         FollowUpSummary luciaSummary = summaries.get(1);
-        assertEquals(List.of("Ana", "Pablo"), luciaSummary.tutors().stream().map(StaffMember::name).toList());
+        assertEquals(List.of("Marcos", "Pablo"), luciaSummary.tutors().stream().map(StaffMember::name).toList());
         assertEquals(2, luciaSummary.interventionCount());
         assertEquals(TODAY, luciaSummary.lastIntervention().orElseThrow());
         assertTrue(luciaSummary.viewerIsTutor());
@@ -109,7 +109,7 @@ class InterventionUseCasesTest {
     // La memoria: las intervenciones "únicamente podrán generar los tutores de cada usuario"
     @Test
     void onlyTutorsRecordInterventions() {
-        assign.execute(lucia.id(), Set.of(pablo.id()));
+        assign.execute(lucia.id(), pablo.id(), null);
 
         assertThrows(NotATutorException.class, () -> record.execute(lucia.id(), ana.id(), TODAY, "Tutoría"));
         assertThrows(NotATutorException.class, () -> record.execute(lucia.id(), admin.id(), TODAY, "Tutoría"));
@@ -121,9 +121,9 @@ class InterventionUseCasesTest {
 
     @Test
     void theFollowUpListsInterventionsNewestFirstAndSaysWhatTheViewerCanDo() {
-        assign.execute(lucia.id(), Set.of(pablo.id(), ana.id()));
+        assign.execute(lucia.id(), pablo.id(), marcos.id());
         record.execute(lucia.id(), pablo.id(), TODAY.minusDays(5), "Primera tutoría");
-        record.execute(lucia.id(), ana.id(), TODAY, "Sesión de psicoterapia");
+        record.execute(lucia.id(), marcos.id(), TODAY, "Sesión de psicoterapia");
 
         FollowUpView asPablo = get.execute(lucia.id(), pablo.id());
         FollowUpView asAdmin = get.execute(lucia.id(), admin.id());
@@ -138,18 +138,22 @@ class InterventionUseCasesTest {
 
     @Test
     void tutorsAreOnlyAssignedToResidentsInTheCentreAndMustExist() {
-        assertThrows(IllegalArgumentException.class, () -> assign.execute(former.id(), Set.of(pablo.id())));
-        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), Set.of(UUID.randomUUID())));
-        assertThrows(ResidentNotFoundException.class, () -> assign.execute(UUID.randomUUID(), Set.of()));
-        assertEquals(List.of(), assign.execute(lucia.id(), Set.of()));
+        assertThrows(IllegalArgumentException.class, () -> assign.execute(former.id(), pablo.id(), null));
+        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), UUID.randomUUID(), null));
+        assertThrows(ResidentNotFoundException.class, () -> assign.execute(UUID.randomUUID(), null, null));
+        assertEquals(List.of(), assign.execute(lucia.id(), null, null));
     }
 
-    // Solo los educadores sociales son tutores: ni la administración ni el resto de especialidades
+    // Memoria final: cada residente tiene un tutor educador social y un tutor psicólogo. La administración no
     @Test
-    void onlySocialEducatorsCanBeTutors() {
-        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), Set.of(pablo.id(), admin.id())));
-        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), Set.of(marcos.id())));
-        assertEquals(List.of("Pablo"), assign.execute(lucia.id(), Set.of(pablo.id())).stream()
+    void tutorsAreOneSocialEducatorAndOnePsychologist() {
+        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), admin.id(), null));
+        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), marcos.id(), null));
+        assertThrows(IllegalArgumentException.class, () -> assign.execute(lucia.id(), pablo.id(), ana.id()));
+        assertEquals(List.of("Marcos", "Pablo"), assign.execute(lucia.id(), pablo.id(), marcos.id()).stream()
+                .map(StaffMember::name).toList());
+        // Cambiar al educador deja al psicólogo
+        assertEquals(List.of("Ana", "Marcos"), assign.execute(lucia.id(), ana.id(), marcos.id()).stream()
                 .map(StaffMember::name).toList());
     }
 
@@ -166,7 +170,7 @@ class InterventionUseCasesTest {
 
     @Test
     void onlyTheAuthorOrAdministrationEditOrDelete() {
-        assign.execute(lucia.id(), Set.of(pablo.id(), ana.id()));
+        assign.execute(lucia.id(), pablo.id(), marcos.id());
         UUID id = record.execute(lucia.id(), pablo.id(), TODAY, "Tutoría").intervention().getId();
 
         assertThrows(InterventionNotManageableException.class, () -> edit.execute(id, ana.id(), TODAY, "Otra cosa"));

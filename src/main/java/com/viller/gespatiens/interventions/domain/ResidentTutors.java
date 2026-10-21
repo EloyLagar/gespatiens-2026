@@ -1,10 +1,12 @@
 package com.viller.gespatiens.interventions.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 // Los tutores de un residente (Tutors en la memoria): los empleados que le acompañan en el programa
-// y los únicos que pueden registrar sus intervenciones
+// y los únicos que pueden registrar sus intervenciones. La memoria final: "estos son un educador social y un
+// psicólogo". Se guardan como un conjunto (la tabla tutors), pero como mucho uno de cada
 public class ResidentTutors {
 
     private final UUID patientId;
@@ -27,9 +29,24 @@ public class ResidentTutors {
         return new ResidentTutors(patientId, tutorIds);
     }
 
-    // Sustituye a todos los tutores. Vacío: el residente se queda sin tutores
-    public void assign(Set<UUID> newTutorIds) {
-        this.tutorIds = Set.copyOf(newTutorIds == null ? Set.of() : newTutorIds);
+    // Sustituye a los dos tutores. null: ese tutor queda sin asignar
+    public void assign(StaffMember educator, StaffMember psychologist) {
+        if (educator != null && !educator.isSocialEducator()) {
+            throw new IllegalArgumentException("El tutor educador tiene que ser educador social: " + educator.name()
+                    + " no lo es");
+        }
+        if (psychologist != null && !psychologist.isPsychologist()) {
+            throw new IllegalArgumentException("El tutor psicólogo tiene que ser psicólogo: " + psychologist.name()
+                    + " no lo es");
+        }
+        Set<UUID> ids = new HashSet<>();
+        if (educator != null) {
+            ids.add(educator.id());
+        }
+        if (psychologist != null) {
+            ids.add(psychologist.id());
+        }
+        this.tutorIds = Set.copyOf(ids);
     }
 
     public boolean isTutor(UUID employeeId) {

@@ -125,11 +125,11 @@ class InterventionControllerTest {
     @Test
     @WithMockUser(username = ME, roles = "ADMINISTRATOR")
     void administrationAssignsTutors() throws Exception {
-        when(assignTutorsUseCase.execute(PATIENT, Set.of(ME_ID))).thenReturn(List.of(pablo));
+        when(assignTutorsUseCase.execute(PATIENT, ME_ID, null)).thenReturn(List.of(pablo));
 
         mockMvc.perform(put("/api/interventions/residents/{id}/tutors", PATIENT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"tutorIds\":[\"" + ME + "\"]}"))
+                        .content("{\"educatorId\":\"" + ME + "\",\"psychologistId\":null}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Pablo"));
     }
@@ -137,11 +137,11 @@ class InterventionControllerTest {
     @Test
     @WithMockUser(username = ME, roles = "SOCIAL_EDUCATOR")
     void educatorsAlsoAssignTutors() throws Exception {
-        when(assignTutorsUseCase.execute(PATIENT, Set.of(ME_ID))).thenReturn(List.of(pablo));
+        when(assignTutorsUseCase.execute(PATIENT, ME_ID, null)).thenReturn(List.of(pablo));
 
         mockMvc.perform(put("/api/interventions/residents/{id}/tutors", PATIENT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"tutorIds\":[\"" + ME + "\"]}"))
+                        .content("{\"educatorId\":\"" + ME + "\",\"psychologistId\":null}"))
                 .andExpect(status().isOk());
     }
 
@@ -150,7 +150,7 @@ class InterventionControllerTest {
     void otherSpecialitiesCannotAssignTutors() throws Exception {
         mockMvc.perform(put("/api/interventions/residents/{id}/tutors", PATIENT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"tutorIds\":[\"" + ME + "\"]}"))
+                        .content("{\"educatorId\":\"" + ME + "\",\"psychologistId\":null}"))
                 .andExpect(status().isForbidden());
         verifyNoInteractions(assignTutorsUseCase);
     }
