@@ -31,16 +31,17 @@ public record DiaryDayResponse(LocalDate date, List<ShiftResponse> shifts, List<
         }
     }
 
-    // updatedAt null: nadie ha rellenado todavía ese turno
+    // updatedAt null: nadie ha rellenado todavía ese turno. version: la que hay que mandar al guardarlo (RF8)
     public record ShiftResponse(DayPart part, List<StaffResponse> staff, String notes,
-                                StaffResponse updatedBy, Instant updatedAt) {
+                                StaffResponse updatedBy, Instant updatedAt, long version) {
         static ShiftResponse from(ShiftView view) {
             return new ShiftResponse(
                     view.part(),
                     view.staff().stream().map(StaffResponse::from).toList(),
                     view.notes().orElse(null),
                     view.updatedBy().map(StaffResponse::from).orElse(null),
-                    view.updatedAt().orElse(null));
+                    view.updatedAt().orElse(null),
+                    view.version());
         }
     }
 
@@ -79,12 +80,13 @@ public record DiaryDayResponse(LocalDate date, List<ShiftResponse> shifts, List<
         }
     }
 
+    // version: la que hay que mandar al guardar la actividad, su lista o sus valoraciones (RF8)
     public record ActivityResponse(UUID id, LocalTime startTime, ActivityType type, String title,
-                                   List<AttendanceResponse> attendance, EvaluationResponse averages) {
+                                   List<AttendanceResponse> attendance, EvaluationResponse averages, long version) {
         static ActivityResponse from(ActivityView view) {
             return new ActivityResponse(view.id(), view.startTime(), view.type(), view.title().orElse(null),
                     view.attendance().stream().map(AttendanceResponse::from).toList(),
-                    EvaluationResponse.from(view.averages()));
+                    EvaluationResponse.from(view.averages()), view.version());
         }
     }
 

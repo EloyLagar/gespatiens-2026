@@ -33,18 +33,23 @@ import {
   summarize,
   type ScoreDraft,
 } from './activities'
+import { diaryResources, type EditLock } from '../../api/editLocks'
+import { EditingBadge, LockNotice } from '../../shared/editing'
+import { useEditLock } from '../../shared/useEditLock'
 
 interface Props {
   date: string
   activities: Activity[]
   // RF6: valoran los educadores y la administración; los demás solo las ven
   canEvaluate: boolean
+  // RF8: las actividades que otras personas están editando ahora
+  others: Map<string, EditLock>
   onChanged: (activities: Activity[]) => void
 }
 
 // Las actividades del día y su lista. Cualquier empleado las programa (también con antelación) y pasa
 // lista; "Rebajado" no se elige, sale de las rebajas del día. A quienes asistieron se les valora (RF6)
-export function ActivitiesSection({ date, activities, canEvaluate, onChanged }: Props) {
+export function ActivitiesSection({ date, activities, canEvaluate, others, onChanged }: Props) {
   const { t } = useTranslation()
   const [adding, setAdding] = useState(false)
   const [removing, setRemoving] = useState<Activity | null>(null)
@@ -91,6 +96,7 @@ export function ActivitiesSection({ date, activities, canEvaluate, onChanged }: 
               activity={activity}
               canTakeRoll={canTakeRoll}
               canEvaluate={canEvaluate}
+              heldBy={others.get(diaryResources.activity(activity.id))}
               onSaved={replace}
               onRemove={() => setRemoving(activity)}
             />
@@ -155,7 +161,7 @@ function ActivityForm({ date, activity, onSaved, onCancel }: FormProps) {
     setError(null)
     try {
       onSaved(activity
-        ? await rescheduleActivity(activity.id, startTime, type, title)
+        ? await rescheduleActivity(activity.id, startTime, type, title, activity.version)
         : await scheduleActivity(date, startTime, type, title))
     } catch (err) {
       setError(err)
@@ -202,13 +208,34 @@ interface CardProps {
   activity: Activity
   canTakeRoll: boolean
   canEvaluate: boolean
+  heldBy: EditLock | undefined
   onSaved: (activity: Activity) => void
   onRemove: () => void
 }
 
-function ActivityCard({ date, activity, canTakeRoll, canEvaluate, onSaved, onRemove }: CardProps) {
+type Mode = 'view' | 'edit' | 'roll' | 'evaluate'
+
+// RF8: cambiar la actividad, pasar lista y valorar bloquean la actividad entera mientras se hace; solo ver las
+// valoraciones no bloquea nada
+function ActivityCard({ date, activity, canTakeRoll, canEvaluate, heldBy, onSaved, onRemove }: CardProps) {
   const { t, i18n } = useTranslation()
-  const [mode, setMode] = useState<'view' | 'edit' | 'roll' | 'evaluate'>('view')
+  const lock = useEditLock(diaryResources.activity(activity.id))
+  const [mode, setMode] = useState<Mode>('view')
+
+  async function open(next: Mode) {
+    if (next === 'evaluate' && !canEvaluate) return setMode(next)
+    if (await lock.acquire()) setMode(next)
+  }
+
+  function close() {
+    setMode('view')
+    lock.stop()
+  }
+
+  function saved(activity: Activity) {
+    onSaved(activity)
+    close()
+  }
   const titleId = `activity-${activity.id}-title`
   const summary = summarize(activity.attendance)
   const recorded = summary.ATTENDED + summary.EXCUSED_ABSENCE + summary.UNEXCUSED_ABSENCE
@@ -222,8 +249,8 @@ function ActivityCard({ date, activity, canTakeRoll, canEvaluate, onSaved, onRem
       <ActivityForm
         date={date}
         activity={activity}
-        onSaved={(saved) => { onSaved(saved); setMode('view') }}
-        onCancel={() => setMode('view')}
+        onSaved={saved}
+        onCancel={close}
       />
     )
   }
@@ -239,19 +266,20 @@ function ActivityCard({ date, activity, canTakeRoll, canEvaluate, onSaved, onRem
       <header className="activity__header">
         <span className="activity__time num">{hhmm(activity.startTime)}</span>
         <h3 id={titleId} className="activity__title">{activityName(activity, t)}</h3>
-        {mode === 'view' && (
+        {mode === 'view' && heldBy && <EditingBadge name={heldBy.holderName} />}
+        {mode === 'view' && !heldBy && (
           <span className="row-actions activity__actions">
             {canTakeRoll && (
-              <button type="button" className="text-action" onClick={() => setMode('roll')}>
+              <button type="button" className="text-action" onClick={() => open('roll')}>
                 {recorded > 0 ? t('diary.attendance.edit') : t('diary.attendance.take')}
               </button>
             )}
             {summary.ATTENDED > 0 && (canEvaluate || evaluated) && (
-              <button type="button" className="text-action" onClick={() => setMode('evaluate')}>
+              <button type="button" className="text-action" onClick={() => open('evaluate')}>
                 {!canEvaluate ? t('diary.evaluation.view') : evaluated ? t('diary.evaluation.review') : t('diary.evaluation.evaluate')}
               </button>
             )}
-            <button type="button" className="text-action" onClick={() => setMode('edit')}>
+            <button type="button" className="text-action" onClick={() => open('edit')}>
               {t('common.edit')}
             </button>
             <button type="button" className="text-action text-action--danger" onClick={onRemove}>
@@ -260,12 +288,12 @@ function ActivityCard({ date, activity, canTakeRoll, canEvaluate, onSaved, onRem
           </span>
         )}
       </header>
+      <LockNotice state={lock.state} />
 
       {mode === 'roll' ? (
-        <RollCall activity={activity} onSaved={(saved) => { onSaved(saved); setMode('view') }} onCancel={() => setMode('view')} />
+        <RollCall activity={activity} onSaved={saved} onCancel={close} />
       ) : mode === 'evaluate' ? (
-        <Evaluations activity={activity} readOnly={!canEvaluate}
-          onSaved={(saved) => { onSaved(saved); setMode('view') }} onCancel={() => setMode('view')} />
+        <Evaluations activity={activity} readOnly={!canEvaluate} onSaved={saved} onCancel={close} />
       ) : (
         <>
           <p className="activity__summary">
@@ -298,7 +326,7 @@ function RollCall({ activity, onSaved, onCancel }: { activity: Activity; onSaved
     setBusy(true)
     setError(null)
     try {
-      onSaved(await recordAttendance(activity.id, attendanceOf(rows)))
+      onSaved(await recordAttendance(activity.id, attendanceOf(rows), activity.version))
     } catch (err) {
       setError(err)
     } finally {
@@ -397,7 +425,7 @@ function Evaluations({ activity, readOnly, onSaved, onCancel }: {
     setBusy(true)
     setError(null)
     try {
-      onSaved(await recordEvaluations(activity.id, evaluations))
+      onSaved(await recordEvaluations(activity.id, evaluations, activity.version))
     } catch (err) {
       setError(err)
     } finally {

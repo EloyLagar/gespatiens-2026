@@ -16,6 +16,8 @@ export interface Shift {
   updatedBy: DiaryStaff | null
   // null si nadie ha rellenado todavía este turno
   updatedAt: string | null
+  // RF8: la que se manda al guardarlo (0 si está sin rellenar)
+  version: number
 }
 
 export interface DiaryResident {
@@ -81,6 +83,8 @@ export interface Activity {
   title: string | null
   attendance: AttendanceRow[]
   averages: Evaluation
+  // RF8: la que se manda al cambiarla, pasar lista o valorar
+  version: number
 }
 
 export interface Outing {
@@ -111,8 +115,9 @@ export function getDiaryDay(date: IsoDate) {
   return request<DiaryDay>(`/diary/${date}`)
 }
 
-export function recordShift(date: IsoDate, part: DayPart, staffIds: string[], notes: string) {
-  return request<Shift>(`/diary/${date}/shifts/${part}`, { method: 'PUT', body: { staffIds, notes } })
+// version: la del turno en pantalla. Si otra persona lo guardó entretanto, 409
+export function recordShift(date: IsoDate, part: DayPart, staffIds: string[], notes: string, version: number) {
+  return request<Shift>(`/diary/${date}/shifts/${part}`, { method: 'PUT', body: { staffIds, notes, version } })
 }
 
 export function recordReduction(date: IsoDate, patientId: string, partial: string, total: boolean, sport: boolean) {
@@ -130,8 +135,9 @@ export function scheduleActivity(date: IsoDate, startTime: LocalTime, type: Acti
   return request<Activity>(`/diary/${date}/activities`, { method: 'POST', body: { startTime, type, title } })
 }
 
-export function rescheduleActivity(activityId: string, startTime: LocalTime, type: ActivityType, title: string) {
-  return request<Activity>(`/diary/activities/${activityId}`, { method: 'PUT', body: { startTime, type, title } })
+export function rescheduleActivity(activityId: string, startTime: LocalTime, type: ActivityType, title: string,
+                                   version: number) {
+  return request<Activity>(`/diary/activities/${activityId}`, { method: 'PUT', body: { startTime, type, title, version } })
 }
 
 export function deleteActivity(activityId: string) {
@@ -139,13 +145,13 @@ export function deleteActivity(activityId: string) {
 }
 
 // Sustituye la lista entera: quien no aparece queda sin anotar
-export function recordAttendance(activityId: string, attendance: Record<string, AttendanceStatus>) {
-  return request<Activity>(`/diary/activities/${activityId}/attendance`, { method: 'PUT', body: { attendance } })
+export function recordAttendance(activityId: string, attendance: Record<string, AttendanceStatus>, version: number) {
+  return request<Activity>(`/diary/activities/${activityId}/attendance`, { method: 'PUT', body: { attendance, version } })
 }
 
 // Sustituye todas las valoraciones: quien no aparece queda sin valorar. Solo educadores y administración
-export function recordEvaluations(activityId: string, evaluations: Record<string, Evaluation>) {
-  return request<Activity>(`/diary/activities/${activityId}/evaluations`, { method: 'PUT', body: { evaluations } })
+export function recordEvaluations(activityId: string, evaluations: Record<string, Evaluation>, version: number) {
+  return request<Activity>(`/diary/activities/${activityId}/evaluations`, { method: 'PUT', body: { evaluations, version } })
 }
 
 export function recordOuting(date: IsoDate, patientId: string, leftAt: LocalTime, notes: string) {

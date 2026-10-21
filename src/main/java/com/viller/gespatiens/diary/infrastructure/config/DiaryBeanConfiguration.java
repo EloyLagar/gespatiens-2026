@@ -13,6 +13,7 @@ import com.viller.gespatiens.diary.application.RescheduleActivityUseCase;
 import com.viller.gespatiens.diary.application.ScheduleActivityUseCase;
 import com.viller.gespatiens.diary.application.UpdateOutingUseCase;
 import com.viller.gespatiens.diary.domain.ActivityRepository;
+import com.viller.gespatiens.diary.domain.EditingPresence;
 import com.viller.gespatiens.diary.domain.ReductionRepository;
 import com.viller.gespatiens.diary.domain.ResidentDirectory;
 import com.viller.gespatiens.diary.domain.ShiftLogRepository;
@@ -40,8 +41,9 @@ public class DiaryBeanConfiguration {
 
     @Bean
     public RecordShiftUseCase recordShiftUseCase(ShiftLogRepository shiftLogRepository,
-                                                 StaffDirectory staffDirectory, Clock clock) {
-        return new RecordShiftUseCase(shiftLogRepository, staffDirectory, clock);
+                                                 StaffDirectory staffDirectory, EditingPresence editingPresence,
+                                                 Clock clock) {
+        return new RecordShiftUseCase(shiftLogRepository, staffDirectory, editingPresence, clock);
     }
 
     @Bean
@@ -65,27 +67,34 @@ public class DiaryBeanConfiguration {
     @Bean
     public RescheduleActivityUseCase rescheduleActivityUseCase(ActivityRepository activityRepository,
                                                                ReductionRepository reductionRepository,
-                                                               ResidentDirectory residentDirectory) {
-        return new RescheduleActivityUseCase(activityRepository, reductionRepository, residentDirectory);
+                                                               ResidentDirectory residentDirectory,
+                                                               EditingPresence editingPresence) {
+        return new RescheduleActivityUseCase(activityRepository, reductionRepository, residentDirectory,
+                editingPresence);
     }
 
     @Bean
-    public DeleteActivityUseCase deleteActivityUseCase(ActivityRepository activityRepository) {
-        return new DeleteActivityUseCase(activityRepository);
+    public DeleteActivityUseCase deleteActivityUseCase(ActivityRepository activityRepository,
+                                                       EditingPresence editingPresence) {
+        return new DeleteActivityUseCase(activityRepository, editingPresence);
     }
 
     @Bean
     public RecordAttendanceUseCase recordAttendanceUseCase(ActivityRepository activityRepository,
                                                            ReductionRepository reductionRepository,
-                                                           ResidentDirectory residentDirectory, Clock clock) {
-        return new RecordAttendanceUseCase(activityRepository, reductionRepository, residentDirectory, clock);
+                                                           ResidentDirectory residentDirectory,
+                                                           EditingPresence editingPresence, Clock clock) {
+        return new RecordAttendanceUseCase(activityRepository, reductionRepository, residentDirectory,
+                editingPresence, clock);
     }
 
     @Bean
     public RecordEvaluationsUseCase recordEvaluationsUseCase(ActivityRepository activityRepository,
                                                              ReductionRepository reductionRepository,
-                                                             ResidentDirectory residentDirectory) {
-        return new RecordEvaluationsUseCase(activityRepository, reductionRepository, residentDirectory);
+                                                             ResidentDirectory residentDirectory,
+                                                             EditingPresence editingPresence) {
+        return new RecordEvaluationsUseCase(activityRepository, reductionRepository, residentDirectory,
+                editingPresence);
     }
 
     @Bean

@@ -64,7 +64,7 @@ final class DiaryViews {
                 })
                 .toList();
         return new ActivityView(activity.getId(), activity.getStartTime(), activity.getType(), activity.getTitle(), rows,
-                averages(rows));
+                averages(rows), activity.version());
     }
 
     // Medias de lo que se ve en la lista (a un rebajado no se le cuenta)

@@ -22,9 +22,11 @@ public class Activity {
     private String title;
     private Map<UUID, AttendanceStatus> attendance;
     private Map<UUID, Evaluation> evaluations;
+    // Bloqueo optimista. null: todavía no se ha guardado nunca
+    private final Long revision;
 
     private Activity(UUID id, LocalDate date, LocalTime startTime, ActivityType type, String title,
-                     Map<UUID, AttendanceStatus> attendance, Map<UUID, Evaluation> evaluations) {
+                     Map<UUID, AttendanceStatus> attendance, Map<UUID, Evaluation> evaluations, Long revision) {
         if (id == null || date == null) {
             throw new IllegalArgumentException("La actividad necesita id y fecha");
         }
@@ -34,17 +36,18 @@ public class Activity {
         this.attendance = Map.copyOf(attendance == null ? Map.of() : attendance);
         this.evaluations = Map.of();
         evaluate(evaluations);
+        this.revision = revision;
     }
 
     // Las actividades se programan día a día, también con antelación
     public static Activity schedule(LocalDate date, LocalTime startTime, ActivityType type, String title) {
-        return new Activity(UUID.randomUUID(), date, startTime, type, title, Map.of(), Map.of());
+        return new Activity(UUID.randomUUID(), date, startTime, type, title, Map.of(), Map.of(), null);
     }
 
     public static Activity reconstitute(UUID id, LocalDate date, LocalTime startTime, ActivityType type, String title,
                                         Map<UUID, AttendanceStatus> attendance,
-                                        Map<UUID, Evaluation> evaluations) {
-        return new Activity(id, date, startTime, type, title, attendance, evaluations);
+                                        Map<UUID, Evaluation> evaluations, Long revision) {
+        return new Activity(id, date, startTime, type, title, attendance, evaluations, revision);
     }
 
     public void reschedule(LocalTime newStartTime, ActivityType newType, String newTitle) {
@@ -128,5 +131,23 @@ public class Activity {
 
     public Map<UUID, Evaluation> getEvaluations() {
         return evaluations;
+    }
+
+    // La versión que ve la pantalla: 0 si todavía no se ha guardado nunca y, después, una más que la revisión de
+    // la persistencia (que empieza en 0 al crearlo). Así quien vio el turno vacío no pisa al que lo acaba de crear
+    public long version() {
+        return revision == null ? 0 : revision + 1;
+    }
+
+    // RF8: quien guarda dice qué versión tenía delante. Si otra persona lo cambió mientras tanto, no se pisa.
+    // null: quien llama no lo comprueba (los tests y las llamadas antiguas a la API)
+    public void checkVersion(Long expected) {
+        if (expected != null && expected != version()) {
+            throw new DiaryConflictException("la actividad");
+        }
+    }
+
+    public Optional<Long> getRevision() {
+        return Optional.ofNullable(revision);
     }
 }

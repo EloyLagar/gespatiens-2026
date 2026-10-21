@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -24,6 +25,10 @@ public class ShiftLogJpaEntity {
 
     @Id
     private UUID id;
+
+    // Bloqueo optimista (RF8): dos guardados simultáneos no se pisan. null: todavía no se ha guardado
+    @Version
+    private Long revision;
 
     @Column(nullable = false)
     private LocalDate date;
@@ -101,5 +106,13 @@ public class ShiftLogJpaEntity {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Long getRevision() {
+        return revision;
+    }
+
+    public void setRevision(Long revision) {
+        this.revision = revision;
     }
 }

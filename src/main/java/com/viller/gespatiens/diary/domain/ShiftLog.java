@@ -20,9 +20,11 @@ public class ShiftLog {
     // null si quien lo rellenó ya no está en la plantilla
     private UUID updatedBy;
     private Instant updatedAt;
+    // Bloqueo optimista. null: todavía no se ha guardado nunca
+    private final Long revision;
 
     private ShiftLog(UUID id, LocalDate date, DayPart part, Set<UUID> staffIds, String notes,
-                     UUID updatedBy, Instant updatedAt) {
+                     UUID updatedBy, Instant updatedAt, Long revision) {
         if (id == null || date == null || part == null || updatedAt == null) {
             throw new IllegalArgumentException("El turno necesita id, fecha, parte del día y fecha de modificación");
         }
@@ -33,17 +35,18 @@ public class ShiftLog {
         this.notes = validateNotes(notes);
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
+        this.revision = revision;
     }
 
     // El primer registro de un turno: se crea cuando alguien lo rellena por primera vez
     public static ShiftLog record(LocalDate date, DayPart part, Set<UUID> staffIds, String notes,
                                   UUID editorId, Instant now) {
-        return new ShiftLog(UUID.randomUUID(), date, part, staffIds, notes, editorId, now);
+        return new ShiftLog(UUID.randomUUID(), date, part, staffIds, notes, editorId, now, null);
     }
 
     public static ShiftLog reconstitute(UUID id, LocalDate date, DayPart part, Set<UUID> staffIds, String notes,
-                                        UUID updatedBy, Instant updatedAt) {
-        return new ShiftLog(id, date, part, staffIds, notes, updatedBy, updatedAt);
+                                        UUID updatedBy, Instant updatedAt, Long revision) {
+        return new ShiftLog(id, date, part, staffIds, notes, updatedBy, updatedAt, revision);
     }
 
     public void update(Set<UUID> newStaffIds, String newNotes, UUID editorId, Instant now) {
@@ -91,5 +94,23 @@ public class ShiftLog {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    // La versión que ve la pantalla: 0 si todavía no se ha guardado nunca y, después, una más que la revisión de
+    // la persistencia (que empieza en 0 al crearlo). Así quien vio el turno vacío no pisa al que lo acaba de crear
+    public long version() {
+        return revision == null ? 0 : revision + 1;
+    }
+
+    // RF8: quien guarda dice qué versión tenía delante. Si otra persona lo cambió mientras tanto, no se pisa.
+    // null: quien llama no lo comprueba (los tests y las llamadas antiguas a la API)
+    public void checkVersion(Long expected) {
+        if (expected != null && expected != version()) {
+            throw new DiaryConflictException("el turno");
+        }
+    }
+
+    public Optional<Long> getRevision() {
+        return Optional.ofNullable(revision);
     }
 }

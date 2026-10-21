@@ -4,6 +4,7 @@ import com.viller.gespatiens.diary.application.DiaryDayView.ActivityView;
 import com.viller.gespatiens.diary.domain.Activity;
 import com.viller.gespatiens.diary.domain.ActivityRepository;
 import com.viller.gespatiens.diary.domain.DiaryEntryNotFoundException;
+import com.viller.gespatiens.diary.domain.EditingPresence;
 import com.viller.gespatiens.diary.domain.Evaluation;
 import com.viller.gespatiens.diary.domain.Reduction;
 import com.viller.gespatiens.diary.domain.ReductionRepository;
@@ -21,17 +22,22 @@ public class RecordEvaluationsUseCase {
     private final ActivityRepository activityRepository;
     private final ReductionRepository reductionRepository;
     private final ResidentDirectory residentDirectory;
+    private final EditingPresence editingPresence;
 
     public RecordEvaluationsUseCase(ActivityRepository activityRepository, ReductionRepository reductionRepository,
-                                    ResidentDirectory residentDirectory) {
+                                    ResidentDirectory residentDirectory, EditingPresence editingPresence) {
         this.activityRepository = activityRepository;
         this.reductionRepository = reductionRepository;
         this.residentDirectory = residentDirectory;
+        this.editingPresence = editingPresence;
     }
 
-    public ActivityView execute(UUID activityId, Map<UUID, Evaluation> entries) {
+    // RF8: expectedVersion es la que tenía la actividad en pantalla; null no lo comprueba
+    public ActivityView execute(UUID activityId, Map<UUID, Evaluation> entries, UUID editorId, Long expectedVersion) {
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new DiaryEntryNotFoundException("actividad", activityId));
+        editingPresence.ensureNotEditedByOther(EditingPresence.activity(activityId), editorId);
+        activity.checkVersion(expectedVersion);
         Map<UUID, Reduction> reductions = DiaryViews.reductionsByPatient(reductionRepository, activity);
         Map<UUID, Evaluation> kept = new HashMap<>();
         (entries == null ? Map.<UUID, Evaluation>of() : entries).forEach((patientId, evaluation) -> {

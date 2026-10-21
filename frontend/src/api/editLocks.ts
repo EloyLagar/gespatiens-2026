@@ -46,3 +46,11 @@ export const reportResources = {
   section: (reportId: string, section: string) => `report:${reportId}:section:${section}`,
   header: (reportId: string) => `report:${reportId}:header`,
 }
+
+// Lo que se bloquea en el diario. Deben coincidir con EditingPresence del diario en Spring
+export const diaryResources = {
+  shiftsOf: (date: string) => `shift:${date}:`,
+  shift: (date: string, part: string) => `shift:${date}:${part}`,
+  activities: 'activity:',
+  activity: (activityId: string) => `activity:${activityId}`,
+}

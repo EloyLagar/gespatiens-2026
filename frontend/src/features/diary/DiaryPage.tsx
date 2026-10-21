@@ -10,6 +10,8 @@ import { useAuth } from '../../auth/AuthContext'
 import { todayIso } from '../../shared/dates'
 import { ErrorNotice, LoadingRows, PageHeader } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
+import { diaryResources } from '../../api/editLocks'
+import { useOthersEditing } from '../../shared/editing'
 import { ActivitiesSection } from './ActivitiesSection'
 import { OutingsSection } from './OutingsSection'
 import { ReductionsSection } from './ReductionsSection'
@@ -45,6 +47,8 @@ function DiaryDayPage({ date }: { date: string }) {
   const residents = useApi(() => listPatients('ACTIVE'), [])
   const [current, setCurrent] = useState<DiaryDay | null>(null)
   useEffect(() => setCurrent(day.data), [day.data])
+  // RF8: los turnos y actividades que otras personas están editando. Al terminar, se recarga el día
+  const others = useOthersEditing([diaryResources.shiftsOf(date), diaryResources.activities], day.reload)
 
   const [y, m, d] = date.split('-').map(Number)
   const longDate = new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-GB' : 'es-ES', {
@@ -98,7 +102,14 @@ function DiaryDayPage({ date }: { date: string }) {
             <h2 id="shifts-title" className="section-title">{t('diary.shifts')}</h2>
             <div className="shifts">
               {current.shifts.map((shift) => (
-                <ShiftPanel key={shift.part} date={date} shift={shift} staff={staff.data ?? []} onSaved={replaceShift} />
+                <ShiftPanel
+                  key={shift.part}
+                  date={date}
+                  shift={shift}
+                  staff={staff.data ?? []}
+                  heldBy={others.get(diaryResources.shift(date, shift.part))}
+                  onSaved={replaceShift}
+                />
               ))}
             </div>
           </section>
@@ -119,6 +130,7 @@ function DiaryDayPage({ date }: { date: string }) {
             date={date}
             activities={current.activities}
             canEvaluate={canEvaluate}
+            others={others}
             onChanged={(activities) => setCurrent({ ...current, activities })}
           />
 
