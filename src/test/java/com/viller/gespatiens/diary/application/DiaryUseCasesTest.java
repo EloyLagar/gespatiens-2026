@@ -99,6 +99,8 @@ class DiaryUseCasesTest {
     private final RecordOutingUseCase recordOuting = new RecordOutingUseCase(outings, residents);
     private final UpdateOutingUseCase updateOuting = new UpdateOutingUseCase(outings, residents);
     private final DeleteOutingUseCase deleteOuting = new DeleteOutingUseCase(outings);
+    private final MonthlyEvaluationsUseCase monthly = new MonthlyEvaluationsUseCase(activities, residents);
+    private final RecordMarkUseCase recordMark = new RecordMarkUseCase(activities, reductions, editing);
 
     @Test
     void anEmptyDayStillShowsTheThreeShifts() {
@@ -153,6 +155,67 @@ class DiaryUseCasesTest {
         recordEvaluations.execute(activity.id(), Map.of(juan.id(), new Evaluation(new BigDecimal("7"), null, null)),
                 ana.id(), marked.version());
         assertEquals("activity:" + activity.id(), lockChecks.getLast());
+    }
+
+    // RF6 en tabla mensual (memoria final): una fila por residente y una columna por día del mes
+    @Test
+    void theMonthlyGridShowsEachResidentsMarkPerDay() {
+        UUID first = scheduleActivity.execute(DAY.minusDays(1), LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, null).id();
+        recordAttendance.execute(first, Map.of(juan.id(), AttendanceStatus.ATTENDED, lucia.id(),
+                AttendanceStatus.UNEXCUSED_ABSENCE), pablo.id(), null);
+        recordEvaluations.execute(first, Map.of(juan.id(), new Evaluation(new BigDecimal("8"), new BigDecimal("6"), null)),
+                pablo.id(), null);
+        // Dos actividades del tipo el mismo día: sale la media y la nota se cambia desde cada actividad
+        UUID morning = scheduleActivity.execute(DAY, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, null).id();
+        UUID evening = scheduleActivity.execute(DAY, LocalTime.of(17, 0), ActivityType.LIFE_SKILLS, null).id();
+        recordAttendance.execute(morning, Map.of(juan.id(), AttendanceStatus.ATTENDED), pablo.id(), null);
+        recordAttendance.execute(evening, Map.of(juan.id(), AttendanceStatus.ATTENDED), pablo.id(), null);
+        recordEvaluations.execute(morning, Map.of(juan.id(), new Evaluation(new BigDecimal("6"), null, null)), pablo.id(), null);
+        recordEvaluations.execute(evening, Map.of(juan.id(), new Evaluation(new BigDecimal("9"), null, null)), pablo.id(), null);
+        scheduleActivity.execute(DAY, LocalTime.of(12, 0), ActivityType.SPORT, null);
+
+        MonthlyEvaluationsView grid = monthly.execute(java.time.YearMonth.from(DAY), ActivityType.LIFE_SKILLS);
+
+        assertEquals(DAY.lengthOfMonth(), grid.days().size());
+        int yesterday = DAY.getDayOfMonth() - 2;
+        int today = DAY.getDayOfMonth() - 1;
+        assertEquals(1, grid.days().get(yesterday).activities().size());
+        assertEquals(2, grid.days().get(today).activities().size());
+        MonthlyEvaluationsView.ResidentRow juanRow = grid.rows().stream()
+                .filter(r -> r.resident().id().equals(juan.id())).findFirst().orElseThrow();
+        MonthlyEvaluationsView.ResidentRow luciaRow = grid.rows().stream()
+                .filter(r -> r.resident().id().equals(lucia.id())).findFirst().orElseThrow();
+        assertEquals(new BigDecimal("8.0"), juanRow.cells().get(yesterday).mark().orElseThrow());
+        assertEquals(first, juanRow.cells().get(yesterday).activityId().orElseThrow());
+        assertEquals(new BigDecimal("7.5"), juanRow.cells().get(today).mark().orElseThrow());
+        assertTrue(juanRow.cells().get(today).activityId().isEmpty());
+        assertFalse(luciaRow.cells().get(yesterday).attended());
+        assertTrue(luciaRow.cells().get(yesterday).activityId().isEmpty());
+    }
+
+    // Cambiar la nota desde la tabla conserva la satisfacción y la utilidad, y respeta RF8
+    @Test
+    void aMarkChangedFromTheGridKeepsTheRestAndChecksTheVersion() {
+        ActivityView activity = scheduleActivity.execute(DAY, LocalTime.of(10, 0), ActivityType.LIFE_SKILLS, null);
+        ActivityView marked = recordAttendance.execute(activity.id(), Map.of(juan.id(), AttendanceStatus.ATTENDED),
+                pablo.id(), null);
+        ActivityView evaluated = recordEvaluations.execute(activity.id(),
+                Map.of(juan.id(), new Evaluation(new BigDecimal("5"), new BigDecimal("9"), null)), pablo.id(), null);
+
+        long version = recordMark.execute(activity.id(), juan.id(), new BigDecimal("7.5"), ana.id(), evaluated.version());
+
+        Evaluation now = activities.findById(activity.id()).orElseThrow().getEvaluations().get(juan.id());
+        assertEquals(new BigDecimal("7.5"), now.mark());
+        assertEquals(new BigDecimal("9.0"), now.satisfaction());
+        assertEquals(evaluated.version() + 1, version);
+        assertThrows(DiaryConflictException.class, () ->
+                recordMark.execute(activity.id(), juan.id(), new BigDecimal("4"), ana.id(), marked.version()));
+        assertThrows(IllegalArgumentException.class, () ->
+                recordMark.execute(activity.id(), lucia.id(), new BigDecimal("4"), ana.id(), version));
+        recordMark.execute(activity.id(), juan.id(), null, ana.id(), version);
+        assertEquals(new BigDecimal("9.0"), activities.findById(activity.id()).orElseThrow()
+                .getEvaluations().get(juan.id()).satisfaction());
+        assertTrue(activities.findById(activity.id()).orElseThrow().getEvaluations().get(juan.id()).mark() == null);
     }
 
     @Test
@@ -363,6 +426,12 @@ class DiaryUseCasesTest {
         @Override
         public Optional<Activity> findById(UUID id) {
             return Optional.ofNullable(all.get(id));
+        }
+
+        @Override
+        public List<Activity> findBetween(LocalDate from, LocalDate to) {
+            return all.values().stream().filter(a -> !a.getDate().isBefore(from) && !a.getDate().isAfter(to))
+                    .sorted(Comparator.comparing(Activity::getDate).thenComparing(Activity::getStartTime)).toList();
         }
 
         @Override

@@ -33,6 +33,13 @@ public class ActivityRepositoryJpaAdapter implements ActivityRepository {
     }
 
     @Override
+    public List<Activity> findBetween(LocalDate from, LocalDate to) {
+        return activityJpaRepository.findByDateBetweenOrderByDateAscStartTimeAsc(from, to).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<Activity> findByDate(LocalDate date) {
         return activityJpaRepository.findByDateOrderByStartTime(date).stream()
                 .map(this::toDomain)

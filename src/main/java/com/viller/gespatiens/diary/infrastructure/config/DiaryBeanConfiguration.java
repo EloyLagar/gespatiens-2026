@@ -4,6 +4,8 @@ import com.viller.gespatiens.diary.application.DeleteActivityUseCase;
 import com.viller.gespatiens.diary.application.DeleteOutingUseCase;
 import com.viller.gespatiens.diary.application.DeleteReductionUseCase;
 import com.viller.gespatiens.diary.application.GetDiaryDayUseCase;
+import com.viller.gespatiens.diary.application.MonthlyEvaluationsUseCase;
+import com.viller.gespatiens.diary.application.RecordMarkUseCase;
 import com.viller.gespatiens.diary.application.RecordAttendanceUseCase;
 import com.viller.gespatiens.diary.application.RecordEvaluationsUseCase;
 import com.viller.gespatiens.diary.application.RecordOutingUseCase;
@@ -95,6 +97,19 @@ public class DiaryBeanConfiguration {
                                                              EditingPresence editingPresence) {
         return new RecordEvaluationsUseCase(activityRepository, reductionRepository, residentDirectory,
                 editingPresence);
+    }
+
+    @Bean
+    public MonthlyEvaluationsUseCase monthlyEvaluationsUseCase(ActivityRepository activityRepository,
+                                                               ResidentDirectory residentDirectory) {
+        return new MonthlyEvaluationsUseCase(activityRepository, residentDirectory);
+    }
+
+    @Bean
+    public RecordMarkUseCase recordMarkUseCase(ActivityRepository activityRepository,
+                                               ReductionRepository reductionRepository,
+                                               EditingPresence editingPresence) {
+        return new RecordMarkUseCase(activityRepository, reductionRepository, editingPresence);
     }
 
     @Bean

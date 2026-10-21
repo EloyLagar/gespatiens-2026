@@ -17,7 +17,8 @@
     "notices": "Notices",
     "diary": "Diary",
     "interventions": "Interventions",
-    "reports": "Reports"
+    "reports": "Reports",
+    "evaluations": "Evaluations"
   },
   "language": {
     "label": "Language",
@@ -675,5 +676,24 @@
     "revokeWho": "Remove {{name}}",
     "revokeTitle": "Remove {{name}} from the authorised people?",
     "revokeBody": "They will no longer be listed as authorised to visit the resident."
+  },
+  "evaluations": {
+    "title": "Evaluations",
+    "subtitle": "The marks for one type of activity over a month, with each week's average and the month's",
+    "month": "Month",
+    "type": "Activity",
+    "helpEdit": "Type the mark (0 to 10) in the box; it is saved when you leave it or press Enter, and Escape undoes it. Days with several activities of the same type show the average and are marked from the diary.",
+    "helpView": "Marks are given by educators and administration. Grey days had no such activity.",
+    "none": "There was no {{type}} activity this month.",
+    "caption": "{{type}} marks in {{month}}, by resident and day",
+    "weekShort": "W{{week}}",
+    "weekAverage": "Week {{week}} average",
+    "monthShort": "Month",
+    "monthAverage": "Month average",
+    "markOf": "Mark for {{name}} on day {{day}}",
+    "invalidMark": "The mark goes from 0 to 10, with one decimal at most.",
+    "beingEdited": "{{name}} has that activity open in the diary. Try again when they finish.",
+    "changed": "Someone else changed that activity. The table has been reloaded: check the mark.",
+    "notSaved": "The mark could not be saved."
   }
 }
