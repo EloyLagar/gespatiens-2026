@@ -28,6 +28,9 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
+		<!-- Los tests que usan PostgreSQL van a su propia base de datos, nunca a la de desarrollo.
+		     Se cambia con -Dtest.db.url=... (la integración continua usa la de su contenedor) -->
+		<test.db.url>jdbc:postgresql://localhost:5432/gespatiens-test</test.db.url>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -94,6 +97,15 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<spring.datasource.url>${test.db.url}</spring.datasource.url>
+					</systemPropertyVariables>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
