@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { listPatients } from '../../api/patients'
+import { useAuth } from '../../auth/AuthContext'
 import { MAX_RESIDENTS, type Patient } from '../../api/types'
 import { ageOn, daysBetween, formatDate } from '../../shared/dates'
 import { ErrorNotice, LoadingRows, PageHeader } from '../../shared/ui'
@@ -15,6 +16,7 @@ import { matches } from './search'
 // Pregunta de la pantalla: ¿quién está en el centro y cuántas plazas quedan?
 export function ResidentsPage() {
   const { t, i18n } = useTranslation()
+  const { isAdmin } = useAuth()
   const navigate = useNavigate()
   const { data, error, loading, reload } = useApi(() => listPatients('ACTIVE'), [])
   const [query, setQuery] = useState('')
@@ -36,7 +38,8 @@ export function ResidentsPage() {
       <PageHeader
         title={t('residents.title')}
         subtitle={subtitle}
-        actions={
+        // Memoria final: las altas las da la administración
+        actions={isAdmin && (
           <Button
             renderIcon={Add}
             onClick={() => navigate('/residentes/nuevo')}
@@ -46,7 +49,7 @@ export function ResidentsPage() {
           >
             {t('residents.admit')}
           </Button>
-        }
+        )}
       />
 
       <section className="panel" aria-labelledby="beds-title">

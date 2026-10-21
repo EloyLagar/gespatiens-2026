@@ -660,5 +660,20 @@
     "editing": "{{name}} lo está editando",
     "busy": "{{name}} lo está editando ahora mismo. Podrás editarlo cuando termine.",
     "lost": "{{name}} ha empezado a editarlo (tu sesión de edición caducó). Copia tu texto antes de salir para no perderlo."
+  },
+  "visitors": {
+    "title": "Personas autorizadas para la visita",
+    "add": "Añadir persona",
+    "authorize": "Autorizar",
+    "none": "Nadie autorizado todavía.",
+    "name": "Nombre",
+    "relationship": "Relación familiar",
+    "relationshipHint": "Madre, hermano, pareja…",
+    "phoneNumber": "Teléfono",
+    "editWho": "Editar a {{name}}",
+    "revoke": "Quitar",
+    "revokeWho": "Quitar a {{name}}",
+    "revokeTitle": "¿Quitar a {{name}} de las personas autorizadas?",
+    "revokeBody": "Dejará de figurar como autorizada para visitar al residente."
   }
 }

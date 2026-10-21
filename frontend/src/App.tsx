@@ -39,7 +39,14 @@ export function App() {
         <Route path="intervenciones" element={<InterventionsPage />} />
         <Route path="intervenciones/:patientId" element={<FollowUpPage />} />
         <Route path="residentes" element={<ResidentsPage />} />
-        <Route path="residentes/nuevo" element={<AdmitPatientPage />} />
+        <Route
+          path="residentes/nuevo"
+          element={
+            <RequireAdmin>
+              <AdmitPatientPage />
+            </RequireAdmin>
+          }
+        />
         <Route path="residentes/:id" element={<PatientDetailPage />} />
         <Route path="antiguos" element={<FormerResidentsPage />} />
         <Route path="empleados" element={<EmployeesPage />} />

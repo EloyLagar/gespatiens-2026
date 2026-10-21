@@ -96,8 +96,8 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "SOCIAL_EDUCATOR")
-    void anyEmployeeAdmitsPatient() throws Exception {
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void administrationAdmitsPatient() throws Exception {
         PatientDetails details = new PatientDetails("Juan", "García López", new Dni("12345678Z"),
                 LocalDate.of(1990, 5, 1), "C/ Mayor 1, Valencia", "600111222",
                 null, null, null, "Alcohol", null);
@@ -113,7 +113,7 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMINISTRATOR")
     void invalidDniReturnsBadRequestWithoutCallingUseCase() throws Exception {
         String body = VALID_BODY.replace("12345678Z", "12345678A");
 
@@ -124,7 +124,7 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMINISTRATOR")
     void badDateFormatReturnsBadRequest() throws Exception {
         String body = VALID_BODY.replace("1990-05-01", "01/05/1990");
 
@@ -133,7 +133,7 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMINISTRATOR")
     void fullCenterReturnsConflict() throws Exception {
         when(admitPatientUseCase.execute(any(), any())).thenThrow(new CenterFullException());
 
@@ -199,8 +199,8 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "SOCIAL_EDUCATOR")
-    void anyEmployeeReadmitsPatient() throws Exception {
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void administrationReadmitsPatient() throws Exception {
         PatientDetails details = new PatientDetails("Juan", "García López", new Dni("12345678Z"),
                 LocalDate.of(1990, 5, 1), "C/ Mayor 1, Valencia", "600111222",
                 null, null, null, null, null);
@@ -217,7 +217,7 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMINISTRATOR")
     void readmitWithoutBodyUsesToday() throws Exception {
         when(readmitPatientUseCase.execute(PATIENT_ID, LocalDate.now()))
                 .thenThrow(new PatientAlreadyActiveException(PATIENT_ID));
@@ -228,7 +228,7 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMINISTRATOR")
     void readmitWhenCenterIsFullReturnsConflict() throws Exception {
         when(readmitPatientUseCase.execute(eq(PATIENT_ID), any())).thenThrow(new CenterFullException());
 
@@ -309,8 +309,8 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "PSYCHOLOGIST")
-    void anyEmployeeUpdatesPatientDetails() throws Exception {
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void administrationUpdatesPatientDetails() throws Exception {
         when(updatePatientDetailsUseCase.execute(eq(PATIENT_ID), any())).thenReturn(dischargedPatient());
 
         mockMvc.perform(put("/api/patients/{id}", PATIENT_ID).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
@@ -319,7 +319,7 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMINISTRATOR")
     void updateWithMissingNameReturnsBadRequest() throws Exception {
         String body = VALID_BODY.replace("\"name\":\"Juan\"", "\"name\":\"\"");
 
@@ -330,13 +330,25 @@ class PatientControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMINISTRATOR")
     void updateWithDniOfAnotherPatientReturnsConflict() throws Exception {
         when(updatePatientDetailsUseCase.execute(eq(PATIENT_ID), any()))
                 .thenThrow(new PatientAlreadyRegisteredException(new Dni("12345678Z")));
 
         mockMvc.perform(put("/api/patients/{id}", PATIENT_ID).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
                 .andExpect(status().isConflict());
+    }
+
+    // Memoria final: la gestión de fichas es de la administración. El resto del personal las consulta
+    @Test
+    @WithMockUser(roles = "SOCIAL_EDUCATOR")
+    void otherEmployeesCannotAdmitEditOrReadmit() throws Exception {
+        mockMvc.perform(post("/api/patients").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(put("/api/patients/{id}", PATIENT_ID).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/api/patients/{id}/readmit", PATIENT_ID)).andExpect(status().isForbidden());
+        verifyNoInteractions(admitPatientUseCase, updatePatientDetailsUseCase, readmitPatientUseCase);
     }
 
     @Test

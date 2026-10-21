@@ -1809,3 +1809,51 @@ ol.resident-reports {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+// Personas autorizadas para la visita: nombre, relación y teléfono en una fila
+.visitors {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.visitors__item {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  min-height: var(--row);
+  border-top: 1px solid var(--rule);
+}
+
+.visitors__item:first-child {
+  border-top: 0;
+}
+
+.visitors__name {
+  font-weight: 600;
+}
+
+.visitor-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-bottom: 16px;
+}
+
+.visitor-form .form-actions,
+.visitor-form .error-notice {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 671px) {
+  .visitors__item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 8px 0;
+  }
+
+  .visitor-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

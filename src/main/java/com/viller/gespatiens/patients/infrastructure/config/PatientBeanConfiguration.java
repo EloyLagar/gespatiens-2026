@@ -1,12 +1,14 @@
 package com.viller.gespatiens.patients.infrastructure.config;
 
 import com.viller.gespatiens.patients.application.AdmitPatientUseCase;
+import com.viller.gespatiens.patients.application.AuthorizedVisitorsUseCase;
 import com.viller.gespatiens.patients.application.DeletePatientUseCase;
 import com.viller.gespatiens.patients.application.DischargePatientUseCase;
 import com.viller.gespatiens.patients.application.GetPatientUseCase;
 import com.viller.gespatiens.patients.application.ListPatientsUseCase;
 import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
 import com.viller.gespatiens.patients.application.UpdatePatientDetailsUseCase;
+import com.viller.gespatiens.patients.domain.AuthorizedVisitorRepository;
 import com.viller.gespatiens.patients.domain.PatientRepository;
 import com.viller.gespatiens.patients.domain.ResidentNumberAssigner;
 import com.viller.gespatiens.patients.domain.StayEvents;
@@ -16,6 +18,12 @@ import org.springframework.context.annotation.Configuration;
 // Los casos de uso y servicios de dominio no llevan anotaciones de Spring: se registran aquí
 @Configuration
 public class PatientBeanConfiguration {
+
+    @Bean
+    public AuthorizedVisitorsUseCase authorizedVisitorsUseCase(PatientRepository patientRepository,
+                                                               AuthorizedVisitorRepository visitorRepository) {
+        return new AuthorizedVisitorsUseCase(patientRepository, visitorRepository);
+    }
 
     @Bean
     public ResidentNumberAssigner residentNumberAssigner() {
