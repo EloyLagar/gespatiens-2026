@@ -38,7 +38,7 @@ public class UserJpaEntity {
     @Column(nullable = false, length = 2)
     private Language language;
 
-    @Column(nullable = false)
+    // NULL mientras el empleado invitado no haya creado su contraseña
     private String passwordHash;
 
     public UUID getId() {

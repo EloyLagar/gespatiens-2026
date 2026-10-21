@@ -1132,6 +1132,11 @@ button:focus-visible,
   color: var(--muted);
 }
 
+.person__tag {
+  margin: 0 0 0 8px;
+  vertical-align: middle;
+}
+
 .dash {
   color: var(--faint);
 }
@@ -1310,6 +1315,28 @@ button:focus-visible,
   padding: var(--pad);
   border: 1px solid var(--border);
   background: var(--surface);
+}
+
+// Segunda forma de hacer lo mismo dentro del panel (p. ej. contraseña provisional si el correo no llega)
+.settings-row__subtitle {
+  margin: 32px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.settings-row__hint {
+  margin: 4px 0 16px;
+  color: var(--muted);
+}
+
+// Explicación breve encima de un formulario
+.form-intro {
+  max-width: 640px;
+  margin: 0 0 24px;
+  color: var(--muted);
 }
 
 // ---------------------------------------------------------------- Login

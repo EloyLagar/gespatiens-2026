@@ -1,9 +1,9 @@
-import { Button, PasswordInput, Select, SelectItem, TextInput } from '@carbon/react'
+import { Button, InlineNotification, PasswordInput, Select, SelectItem, Tag, TextInput } from '@carbon/react'
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { SPECIALITIES, type Speciality, type User } from '../../api/types'
-import { deleteUser, editUser, getUser, registerUser, resetUserPassword } from '../../api/users'
+import { deleteUser, editUser, getUser, registerUser, resetUserPassword, sendPasswordSetup } from '../../api/users'
 import { ConfirmDialog, ErrorNotice, LoadingRows, PageHeader, SuccessNotice } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
 
@@ -15,8 +15,10 @@ interface Values {
   email: string
   phoneNumber: string
   speciality: Speciality
-  password: string
 }
+
+// Tras el alta, la ficha del empleado dice si el correo para crear la contraseña ha salido
+type Flash = 'invited' | 'inviteFailed' | null
 
 // RF7: alta (/empleados/nuevo) y edición (/empleados/:id) de empleados por la administración
 export function EmployeeFormPage() {
@@ -30,12 +32,12 @@ function NewEmployee() {
   return (
     <>
       <PageHeader title={t('employeeForm.newTitle')} breadcrumb={<Link to="/empleados">{t('nav.employees')}</Link>} />
+      <p className="form-intro">{t('employeeForm.inviteHelp')}</p>
       <EmployeeForm
-        withPassword
         submitLabel={t('employeeForm.create')}
         onSubmit={async (v) => {
-          await registerUser(v)
-          navigate('/empleados')
+          const { user, emailSent } = await registerUser(v)
+          navigate(`/empleados/${user.id}`, { state: { flash: emailSent ? 'invited' : 'inviteFailed' } })
         }}
       />
     </>
@@ -45,14 +47,22 @@ function NewEmployee() {
 function EditEmployee({ id }: { id: string }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const location = useLocation()
   const { data, error, loading, reload } = useApi(() => getUser(id), [id])
   const [user, setUser] = useState<User | null>(null)
+  const [flash] = useState<Flash>((location.state as { flash?: Flash } | null)?.flash ?? null)
   const [saved, setSaved] = useState<string | null>(null)
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState<unknown>(null)
   const [deleting, setDeleting] = useState(false)
   const [busy, setBusy] = useState(false)
   const [deleteError, setDeleteError] = useState<unknown>(null)
 
   useEffect(() => setUser(data), [data])
+  // El aviso del alta llega en el estado de la navegación: se borra para que no vuelva a salir al recargar
+  useEffect(() => {
+    if (location.state) navigate(location.pathname, { replace: true, state: null })
+  }, [location.state, location.pathname, navigate])
 
   if (error) {
     return (
@@ -67,7 +77,12 @@ function EditEmployee({ id }: { id: string }) {
   return (
     <>
       <PageHeader title={user.name} subtitle={t(`speciality.${user.speciality}`)} breadcrumb={<Link to="/empleados">{t('nav.employees')}</Link>} />
-      <SuccessNotice message={saved} />
+      <SuccessNotice message={saved ?? (flash === 'invited' ? t('employeeForm.invited', { email: user.email }) : null)} />
+      {flash === 'inviteFailed' && !saved && (
+        <div role="alert">
+          <InlineNotification kind="warning" lowContrast hideCloseButton title={t('employeeForm.inviteFailedTitle')} subtitle={t('employeeForm.inviteFailed')} />
+        </div>
+      )}
 
       <section className="settings-row" aria-labelledby="profile-title">
         <div className="settings-row__label">
@@ -90,14 +105,45 @@ function EditEmployee({ id }: { id: string }) {
       <section className="settings-row" aria-labelledby="reset-title">
         <div className="settings-row__label">
           <h2 id="reset-title">{t('employeeForm.resetTitle')}</h2>
-          <p>{t('employeeForm.resetHelp')}</p>
+          <p>{user.passwordPending ? t('employeeForm.pendingHelp') : t('employeeForm.linkHelp')}</p>
         </div>
         <div className="settings-row__panel">
+          <div className="form form--compact">
+            {user.passwordPending && (
+              <p>
+                <Tag type="warm-gray" size="sm">{t('employees.pending')}</Tag>
+              </p>
+            )}
+            <ErrorNotice error={sendError} title={t('employeeForm.linkNotSent')} />
+            <div className="form-actions">
+              <Button
+                kind="secondary"
+                disabled={sending}
+                onClick={async () => {
+                  setSending(true)
+                  setSendError(null)
+                  try {
+                    await sendPasswordSetup(user.id)
+                    setSaved(t('employeeForm.linkSent', { email: user.email }))
+                  } catch (err) {
+                    setSendError(err)
+                  } finally {
+                    setSending(false)
+                  }
+                }}
+              >
+                {sending ? t('employeeForm.sending') : user.passwordPending ? t('employeeForm.resendInvite') : t('employeeForm.sendLink')}
+              </Button>
+            </div>
+          </div>
+          <h3 className="settings-row__subtitle">{t('employeeForm.resetManualTitle')}</h3>
+          <p className="settings-row__hint">{t('employeeForm.resetHelp')}</p>
           <PasswordForm
             idPrefix="reset"
             submitLabel={t('employeeForm.resetSubmit')}
             onSubmit={async (newPassword) => {
               await resetUserPassword(user.id, newPassword)
+              setUser({ ...user, passwordPending: false })
               setSaved(t('employeeForm.resetDone', { name: user.name }))
             }}
           />
@@ -143,19 +189,17 @@ function EditEmployee({ id }: { id: string }) {
 
 interface FormProps {
   initial?: User
-  withPassword?: boolean
   submitLabel: string
   onSubmit: (values: Values) => Promise<void>
 }
 
-function EmployeeForm({ initial, withPassword, submitLabel, onSubmit }: FormProps) {
+function EmployeeForm({ initial, submitLabel, onSubmit }: FormProps) {
   const { t } = useTranslation()
   const [values, setValues] = useState<Values>({
     name: initial?.name ?? '',
     email: initial?.email ?? '',
     phoneNumber: initial?.phoneNumber ?? '',
     speciality: initial?.speciality ?? 'SOCIAL_EDUCATOR',
-    password: '',
   })
   const [errors, setErrors] = useState<Partial<Record<keyof Values, string>>>({})
   const [serverError, setServerError] = useState<unknown>(null)
@@ -169,9 +213,6 @@ function EmployeeForm({ initial, withPassword, submitLabel, onSubmit }: FormProp
     if (!values.name.trim()) found.name = t('form.required')
     if (!values.email.trim()) found.email = t('form.required')
     if (!values.phoneNumber.trim()) found.phoneNumber = t('form.required')
-    if (withPassword && values.password.length < MIN_PASSWORD_LENGTH) {
-      found.password = t('form.passwordLength', { min: MIN_PASSWORD_LENGTH })
-    }
     setErrors(found)
     if (Object.keys(found).length > 0) {
       document.getElementById(`employee-${Object.keys(found)[0]}`)?.focus()
@@ -199,20 +240,6 @@ function EmployeeForm({ initial, withPassword, submitLabel, onSubmit }: FormProp
           <SelectItem key={s} value={s} text={t(`speciality.${s}`)} />
         ))}
       </Select>
-      {withPassword && (
-        <PasswordInput
-          id="employee-password"
-          labelText={`${t('employeeForm.initialPassword')} (${t('form.requiredMark')})`}
-          helperText={t('form.passwordLength', { min: MIN_PASSWORD_LENGTH })}
-          value={values.password}
-          onChange={set('password')}
-          invalid={Boolean(errors.password)}
-          invalidText={errors.password}
-          autoComplete="new-password"
-          showPasswordLabel={t('login.showPassword')}
-          hidePasswordLabel={t('login.hidePassword')}
-        />
-      )}
       <div className="form-actions">
         <Button type="submit" disabled={busy}>
           {busy ? t('common.saving') : submitLabel}
@@ -226,11 +253,13 @@ interface PasswordFormProps {
   idPrefix: string
   // Cambiar la propia contraseña exige la actual (RF4); restablecer la de otro no
   withCurrent?: boolean
+  // Botón principal cuando el formulario es lo único de la pantalla (crear la contraseña desde el correo)
+  primary?: boolean
   submitLabel: string
   onSubmit: (newPassword: string, currentPassword: string) => Promise<void>
 }
 
-export function PasswordForm({ idPrefix, withCurrent, submitLabel, onSubmit }: PasswordFormProps) {
+export function PasswordForm({ idPrefix, withCurrent, primary, submitLabel, onSubmit }: PasswordFormProps) {
   const { t } = useTranslation()
   const [current, setCurrent] = useState('')
   const [next, setNext] = useState('')
@@ -274,7 +303,7 @@ export function PasswordForm({ idPrefix, withCurrent, submitLabel, onSubmit }: P
       <PasswordInput id={`${idPrefix}-next`} labelText={t('password.new')} helperText={t('form.passwordLength', { min: MIN_PASSWORD_LENGTH })} value={next} onChange={(e) => setNext(e.target.value)} invalid={Boolean(errors.next)} invalidText={errors.next} autoComplete="new-password" {...labels} />
       <PasswordInput id={`${idPrefix}-repeat`} labelText={t('password.repeat')} value={repeat} onChange={(e) => setRepeat(e.target.value)} invalid={Boolean(errors.repeat)} invalidText={errors.repeat} autoComplete="new-password" {...labels} />
       <div className="form-actions">
-        <Button type="submit" kind="secondary" disabled={busy}>
+        <Button type="submit" kind={primary ? 'primary' : 'secondary'} disabled={busy}>
           {busy ? t('common.saving') : submitLabel}
         </Button>
       </div>

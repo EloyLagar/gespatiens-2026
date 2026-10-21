@@ -45,7 +45,7 @@
     "failed": "No se ha podido entrar",
     "entering": "Entrando…",
     "submit": "Entrar",
-    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te ponga una nueva."
+    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te envíe un enlace para crear una nueva."
   },
   "errors": {
     "title": "Algo ha fallado",
@@ -55,7 +55,9 @@
     "forbidden": "Tu especialidad no tiene permiso para hacer esto.",
     "notFound": "No existe o ya se ha borrado.",
     "conflict": "Choca con datos que ya existen.",
-    "generic": "Ha ocurrido un error inesperado. Vuelve a intentarlo."
+    "generic": "Ha ocurrido un error inesperado. Vuelve a intentarlo.",
+    "gone": "El enlace ya no es válido.",
+    "badGateway": "No se ha podido enviar el correo. Revisa la configuración del correo e inténtalo de nuevo."
   },
   "common": {
     "retry": "Reintentar",
@@ -199,7 +201,8 @@
     "tableCaption": "Empleados del centro, ordenados por nombre",
     "you": "tú",
     "myProfile": "Mi perfil",
-    "editWho": "Editar a {{name}}"
+    "editWho": "Editar a {{name}}",
+    "pending": "Sin contraseña todavía"
   },
   "user": {
     "name": "Nombre",
@@ -215,7 +218,7 @@
     "profileHelp": "La especialidad decide qué puede hacer en la aplicación. Solo la administración puede cambiarla, igual que el email.",
     "saved": "Perfil guardado.",
     "resetTitle": "Contraseña",
-    "resetHelp": "Si ha olvidado la suya, ponle una provisional y pídele que la cambie desde su perfil.",
+    "resetHelp": "Si el correo no le llega, ponle una provisional y pídele que la cambie desde su perfil.",
     "resetSubmit": "Poner contraseña nueva",
     "resetDone": "{{name}} ya puede entrar con la contraseña nueva.",
     "deleteTitle": "Eliminar empleado",
@@ -226,7 +229,18 @@
     "deleteConfirm": "Eliminar",
     "emailHelp": "Con él entra en la aplicación",
     "specialityHelp": "Administración puede gestionar empleados, dar bajas y borrar fichas",
-    "initialPassword": "Contraseña inicial"
+    "inviteHelp": "Le llegará un correo con un enlace para que cree su propia contraseña. Nadie más la conocerá.",
+    "invited": "Empleado dado de alta. Hemos enviado a {{email}} un correo para que cree su contraseña.",
+    "inviteFailedTitle": "Empleado dado de alta, pero el correo no ha salido",
+    "inviteFailed": "Reenvíalo desde el apartado Contraseña o ponle una contraseña provisional.",
+    "pendingHelp": "Todavía no ha creado su contraseña. El enlace del correo caduca a los 3 días: si no le ha llegado o ha caducado, reenvíaselo.",
+    "linkHelp": "Si ha olvidado la suya, envíale un enlace por correo para que cree una nueva. El enlace anterior deja de valer.",
+    "resendInvite": "Reenviar correo",
+    "sendLink": "Enviar enlace para nueva contraseña",
+    "sending": "Enviando…",
+    "linkSent": "Hemos enviado a {{email}} un enlace para crear la contraseña.",
+    "linkNotSent": "No se ha enviado el correo",
+    "resetManualTitle": "O ponle una contraseña provisional"
   },
   "password": {
     "current": "Contraseña actual",
@@ -848,5 +862,14 @@
       "removed_one": "Se ha quitado {{count}} turno",
       "removed_other": "Se han quitado {{count}} turnos"
     }
+  },
+  "passwordSetup": {
+    "title": "Crea tu contraseña",
+    "lead": "Hola, {{name}}. Con esta contraseña y tu email ({{email}}) entrarás en la aplicación.",
+    "submit": "Crear contraseña",
+    "done": "Contraseña creada. Ya puedes entrar.",
+    "invalidTitle": "El enlace no sirve",
+    "invalid": "Puede que ya lo hayas usado, que haya caducado o que te hayan enviado otro más reciente. Pide a la administración un enlace nuevo.",
+    "toLogin": "Ir a iniciar sesión"
   }
 }

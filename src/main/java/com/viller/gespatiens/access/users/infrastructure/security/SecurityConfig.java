@@ -26,6 +26,8 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         // El login es lo único accesible sin token
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        // Y crear la contraseña desde el enlace del correo: quien lo abre aún no puede entrar
+                        .requestMatchers("/api/auth/password-setup/*").permitAll()
                         // Solo la administración puede dar de alta empleados
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMINISTRATOR")
                         // RF4: cada empleado gestiona su propio perfil. Va antes que la regla de /api/users/*
@@ -37,6 +39,7 @@ public class SecurityConfig {
                         // RF7: editar, restablecer contraseñas y eliminar perfiles es cosa de la administración
                         .requestMatchers(HttpMethod.PUT, "/api/users/*", "/api/users/*/password").hasRole("ADMINISTRATOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.POST, "/api/users/*/password-setup").hasRole("ADMINISTRATOR")
                         // Memoria final: "La aplicación deberá proporcionar a la administración un menú de gestión de
                         // usuarios": dar de alta, modificar, reincorporar, dar de baja (RF9) y borrar fichas, y
                         // gestionar a quién se autoriza a visitar, es de la administración. Consultarlas, de todos

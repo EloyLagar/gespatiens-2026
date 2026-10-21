@@ -55,6 +55,11 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
+		<!-- Memoria final: el empleado nuevo recibe un correo para crear su contraseña -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 		<!-- Genera los informes en PDF (RF2). Fork libre (LGPL/MPL) de iText 4 -->
 		<dependency>
 			<groupId>com.github.librepdf</groupId>

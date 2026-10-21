@@ -24,6 +24,8 @@ export interface User {
   speciality: Speciality
   // RNF9: el idioma que ha elegido. Puede faltar en una sesión guardada antes de existir
   language?: 'ES' | 'EN'
+  // Invitado que todavía no ha creado su contraseña desde el correo
+  passwordPending?: boolean
 }
 
 export interface LoginResponse {

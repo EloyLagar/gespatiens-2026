@@ -1,4 +1,4 @@
-import { Button } from '@carbon/react'
+import { Button, Tag } from '@carbon/react'
 import { Add } from '@carbon/icons-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
@@ -65,6 +65,12 @@ export function EmployeesPage() {
                         <span>
                           {u.name}
                           {u.id === me?.id && <span className="you"> ({t('employees.you')})</span>}
+                          {/* Invitado que aún no ha creado su contraseña desde el correo */}
+                          {u.passwordPending && (
+                            <Tag type="warm-gray" size="sm" className="person__tag">
+                              {t('employees.pending')}
+                            </Tag>
+                          )}
                           <span className="row-sub">
                             {t(`speciality.${u.speciality}`)} · {u.phoneNumber}
                           </span>

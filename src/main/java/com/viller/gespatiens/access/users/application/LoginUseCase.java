@@ -24,6 +24,8 @@ public class LoginUseCase {
             throw new InvalidCredentialsException();
         }
         User user = userRepository.findByEmail(email.trim())
+                // El invitado que aún no ha creado su contraseña no puede entrar
+                .filter(User::hasPassword)
                 .filter(u -> passwordHasher.matches(password, u.getPasswordHash()))
                 .orElseThrow(InvalidCredentialsException::new);
         return new Session(user, accessTokenIssuer.issueFor(user));

@@ -6,8 +6,10 @@ import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
-import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
+import com.viller.gespatiens.access.users.application.InviteUserUseCase;
+import com.viller.gespatiens.access.users.application.PasswordSetupDeliveryException;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
+import com.viller.gespatiens.access.users.application.SendPasswordSetupLinkUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException;
@@ -54,14 +56,14 @@ class UserControllerTest {
 
     private static final String VALID_BODY = """
             {"name":"Ana","email":"ana@vientos.es","phoneNumber":"600111222",
-             "speciality":"PSYCHOLOGIST","password":"secreto123"}
+             "speciality":"PSYCHOLOGIST"}
             """;
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private RegisterUserUseCase registerUserUseCase;
+    private InviteUserUseCase inviteUserUseCase;
 
     @MockitoBean
     private ListUsersUseCase listUsersUseCase;
@@ -87,6 +89,9 @@ class UserControllerTest {
     @MockitoBean
     private ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
 
+    @MockitoBean
+    private SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase;
+
     // La seguridad real necesita estos dos beans; con @WithMockUser no se llegan a usar
     @MockitoBean
     private JwtDecoder jwtDecoder;
@@ -109,22 +114,65 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMINISTRATOR")
-    void administratorRegistersUserWithoutExposingPassword() throws Exception {
-        User user = User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash");
-        when(registerUserUseCase.execute(any(), any(), any(), any(), any())).thenReturn(user);
+    void administratorInvitesUserWhoReceivesTheEmail() throws Exception {
+        User user = User.invite("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST);
+        when(inviteUserUseCase.execute("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST))
+                .thenReturn(new InviteUserUseCase.Invitation(user, true));
 
         mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(user.getId().toString()))
-                .andExpect(jsonPath("$.speciality").value("PSYCHOLOGIST"))
-                .andExpect(jsonPath("$.passwordHash").doesNotExist())
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.emailSent").value(true))
+                .andExpect(jsonPath("$.user.id").value(user.getId().toString()))
+                .andExpect(jsonPath("$.user.speciality").value("PSYCHOLOGIST"))
+                .andExpect(jsonPath("$.user.passwordPending").value(true))
+                .andExpect(jsonPath("$.user.passwordHash").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void invitationSaysWhenTheEmailCouldNotBeSent() throws Exception {
+        User user = User.invite("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST);
+        when(inviteUserUseCase.execute(any(), any(), any(), any()))
+                .thenReturn(new InviteUserUseCase.Invitation(user, false));
+
+        mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.emailSent").value(false));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void administratorResendsThePasswordSetupEmail() throws Exception {
+        UUID id = UUID.randomUUID();
+
+        mockMvc.perform(post("/api/users/{id}/password-setup", id))
+                .andExpect(status().isNoContent());
+        verify(sendPasswordSetupLinkUseCase).execute(id);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void failedEmailReturnsBadGateway() throws Exception {
+        UUID id = UUID.randomUUID();
+        doThrow(new PasswordSetupDeliveryException("ana@vientos.es", new RuntimeException("SMTP caído")))
+                .when(sendPasswordSetupLinkUseCase).execute(id);
+
+        mockMvc.perform(post("/api/users/{id}/password-setup", id))
+                .andExpect(status().isBadGateway());
+    }
+
+    @Test
+    @WithMockUser(roles = "SOCIAL_EDUCATOR")
+    void onlyAdministrationResendsThePasswordSetupEmail() throws Exception {
+        mockMvc.perform(post("/api/users/{id}/password-setup", UUID.randomUUID()))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(sendPasswordSetupLinkUseCase);
     }
 
     @Test
     @WithMockUser(roles = "ADMINISTRATOR")
     void duplicateEmailReturnsConflict() throws Exception {
-        when(registerUserUseCase.execute(any(), any(), any(), any(), any()))
+        when(inviteUserUseCase.execute(any(), any(), any(), any()))
                 .thenThrow(new EmailAlreadyRegisteredException("ana@vientos.es"));
 
         mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
@@ -134,7 +182,7 @@ class UserControllerTest {
     @Test
     @WithMockUser(roles = "ADMINISTRATOR")
     void invalidDataReturnsBadRequest() throws Exception {
-        when(registerUserUseCase.execute(any(), any(), any(), any(), any()))
+        when(inviteUserUseCase.execute(any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("Email inválido"));
 
         mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))

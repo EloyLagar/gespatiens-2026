@@ -45,7 +45,7 @@
     "failed": "Could not sign in",
     "entering": "Signing in…",
     "submit": "Sign in",
-    "forgot": "Forgotten your password? Ask administration to set a new one."
+    "forgot": "Forgotten your password? Ask administration to send you a link to create a new one."
   },
   "errors": {
     "title": "Something went wrong",
@@ -55,7 +55,9 @@
     "forbidden": "Your role is not allowed to do this.",
     "notFound": "It does not exist or has been deleted.",
     "conflict": "It clashes with data that already exists.",
-    "generic": "An unexpected error occurred. Try again."
+    "generic": "An unexpected error occurred. Try again.",
+    "gone": "The link is no longer valid.",
+    "badGateway": "The email could not be sent. Check the mail configuration and try again."
   },
   "common": {
     "retry": "Retry",
@@ -199,7 +201,8 @@
     "tableCaption": "Centre staff, by name",
     "you": "you",
     "myProfile": "My profile",
-    "editWho": "Edit {{name}}"
+    "editWho": "Edit {{name}}",
+    "pending": "No password yet"
   },
   "user": {
     "name": "Name",
@@ -215,7 +218,7 @@
     "profileHelp": "The role decides what they can do in the application. Only administration can change it, like the email.",
     "saved": "Profile saved.",
     "resetTitle": "Password",
-    "resetHelp": "If they have forgotten theirs, set a temporary one and ask them to change it from their profile.",
+    "resetHelp": "If the email does not arrive, set a temporary one and ask them to change it from their profile.",
     "resetSubmit": "Set new password",
     "resetDone": "{{name}} can now sign in with the new password.",
     "deleteTitle": "Remove staff member",
@@ -226,7 +229,18 @@
     "deleteConfirm": "Remove",
     "emailHelp": "They sign in with it",
     "specialityHelp": "Administration can manage staff, discharge residents and delete records",
-    "initialPassword": "Initial password"
+    "inviteHelp": "They will receive an email with a link to create their own password. Nobody else will know it.",
+    "invited": "Staff member added. We have emailed {{email}} a link to create their password.",
+    "inviteFailedTitle": "Staff member added, but the email was not sent",
+    "inviteFailed": "Resend it from the Password section or set a temporary password.",
+    "pendingHelp": "They have not created their password yet. The email link expires after 3 days: if it did not arrive or has expired, resend it.",
+    "linkHelp": "If they have forgotten theirs, email them a link to create a new one. The previous link stops working.",
+    "resendInvite": "Resend email",
+    "sendLink": "Send new password link",
+    "sending": "Sending…",
+    "linkSent": "We have emailed {{email}} a link to create the password.",
+    "linkNotSent": "The email was not sent",
+    "resetManualTitle": "Or set a temporary password"
   },
   "password": {
     "current": "Current password",
@@ -848,5 +862,14 @@
       "removed_one": "{{count}} shift removed",
       "removed_other": "{{count}} shifts removed"
     }
+  },
+  "passwordSetup": {
+    "title": "Create your password",
+    "lead": "Hello, {{name}}. You will sign in with this password and your email ({{email}}).",
+    "submit": "Create password",
+    "done": "Password created. You can sign in now.",
+    "invalidTitle": "This link does not work",
+    "invalid": "You may have used it already, it may have expired, or a newer one may have been sent. Ask administration for a new link.",
+    "toLogin": "Go to sign in"
   }
 }
