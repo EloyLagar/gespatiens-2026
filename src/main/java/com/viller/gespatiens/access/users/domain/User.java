@@ -7,10 +7,15 @@ public class User {
     private String name;
     private String email;
     private String phoneNumber;
-    private final String speciality;
+    private Speciality speciality;
+    // Solo guardamos el hash, nunca la contraseña en claro
+    private String passwordHash;
+    // El idioma de la aplicación que ha elegido (RNF9)
+    private Language language;
 
     // Constructor para reconstruir un usuario ya existente (p.ej. al leerlo de la BD)
-    private User(UUID id, String name, String email, String phoneNumber, String speciality) {
+    private User(UUID id, String name, String email, String phoneNumber, Speciality speciality, String passwordHash,
+                 Language language) {
         if (id == null) {
             throw new IllegalArgumentException("El id no puede ser null");
         }
@@ -20,27 +25,30 @@ public class User {
         this.email = validateEmail(email);
         this.phoneNumber = phoneNumber;
         this.speciality = speciality;
+        this.passwordHash = validatePasswordHash(passwordHash);
+        this.language = language == null ? Language.ES : language;
     }
 
     // Crear un usuario nuevo: el dominio genera el id
-    public static User create(String name, String email, String phoneNumber, String speciality) {
-        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality);
+    public static User create(String name, String email, String phoneNumber, Speciality speciality, String passwordHash) {
+        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, passwordHash, Language.ES);
     }
 
     // Reconstruir un usuario que ya existía (leído de BD)
-    public static User reconstitute(UUID id, String name, String email, String phoneNumber, String speciality) {
-        return new User(id, name, email, phoneNumber, speciality);
+    public static User reconstitute(UUID id, String name, String email, String phoneNumber, Speciality speciality,
+                                    String passwordHash, Language language) {
+        return new User(id, name, email, phoneNumber, speciality, passwordHash, language);
     }
 
     // Método auxiliar compartido, para no repetir los tres "if" en ambos constructores
-    private void validateFields(String name, String phoneNumber, String speciality) {
+    private void validateFields(String name, String phoneNumber, Speciality speciality) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
         }
         if (phoneNumber == null || phoneNumber.isBlank()) {
             throw new IllegalArgumentException("El número de teléfono no puede estar vacío");
         }
-        if (speciality == null || speciality.isBlank()) {
+        if (speciality == null) {
             throw new IllegalArgumentException("El campo de especialidad no puede estar vacío");
         }
     }
@@ -56,6 +64,13 @@ public class User {
         return email != null
                 && !email.isBlank()
                 && email.matches("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    private String validatePasswordHash(String passwordHash) {
+        if (passwordHash == null || passwordHash.isBlank()) {
+            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+        }
+        return passwordHash;
     }
 
     public void changeEmail(String newEmail) {
@@ -75,6 +90,21 @@ public class User {
         this.phoneNumber = newPhoneNumber;
     }
 
+    public void changeSpeciality(Speciality newSpeciality) {
+        if (newSpeciality == null) {
+            throw new IllegalArgumentException("El campo de especialidad no puede estar vacío");
+        }
+        this.speciality = newSpeciality;
+    }
+
+    public void changePasswordHash(String newPasswordHash) {
+        this.passwordHash = validatePasswordHash(newPasswordHash);
+    }
+
+    public boolean isAdministrator() {
+        return speciality == Speciality.ADMINISTRATOR;
+    }
+
 
     public UUID getId() {
         return id;
@@ -92,7 +122,22 @@ public class User {
         return phoneNumber;
     }
 
-    public String getSpeciality() {
+    public Speciality getSpeciality() {
         return speciality;
+    }
+
+    public void changeLanguage(Language newLanguage) {
+        if (newLanguage == null) {
+            throw new IllegalArgumentException("Indica el idioma");
+        }
+        this.language = newLanguage;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 }

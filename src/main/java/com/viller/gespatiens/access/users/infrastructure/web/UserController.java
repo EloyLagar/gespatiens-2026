@@ -1,0 +1,140 @@
+package com.viller.gespatiens.access.users.infrastructure.web;
+
+import com.viller.gespatiens.access.users.application.ChangeOwnLanguageUseCase;
+import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
+import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
+import com.viller.gespatiens.access.users.application.EditUserUseCase;
+import com.viller.gespatiens.access.users.application.GetUserUseCase;
+import com.viller.gespatiens.access.users.application.ListUsersUseCase;
+import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
+import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
+import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
+import com.viller.gespatiens.access.users.domain.Language;
+import com.viller.gespatiens.access.users.domain.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final RegisterUserUseCase registerUserUseCase;
+    private final ListUsersUseCase listUsersUseCase;
+    private final GetUserUseCase getUserUseCase;
+    private final UpdateOwnProfileUseCase updateOwnProfileUseCase;
+    private final ChangeOwnPasswordUseCase changeOwnPasswordUseCase;
+    private final EditUserUseCase editUserUseCase;
+    private final ResetUserPasswordUseCase resetUserPasswordUseCase;
+    private final DeleteUserUseCase deleteUserUseCase;
+    private final ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
+
+    public UserController(RegisterUserUseCase registerUserUseCase,
+                          ListUsersUseCase listUsersUseCase,
+                          GetUserUseCase getUserUseCase,
+                          UpdateOwnProfileUseCase updateOwnProfileUseCase,
+                          ChangeOwnPasswordUseCase changeOwnPasswordUseCase,
+                          EditUserUseCase editUserUseCase,
+                          ResetUserPasswordUseCase resetUserPasswordUseCase,
+                          DeleteUserUseCase deleteUserUseCase,
+                          ChangeOwnLanguageUseCase changeOwnLanguageUseCase) {
+        this.registerUserUseCase = registerUserUseCase;
+        this.listUsersUseCase = listUsersUseCase;
+        this.getUserUseCase = getUserUseCase;
+        this.updateOwnProfileUseCase = updateOwnProfileUseCase;
+        this.changeOwnPasswordUseCase = changeOwnPasswordUseCase;
+        this.editUserUseCase = editUserUseCase;
+        this.resetUserPasswordUseCase = resetUserPasswordUseCase;
+        this.deleteUserUseCase = deleteUserUseCase;
+        this.changeOwnLanguageUseCase = changeOwnLanguageUseCase;
+    }
+
+    @GetMapping
+    public List<UserResponse> list() {
+        return listUsersUseCase.execute().stream()
+                .map(UserResponse::from)
+                .toList();
+    }
+
+    // El empleado autenticado. "/me" es un literal, así que Spring lo prefiere a "/{id}"
+    @GetMapping("/me")
+    public UserResponse me(Principal principal) {
+        return UserResponse.from(getUserUseCase.execute(currentUserId(principal)));
+    }
+
+    // RF4: cada empleado modifica sus propios datos, salvo el email
+    @PutMapping("/me")
+    public UserResponse updateMe(Principal principal, @RequestBody UpdateOwnProfileRequest request) {
+        User user = updateOwnProfileUseCase.execute(currentUserId(principal), request.name(), request.phoneNumber());
+        return UserResponse.from(user);
+    }
+
+    // RF4: y sus credenciales de acceso
+    @PutMapping("/me/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeMyPassword(Principal principal, @RequestBody ChangeOwnPasswordRequest request) {
+        changeOwnPasswordUseCase.execute(currentUserId(principal), request.currentPassword(), request.newPassword());
+    }
+
+    // RNF9: el idioma de la aplicación se guarda en el perfil
+    @PutMapping("/me/language")
+    public UserResponse changeMyLanguage(Principal principal, @RequestBody LanguageRequest request) {
+        return UserResponse.from(changeOwnLanguageUseCase.execute(currentUserId(principal), request.language()));
+    }
+
+    public record LanguageRequest(Language language) {
+    }
+
+    @GetMapping("/{id}")
+    public UserResponse get(@PathVariable UUID id) {
+        return UserResponse.from(getUserUseCase.execute(id));
+    }
+
+    // RF7: los endpoints con {id} son de la administración (ver SecurityConfig)
+    @PutMapping("/{id}")
+    public UserResponse edit(@PathVariable UUID id, @RequestBody EditUserRequest request) {
+        User user = editUserUseCase.execute(id, request.name(), request.email(), request.phoneNumber(),
+                request.speciality());
+        return UserResponse.from(user);
+    }
+
+    @PutMapping("/{id}/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void resetPassword(@PathVariable UUID id, @RequestBody ResetPasswordRequest request) {
+        resetUserPasswordUseCase.execute(id, request.newPassword());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id) {
+        deleteUserUseCase.execute(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse register(@RequestBody RegisterUserRequest request) {
+        User user = registerUserUseCase.execute(
+                request.name(),
+                request.email(),
+                request.phoneNumber(),
+                request.speciality(),
+                request.password());
+        return UserResponse.from(user);
+    }
+
+    // CurrentUserJwtConverter pone el id del empleado como "name" de la autenticación
+    private static UUID currentUserId(Principal principal) {
+        return UUID.fromString(principal.getName());
+    }
+}

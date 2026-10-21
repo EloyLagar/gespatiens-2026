@@ -1,0 +1,2233 @@
+// Carbon con el tema g10 (fondo gris claro, superficies blancas). Las fuentes IBM Plex las sirve
+// @fontsource desde la propia app (main.tsx), así que se desactiva la carga desde el CDN de IBM
+@use '@carbon/react/scss/config' with (
+  $css--font-face: false
+);
+@use '@carbon/react/scss/themes';
+@use '@carbon/react/scss/theme' with (
+  $theme: themes.$g10
+);
+@use '@carbon/react';
+
+// Tokens de gespatiens: DESIGN.md (Carbon adaptado) con el estilo "accent-ladder" de la skill de
+// diseño: un solo azul a plena intensidad en marcas pequeñas y sus tonos claros en las superficies.
+// Todos los textos llegan a 4,5:1 sobre la superficie en la que están (WCAG 2.1 AA)
+:root {
+  --ground: #f4f4f4;
+  --surface: #ffffff;
+  --border: #e0e0e0;
+  --rule: #e8e8e8;
+  --control: #8d8d8d;
+  --text: #161616;
+  --muted: #525252; // 7,8:1 sobre blanco
+  --faint: #6f6f6f; // 5,0:1 sobre blanco: el gris más claro que se usa para texto
+  --accent: #0f62fe; // 5,0:1
+  --accent-ink: #0043ce; // 7,6:1, texto sobre los tonos claros
+  --tint: #edf5ff;
+  --tint-strong: #d0e2ff;
+  --negative: #da1e28;
+  --positive-ink: #198038;
+  --notice-bg: #fcf4d6;
+  --notice-border: #f1c21b;
+  // La identidad de la aplicación original (memoria final, 4.4): el azul de la cabecera, el aguamarina del
+  // logotipo y el azul claro de su paleta para los textos sobre el azul (6,5:1)
+  --brand: #004f84;
+  --brand-accent: #00e1b4;
+  --brand-ink: #d1e2ed;
+
+  --sidebar: 240px;
+  --gap: 16px;
+  --pad: 24px;
+  --canvas-pad: 32px;
+  --row: 48px;
+  --font: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.16px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+// Foco visible siempre: el anillo de Carbon para nuestros enlaces y botones propios
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -48px;
+  z-index: 10;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+// ---------------------------------------------------------------- Marco
+
+// El logotipo de la aplicación original (memoria final, 4.4): Outfit, "ges" en aguamarina y "patiens" en azul.
+// Es un logotipo: queda fuera del contraste mínimo de WCAG (1.4.3), pero "patiens" lo cumple de sobra
+.wordmark {
+  font-family: 'Outfit', var(--font);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.wordmark__ges {
+  color: var(--brand-accent);
+}
+
+.wordmark__patiens {
+  color: var(--brand);
+}
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
+}
+
+// Barra lateral en el mismo fondo que la página, separada por una sola línea
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px 16px;
+  border-right: 1px solid var(--border);
+  background: var(--ground);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 24px;
+}
+
+// El logotipo va sobre una franja del azul de la aplicación, en su versión en negativo, como en la cabecera
+// original: así el aguamarina de "ges" se lee (5:1) en lugar de perderse sobre el gris claro
+.sidebar .brand {
+  margin: -20px -12px 16px;
+  padding: 20px;
+  background: var(--brand);
+}
+
+.sidebar .brand__scope,
+.topbar .brand__scope,
+.login__brand .login__scope {
+  color: var(--brand-ink);
+}
+
+.sidebar .wordmark__patiens,
+.topbar .wordmark__patiens,
+.login__brand .wordmark__patiens {
+  color: #fff;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand__name {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.brand__scope {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.side-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.side-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 32px;
+  margin-bottom: 2px;
+  padding: 6px 8px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.side-nav__link:hover {
+  background: #e8e8e8;
+  color: var(--text);
+  text-decoration: none;
+}
+
+// Apartado activo: el tono claro del azul con su tinta oscura, sin barra lateral de color
+.side-nav__link.active {
+  background: var(--tint);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.side-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  color: var(--text);
+}
+
+.user-row:hover {
+  background: #e8e8e8;
+  text-decoration: none;
+}
+
+.user-row.active {
+  background: var(--tint);
+}
+
+.user-row__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.user-row__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-row__meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.avatar {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.language-switch {
+  display: inline-flex;
+  align-self: flex-start;
+  margin: 0 8px 4px;
+  border: 1px solid var(--control);
+}
+
+.language-switch button {
+  min-width: 40px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.language-switch button[aria-pressed='true'] {
+  background: var(--text);
+  color: #fff;
+}
+
+.topbar,
+.mobile-menu {
+  display: none;
+}
+
+.canvas {
+  min-width: 0;
+  padding: 32px var(--canvas-pad) 64px;
+}
+
+.canvas:focus {
+  outline: none;
+}
+
+// ---------------------------------------------------------------- Cabecera de pantalla
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header__crumbs {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.page-header__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.page-header__subtitle {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.page-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+// Campos dentro de una superficie blanca: el gris de campo sobre capa de Carbon ($field-02), para que
+// se vea dónde se escribe y no solo la línea inferior
+.login__panel,
+.form-section,
+.settings-row__panel,
+.panel {
+  --cds-field: #f4f4f4;
+  --cds-field-hover: #e8e8e8;
+}
+
+// ---------------------------------------------------------------- Paneles
+
+.panel {
+  padding: var(--pad);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.panel h2,
+.settings-row h2,
+.danger-zone h2,
+.toolbar__title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.panel__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.panel__meta {
+  color: var(--muted);
+}
+
+.notice {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--notice-border);
+  background: var(--notice-bg);
+  color: var(--text);
+}
+
+.empty {
+  padding: 16px;
+  border: 1px dashed var(--control);
+  color: var(--muted);
+}
+
+.error-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.error-notice .cds--inline-notification,
+.success-notice .cds--inline-notification {
+  max-width: none;
+  margin: 0 0 16px;
+}
+
+.text-action {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+// ---------------------------------------------------------------- Avisos
+
+.composer .form-actions {
+  margin-top: 16px;
+}
+
+// Filtro de tres opciones: tan ancho como sus opciones, no como la fila
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--control);
+}
+
+.segmented button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.segmented button + button {
+  border-left: 1px solid var(--control);
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--text);
+  color: #fff;
+}
+
+.segmented .num {
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+.notices {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.notice {
+  padding: 16px var(--pad);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+// Los avisos de administración, destacados con el tono claro del azul (y con su etiqueta)
+.notice--admin {
+  border-color: var(--tint-strong);
+  background: var(--tint);
+}
+
+.notice__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notice__who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.notice__author {
+  font-weight: 600;
+}
+
+.notice__meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.notice__tag {
+  flex: none;
+  margin: 0 0 0 auto;
+}
+
+.notice__text {
+  max-width: 75ch;
+  margin-top: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  white-space: pre-line;
+}
+
+.notice__edit {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.notice__actions {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+.text-action--danger {
+  color: var(--negative);
+}
+
+.notice-quote {
+  margin: 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+  white-space: pre-line;
+}
+
+// ---------------------------------------------------------------- Diario
+
+.capitalize-first::first-letter {
+  text-transform: uppercase;
+}
+
+.day-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.day-switcher .cds--text-input {
+  width: 160px;
+}
+
+.section-title {
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.section-help {
+  margin: -4px 0 12px;
+  color: var(--muted);
+}
+
+// Tres turnos en una fila: comparten borde inferior y la acción va al pie de cada uno
+.shifts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.shift {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// La separación general entre paneles (.panel + .panel) no aplica dentro de la fila de turnos
+.shifts > .shift.panel {
+  margin-top: 0;
+}
+
+.shift__title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.shift__staff {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shift__empty {
+  color: var(--muted);
+}
+
+.shift__notes {
+  white-space: pre-line;
+}
+
+.shift__footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.shift__meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.shift__form {
+  display: grid;
+  gap: 16px;
+}
+
+.staff-picker {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.staff-picker legend,
+.reduction-form__types legend {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.reduction-form {
+  display: grid;
+  gap: 16px;
+  max-width: 560px;
+  margin-bottom: 16px;
+}
+
+.reduction-form__types {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.reduction-form__who {
+  font-weight: 600;
+}
+
+.form-error {
+  color: var(--negative);
+}
+
+.row-actions {
+  display: inline-flex;
+  gap: 16px;
+}
+
+.text-action:disabled {
+  color: var(--faint);
+  cursor: default;
+}
+
+// Actividades: una tarjeta por actividad, con la hora a la izquierda como en una agenda
+.activities {
+  display: grid;
+  gap: 8px;
+}
+
+.activities > .panel + .panel {
+  margin-top: 0;
+}
+
+.activity {
+  display: grid;
+  gap: 8px;
+  padding: 16px var(--pad);
+}
+
+.activity__header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.activity__time {
+  min-width: 48px;
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.activity__title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.activity__actions {
+  margin-left: auto;
+}
+
+.activity__summary {
+  padding-left: 64px;
+  color: var(--muted);
+}
+
+.activity-form,
+.outing-form {
+  display: grid;
+  gap: 16px;
+  max-width: 560px;
+  margin-bottom: 16px;
+}
+
+.activity-form__row {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 16px;
+}
+
+// Pasar lista
+.roll-call {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.roll-call__tools {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.roll-call__pending {
+  color: var(--muted);
+}
+
+.roll-call__list {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+}
+
+.roll-call__row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  min-height: var(--row);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.roll-call__number {
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.roll-call__who {
+  display: grid;
+}
+
+.roll-call__note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+// Tres opciones pegadas; la marcada se tiñe según lo anotado. El radio real queda oculto pero enfocable
+.segmented {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.segmented__option {
+  position: relative;
+}
+
+.segmented__option input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.segmented__option span {
+  display: block;
+  padding: 7px 12px;
+  border: 1px solid var(--control);
+  background: var(--surface);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.segmented__option + .segmented__option span {
+  border-left: 0;
+}
+
+.segmented__option input:hover + span {
+  background: #e8e8e8;
+}
+
+.segmented__option input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.segmented__option input:checked + span {
+  font-weight: 600;
+}
+
+.segmented__option--ATTENDED input:checked + span {
+  border-color: var(--positive-ink);
+  background: #defbe6;
+}
+
+.segmented__option--EXCUSED_ABSENCE input:checked + span {
+  border-color: var(--notice-border);
+  background: var(--notice-bg);
+}
+
+.segmented__option--UNEXCUSED_ABSENCE input:checked + span {
+  border-color: var(--negative);
+  background: #fff1f1;
+}
+
+// Intervenciones: los tutores de un residente, en fila con su inicial y especialidad
+.tutors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tutors__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.intervention-form {
+  max-width: 720px;
+  margin-bottom: 16px;
+}
+
+.intervention-form .cds--text-input[type='date'] {
+  width: 180px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+// Valoraciones (RF6): una fila por asistente con nota, satisfacción y utilidad
+.scores {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--rule);
+}
+
+.scores th,
+.scores td {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+}
+
+.scores thead th {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+.scores tbody th {
+  font-weight: 400;
+}
+
+.scores .scores__number {
+  width: 48px;
+  padding-right: 16px;
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.scores .scores__value {
+  width: 96px;
+  padding-left: 16px;
+}
+
+.score-input {
+  width: 64px;
+  height: 32px;
+  padding: 0 8px;
+  border: 0;
+  border-bottom: 1px solid var(--control);
+  background: var(--ground);
+  color: var(--text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.score-input--invalid {
+  outline: 2px solid var(--negative);
+  outline-offset: -2px;
+}
+
+.tag-reduced,
+.tag-away {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--tint);
+  color: var(--accent-ink);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.tag-away {
+  background: var(--notice-bg);
+  color: var(--text);
+}
+
+// ---------------------------------------------------------------- Las 32 plazas
+
+.beds {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bed {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 56px;
+  padding: 6px 8px;
+  overflow: hidden;
+}
+
+.bed__number {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.bed__name {
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bed--taken {
+  background: var(--tint);
+  color: var(--text);
+}
+
+.bed--taken .bed__number {
+  color: var(--accent-ink);
+}
+
+.bed--taken:hover {
+  background: var(--tint-strong);
+  text-decoration: none;
+}
+
+// Plaza libre: hueco discontinuo, como un sitio vacío en la tira
+.bed--free {
+  border: 1px dashed var(--control);
+  color: var(--faint);
+}
+
+.bed--next {
+  border: 2px solid var(--accent);
+  color: var(--accent-ink);
+}
+
+// ---------------------------------------------------------------- Listas y tablas
+
+.list-section {
+  margin-top: 32px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.toolbar .cds--search {
+  max-width: 320px;
+}
+
+.toolbar__count {
+  margin-left: auto;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.table-wrap {
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+// Cabecera gris en minúsculas, sin banda de color; filas separadas solo por una línea fina
+.data-table th {
+  height: 40px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.data-table td {
+  height: var(--row);
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.data-table tbody tr:hover {
+  background: #f8f8f8;
+}
+
+.data-table .num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.col-number {
+  width: 64px;
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.col-identity {
+  width: 34%;
+}
+
+.col-identity a {
+  font-weight: 600;
+}
+
+.col-action {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.row-sub {
+  display: none;
+}
+
+.unit {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.you {
+  color: var(--muted);
+}
+
+.dash {
+  color: var(--faint);
+}
+
+.loading-rows {
+  padding: 8px 0;
+}
+
+.loading-rows__row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: var(--row);
+  padding: 0 16px;
+}
+
+.bar {
+  display: block;
+  height: 14px;
+  background: var(--border);
+}
+
+.bar--short {
+  width: 40px;
+}
+
+.bar--mid {
+  width: 120px;
+}
+
+.bar--long {
+  width: 240px;
+}
+
+// ---------------------------------------------------------------- Ficha
+
+.panel + .panel {
+  margin-top: var(--gap);
+}
+
+.panel > h2 {
+  margin-bottom: 16px;
+}
+
+.kv-list {
+  display: grid;
+  gap: 16px 24px;
+  margin: 0;
+}
+
+// Ficha: cuatro columnas en escritorio; los textos largos ocupan dos o la fila entera
+.kv-list--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.kv-span {
+  grid-column: span 2;
+}
+
+.kv-span--all {
+  grid-column: 1 / -1;
+}
+
+.kv dt {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.kv dd {
+  margin: 2px 0 0;
+  white-space: pre-line;
+}
+
+.danger-zone {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.danger-zone p {
+  max-width: 640px;
+  margin: 4px 0 16px;
+  color: var(--muted);
+}
+
+// Los botones del pie de los diálogos de Carbon se separan con una sombra de 1px: mejor un hueco
+// (Carbon la aplica con un selector más específico, de ahí el !important)
+.cds--modal-footer .cds--btn {
+  box-shadow: none !important;
+}
+
+.cds--modal-footer .cds--btn + .cds--btn {
+  margin-left: 1px;
+}
+
+.dialog-body {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+// ---------------------------------------------------------------- Formularios
+
+.form {
+  max-width: 960px;
+}
+
+.form--compact {
+  display: grid;
+  gap: 24px;
+  max-width: 480px;
+}
+
+.form-section {
+  margin: 0 0 32px;
+  padding: var(--pad);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.form-section legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 24px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.form-grid {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.form-grid + .form-grid {
+  margin-top: 24px;
+}
+
+.form-grid--full {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.form-grid--narrow {
+  max-width: 320px;
+  margin-bottom: 32px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+// Ajustes: título y ayuda a la izquierda, el formulario a la derecha
+.settings-row {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr);
+  gap: 32px;
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+}
+
+.settings-row:first-of-type {
+  border-top: 0;
+  padding-top: 8px;
+}
+
+.settings-row__label p {
+  margin: 4px 0 16px;
+  color: var(--muted);
+}
+
+.settings-row__panel {
+  padding: var(--pad);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+// ---------------------------------------------------------------- Login
+
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+
+.login__panel {
+  width: 100%;
+  max-width: 400px;
+  display: grid;
+  gap: 24px;
+  padding: 32px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.login__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  // La franja azul ocupa todo el ancho de arriba del panel
+  margin: -32px -32px 0;
+  padding: 24px 32px;
+  background: var(--brand);
+}
+
+.login__name {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.login__scope,
+.login__lead,
+.login__help {
+  color: var(--muted);
+}
+
+.login h1 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+}
+
+.login__lead {
+  margin-top: -16px;
+}
+
+.login__submit {
+  width: 100%;
+  max-width: none;
+}
+
+.login .language-switch {
+  justify-self: start;
+  margin: 0;
+}
+
+// ---------------------------------------------------------------- Tablet y móvil
+
+// Por debajo de 1056px la barra lateral se pliega en una barra superior con menú
+@media (max-width: 1055px) {
+  .shell {
+    display: block;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    padding: 0 8px 0 16px;
+    background: var(--brand);
+  }
+
+  .topbar .brand {
+    padding: 0;
+  }
+
+  .icon-button {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  // Sobre la franja azul, el foco en blanco para que se vea
+  .icon-button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -4px;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 48px 0 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow-y: auto;
+    background: var(--ground);
+  }
+
+  .mobile-menu .side-nav__link,
+  .mobile-menu .user-row {
+    min-height: 48px;
+  }
+
+  .canvas {
+    padding: 24px 24px 48px;
+  }
+
+  .beds {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+
+  .kv-list--four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .shifts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 671px) {
+  .canvas {
+    padding: 20px 16px 48px;
+  }
+
+  .page-header__row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .page-header__actions {
+    justify-content: flex-start;
+  }
+
+  .page-header__actions .cds--btn {
+    min-height: 48px;
+  }
+
+  .bed {
+    height: 44px;
+    padding: 4px 6px;
+    justify-content: center;
+  }
+
+  // En el móvil la plaza solo muestra su número; el nombre sigue en la etiqueta accesible
+  .bed__name {
+    display: none;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .toolbar .cds--search {
+    max-width: none;
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  // Las tablas se convierten en filas de dos líneas: lo importante arriba, el resto en gris debajo
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table .col-wide {
+    display: none;
+  }
+
+  .data-table td {
+    height: auto;
+    min-height: 56px;
+    padding: 10px 16px;
+  }
+
+  .col-identity {
+    width: auto;
+  }
+
+  .row-sub {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .form-grid,
+  .settings-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-row {
+    gap: 16px;
+  }
+
+  .kv-list--four {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kv-span {
+    grid-column: auto;
+  }
+
+  .day-switcher {
+    flex-wrap: wrap;
+  }
+
+  .activity {
+    padding: 16px;
+  }
+
+  .activity__header {
+    flex-wrap: wrap;
+    gap: 4px 16px;
+  }
+
+  .activity__actions {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .activity__summary {
+    padding-left: 0;
+  }
+
+  .activity-form__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  // La lista en el móvil: número y nombre arriba, las tres opciones a todo el ancho debajo
+  .roll-call__row {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 10px 0;
+  }
+
+  // Las valoraciones en el móvil: número y nombre arriba, las tres puntuaciones en fila debajo
+  .scores thead {
+    display: none;
+  }
+
+  .scores tbody tr {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4px 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .scores tbody th,
+  .scores tbody td,
+  .scores tbody .scores__number,
+  .scores tbody .scores__value {
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+
+  .scores tbody .scores__who {
+    grid-column: 2 / -1;
+  }
+
+  .scores tbody .scores__value:nth-child(3) {
+    grid-column: 2;
+  }
+
+  .scores__value::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .score-input {
+    width: 100%;
+    height: 40px;
+  }
+
+  .roll-call__row > .segmented,
+  .roll-call__row > .tag-reduced {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .segmented {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .segmented__option span {
+    min-height: 44px;
+    padding: 6px 8px;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .roll-call__tools {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-section {
+    padding: 16px;
+  }
+
+  .login__panel {
+    padding: 24px;
+  }
+}
+
+// ---------------------------------------------------------------- Informes (RF1, RF2, RF8)
+
+// El tipo de informe, debajo del residente en el listado
+.row-meta {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.report-header__note {
+  margin: 16px 0 0;
+}
+
+// Un área: sus apartados uno debajo de otro, separados por una raya fina
+.report-sections {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.report-section {
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.report-section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+// Los cinco apartados del "Grado de adaptación al centro" cuelgan de su encabezado
+.report-section--nested {
+  padding-left: 24px;
+}
+
+.report-sections__group {
+  margin: 0 0 16px -24px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.report-section__label {
+  margin: 0 0 4px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+// Lo escrito conserva los saltos de línea de quien lo redactó
+.report-section__text {
+  max-width: 80ch;
+  white-space: pre-line;
+}
+
+.report-section__meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.report-section__read .report-section__meta {
+  display: block;
+  margin-top: 4px;
+}
+
+.report-section__edit .cds--text-area__wrapper,
+.report-section__edit .cds--form-item {
+  max-width: 80ch;
+}
+
+.report-section__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  max-width: 80ch;
+  min-height: 32px;
+  margin-top: 8px;
+}
+
+.report-section__status {
+  color: var(--positive-ink);
+}
+
+.report-section__actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+// RF8: las dos versiones del apartado, para que quien editaba elija
+.report-conflict {
+  display: grid;
+  gap: 8px;
+  max-width: 80ch;
+  margin-top: 12px;
+}
+
+.report-conflict__label {
+  font-weight: 600;
+}
+
+// En la ficha: un bloque por estancia, de la más reciente a la más antigua
+.resident-reports {
+  display: grid;
+  gap: var(--gap);
+}
+
+.resident-reports__title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.resident-reports__list {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.resident-reports__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.resident-reports__actions .section-help {
+  margin: 0;
+}
+
+@media (max-width: 671px) {
+  .report-section--nested {
+    padding-left: 12px;
+  }
+
+  .report-sections__group {
+    margin-left: -12px;
+  }
+
+  .report-section__actions {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+// RF8: quién está editando un apartado o la cabecera de un informe
+.editing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  background: var(--notice-bg);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.report-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 4px;
+}
+
+.report-section__head .report-section__label {
+  margin: 0;
+}
+
+.report-section__head .cds--btn {
+  margin-left: auto;
+}
+
+ol.resident-reports {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// La firma escaneada del perfil, sobre blanco como en el papel
+.signature-preview {
+  display: flex;
+  align-items: center;
+  min-height: 96px;
+  max-width: 360px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.signature-preview img {
+  max-width: 100%;
+  max-height: 120px;
+}
+
+// Los dos tutores de un residente, uno al lado del otro
+.tutor-picker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+  max-width: 640px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 671px) {
+  .tutor-picker {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// Personas autorizadas para la visita: nombre, relación y teléfono en una fila
+.visitors {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.visitors__item {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  min-height: var(--row);
+  border-top: 1px solid var(--rule);
+}
+
+.visitors__item:first-child {
+  border-top: 0;
+}
+
+.visitors__name {
+  font-weight: 600;
+}
+
+.visitor-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-bottom: 16px;
+}
+
+.visitor-form .form-actions,
+.visitor-form .error-notice {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 671px) {
+  .visitors__item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 8px 0;
+  }
+
+  .visitor-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// RF6 en tabla mensual: el residente fijo a la izquierda y los días desplazándose
+.evaluations-filters {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 280px);
+  gap: var(--gap);
+  margin-bottom: 16px;
+}
+
+.evaluations-grid {
+  overflow-x: auto;
+}
+
+.evaluations-grid .data-table {
+  width: auto;
+  min-width: 100%;
+}
+
+.evaluations-grid th,
+.evaluations-grid td {
+  padding: 0 6px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.evaluations-grid__resident {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 180px;
+  background: var(--surface);
+  text-align: left !important;
+}
+
+.evaluations-grid__day {
+  min-width: 44px;
+  font-weight: 400;
+}
+
+.evaluations-grid__weekday {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+// Días sin la actividad: en gris, para que se vea de un vistazo cuándo hubo
+.evaluations-grid__day.is-empty,
+.evaluations-grid__cell.is-absent {
+  background: var(--ground);
+  color: var(--faint);
+}
+
+.evaluations-grid__average {
+  background: var(--tint);
+  font-weight: 600;
+}
+
+.mark-input {
+  width: 40px;
+  height: 32px;
+  border: 0;
+  border-bottom: 1px solid var(--control);
+  background: var(--ground);
+  color: var(--text);
+  font: inherit;
+  text-align: center;
+}
+
+.mark-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+@media (max-width: 671px) {
+  .evaluations-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .evaluations-grid__resident {
+    min-width: 120px;
+  }
+}
+
+// En el móvil el panel del inicio de sesión tiene menos margen: la franja azul se ajusta a él
+@media (max-width: 671px) {
+  .login__brand {
+    margin: -24px -24px 0;
+    padding: 20px 24px;
+  }
+}
+
+// Textos largos que conservan los saltos de línea de quien los escribió
+.pre-line {
+  white-space: pre-line;
+}
+
+// ---------------------------------------------------------------- Panel de control (memoria final, 5.1)
+
+.dashboard-filters {
+  max-width: 200px;
+  margin-bottom: var(--gap);
+}
+
+// Cifras de un vistazo: etiqueta, valor grande y una nota
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.stat {
+  padding: var(--pad);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.stat__label {
+  color: var(--muted);
+}
+
+.stat__value {
+  margin: 8px 0;
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 600;
+}
+
+.stat__unit {
+  color: var(--muted);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.stat__note {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+a.stat__note {
+  color: var(--accent);
+}
+
+// Medidor: el tramo vacío es un tono claro del mismo azul
+.meter {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--tint-strong);
+  overflow: hidden;
+}
+
+.meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--gap);
+  align-items: start;
+}
+
+.chart h2 {
+  margin-bottom: 4px;
+}
+
+.chart__subtitle {
+  margin-bottom: 16px;
+  color: var(--muted);
+}
+
+.chart__table {
+  margin-top: 16px;
+}
+
+.chart__table summary {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.chart__table .data-table {
+  margin-top: 8px;
+}
+
+// Barras horizontales: 16px de grosor, punta redondeada, base recta sobre la línea de cero
+.hbars {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hbars__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(80px, 140px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 28px;
+  outline-offset: 2px;
+}
+
+.hbars__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hbars__track {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 1px solid var(--rule);
+}
+
+.hbars__bar {
+  height: 16px;
+  min-width: 2px;
+  border-radius: 0 4px 4px 0;
+  background: var(--accent);
+}
+
+.hbars__value {
+  color: var(--text);
+  font-size: 12px;
+}
+
+// Columnas: una por semana, la base sobre una línea fina
+.columns {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 8px;
+  height: 200px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.columns__item {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  outline-offset: 2px;
+}
+
+.columns__value {
+  font-size: 12px;
+}
+
+.columns__track {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  border-bottom: 1px solid var(--rule);
+}
+
+.columns__bar {
+  width: 24px;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--accent);
+}
+
+.columns__label {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+// Tooltip de cada marca: al pasar el ratón o al llegar con el teclado
+.chart-tip {
+  position: absolute;
+  z-index: 2;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  display: none;
+  padding: 6px 8px;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.hbars__row:hover .chart-tip,
+.hbars__row:focus-visible .chart-tip,
+.columns__item:hover .chart-tip,
+.columns__item:focus-visible .chart-tip {
+  display: block;
+}
+
+.hbars__row:hover .hbars__bar,
+.columns__item:hover .columns__bar {
+  background: var(--accent-ink);
+}
+
+@media (max-width: 1055px) {
+  .stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 671px) {
+  .stat-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// Los dos gráficos van uno al lado del otro: sin el margen que separa paneles apilados
+.dashboard-charts .panel + .panel {
+  margin-top: 0;
+}
