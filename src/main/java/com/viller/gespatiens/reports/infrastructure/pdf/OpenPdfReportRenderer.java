@@ -32,6 +32,7 @@ import com.viller.gespatiens.reports.domain.SectionEntry;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -60,6 +61,10 @@ public class OpenPdfReportRenderer implements ReportPdfRenderer {
     private static final Font BOX_LABEL = font(8, Font.BOLD, INK);
     private static final Font BOX_VALUE = font(8, Font.NORMAL, INK);
     private static final Font SMALL = font(8, Font.NORMAL, MUTED);
+
+    // Los logos del centro, leídos una sola vez
+    private static final byte[] SISAN = logo("logo_SISAN_transparente.png");
+    private static final byte[] SIGED = logo("logo_SIGED_transparente.png");
 
     private static final Map<String, String> SPECIALITIES = Map.of(
             "ADMINISTRATOR", "Administración",
@@ -104,6 +109,7 @@ public class OpenPdfReportRenderer implements ReportPdfRenderer {
         Report report = printable.report();
         ReportType type = report.getType();
 
+        document.add(logos());
         Paragraph title = new Paragraph(type.title().toUpperCase(), TITLE);
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingAfter(14);
@@ -139,6 +145,44 @@ public class OpenPdfReportRenderer implements ReportPdfRenderer {
         }
 
         document.add(signatures(printable));
+    }
+
+    // La cabecera del centro: SISAN a la izquierda y SIGED a la derecha, como en sus modelos. Se usa la versión
+    // transparente de cada logo, que queda bien sobre cualquier papel
+    private static PdfPTable logos() {
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setSpacingAfter(18);
+        table.addCell(logoCell(SISAN, 40, Element.ALIGN_LEFT));
+        table.addCell(logoCell(SIGED, 40, Element.ALIGN_RIGHT));
+        return table;
+    }
+
+    private static PdfPCell logoCell(byte[] png, float height, int alignment) {
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setHorizontalAlignment(alignment);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        try {
+            Image image = Image.getInstance(png);
+            image.scaleToFit(220, height);
+            image.setAlignment(alignment);
+            cell.addElement(image);
+        } catch (IOException | RuntimeException unreadable) {
+            // Sin logo el informe sigue siendo válido: no se rompe el PDF por una imagen
+        }
+        return cell;
+    }
+
+    private static byte[] logo(String name) {
+        try (InputStream in = OpenPdfReportRenderer.class.getResourceAsStream("/reports/logos/" + name)) {
+            if (in == null) {
+                throw new IllegalStateException("Falta el logo " + name + " en src/main/resources/reports/logos");
+            }
+            return in.readAllBytes();
+        } catch (IOException e) {
+            throw new IllegalStateException("No se ha podido leer el logo " + name, e);
+        }
     }
 
     // El recuadro con los datos del residente, como en los modelos: etiqueta en negrita y valor

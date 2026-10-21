@@ -1,5 +1,7 @@
 package com.viller.gespatiens.reports.infrastructure.pdf;
 
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.parser.PdfTextExtractor;
 import com.viller.gespatiens.reports.application.PrintableReport;
@@ -93,6 +95,24 @@ class OpenPdfReportRendererTest {
         assertEquals(2, text.split("INFORME FINAL DE PROGRAMA", -1).length - 1, text);
         assertTrue(text.contains("ORIENTACIONES DE SEGUIMIENTO"), text);
         assertTrue(text.contains("21/10/2026"), text);
+    }
+
+    // La cabecera del centro: los logos SISAN y SIGED arriba de la primera página de cada informe
+    @Test
+    void eachReportStartsWithTheCentreLogos() throws IOException {
+        Report report = report(ReportType.FINAL);
+
+        byte[] pdf = renderer.render(List.of(new PrintableReport(report, lucia, List.of())));
+
+        PdfReader reader = new PdfReader(pdf);
+        try {
+            PdfDictionary resources = reader.getPageN(1).getAsDict(PdfName.RESOURCES);
+            PdfDictionary images = resources.getAsDict(PdfName.XOBJECT);
+            // Los dos logos, cada uno con su máscara de transparencia (los PNG transparentes llevan canal alfa)
+            assertEquals(4, images.size());
+        } finally {
+            reader.close();
+        }
     }
 
     // Una firma que no se puede leer deja el hueco para firmar a mano en lugar de romper el PDF
