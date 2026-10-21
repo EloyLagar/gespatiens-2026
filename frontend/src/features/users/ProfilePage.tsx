@@ -5,6 +5,7 @@ import { changeMyPassword, updateMe } from '../../api/users'
 import { useAuth } from '../../auth/AuthContext'
 import { ErrorNotice, Field, PageHeader, SuccessNotice } from '../../shared/ui'
 import { PasswordForm } from './EmployeeFormPage'
+import { SignatureSection } from './SignatureSection'
 
 // RF4: cada empleado cambia sus datos y su contraseña, salvo el email
 export function ProfilePage() {
@@ -83,6 +84,8 @@ export function ProfilePage() {
           />
         </div>
       </section>
+
+      <SignatureSection />
     </>
   )
 }

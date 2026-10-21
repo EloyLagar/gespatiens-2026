@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, configureHttp, request } from './http'
+import { ApiError, configureHttp, download, request } from './http'
 
 function respond(status: number, body?: unknown) {
   return vi.fn().mockImplementation(async () =>
@@ -61,6 +61,32 @@ describe('request', () => {
 
     const error = await request('/patients').catch((e: unknown) => e)
     expect((error as ApiError).status).toBe(0)
+  })
+
+  it('el ApiError conserva los datos extra del ProblemDetail', async () => {
+    vi.stubGlobal('fetch', respond(409, { detail: 'Choque', section: 'PSYCHO_DIAGNOSIS', currentVersion: 2 }))
+
+    const error = (await request('/reports/1/sections/PSYCHO_DIAGNOSIS', { method: 'PUT', body: {} }).catch((e: unknown) => e)) as ApiError
+    expect(error.problem.section).toBe('PSYCHO_DIAGNOSIS')
+    expect(error.problem.currentVersion).toBe(2)
+  })
+
+  it('descarga un fichero con el token y el nombre que manda la API', async () => {
+    const fetchMock = vi.fn().mockImplementation(async () =>
+      new Response('%PDF', {
+        status: 200,
+        headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'attachment; filename="informe-final.pdf"' },
+      }),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    configureHttp(() => 'abc', () => {})
+
+    const file = await download('/reports/1/pdf')
+    expect(file.fileName).toBe('informe-final.pdf')
+    // El Blob de jsdom no tiene text(): basta con que lleguen los 4 bytes
+    expect(file.blob.size).toBe(4)
+    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe('Bearer abc')
+    expect(fetchMock.mock.calls[0][1].headers.Accept).toBe('application/pdf')
   })
 
   it('una respuesta 204 no intenta leer JSON', async () => {

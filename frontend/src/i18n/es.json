@@ -16,7 +16,8 @@
     "closeMenu": "Cerrar el menú",
     "notices": "Avisos",
     "diary": "Diario",
-    "interventions": "Intervenciones"
+    "interventions": "Intervenciones",
+    "reports": "Informes"
   },
   "language": {
     "label": "Idioma",
@@ -237,7 +238,18 @@
     "password": "Contraseña",
     "passwordHelp": "Se pide la actual para que nadie pueda cambiarla desde una sesión que se haya quedado abierta.",
     "changePassword": "Cambiar la contraseña",
-    "passwordChanged": "Contraseña cambiada."
+    "passwordChanged": "Contraseña cambiada.",
+    "signature": {
+      "title": "Firma",
+      "help": "Tu firma escaneada, en PNG. Se imprime junto a tu nombre en los informes que hayas redactado.",
+      "none": "Todavía no has subido tu firma.",
+      "alt": "Tu firma escaneada",
+      "upload": "Subir firma (PNG)",
+      "replace": "Cambiar firma",
+      "remove": "Quitar firma",
+      "onlyPng": "La firma tiene que ser una imagen PNG.",
+      "tooBig": "La imagen no puede pasar de 1 MB."
+    }
   },
   "notFound": {
     "title": "Esta página no existe",
@@ -489,5 +501,162 @@
     "delete": "Eliminar",
     "deleteTitle": "¿Eliminar esta intervención?",
     "deleteBody": "Desaparecerá del historial de {{name}}. No se puede deshacer."
+  },
+  "reports": {
+    "title": "Informes",
+    "subtitle": "{{drafts}} en elaboración · {{closed}} cerrados",
+    "listTitle": "Informes de media estancia y fin de programa",
+    "filterLabel": "Filtrar por estado",
+    "filter": {
+      "DRAFT": "En elaboración",
+      "CLOSED": "Cerrados",
+      "all": "Todos"
+    },
+    "empty": {
+      "DRAFT": "No hay ningún informe en elaboración.",
+      "CLOSED": "Todavía no se ha cerrado ningún informe.",
+      "all": "Todavía no hay informes. Se crean solos cuando un residente entra en el centro.",
+      "section": "Sin redactar"
+    },
+    "tableCaption": "Informes, del modificado más recientemente al que menos",
+    "col": {
+      "report": "Residente e informe",
+      "state": "Estado",
+      "progress": "Apartados",
+      "updated": "Última modificación"
+    },
+    "type": {
+      "MID_STAY": "Informe de media estancia",
+      "FINAL": "Informe final de programa"
+    },
+    "state": {
+      "DRAFT": "En elaboración",
+      "CLOSED": "Cerrado"
+    },
+    "progress": "{{written}} de {{total}} apartados redactados",
+    "notFoundTitle": "Informe no encontrado",
+    "downloadPdf": "Descargar PDF",
+    "pdfFailed": "No se ha podido generar el PDF",
+    "close": "Cerrar informe",
+    "reopen": "Reabrir",
+    "unsaved_one": "{{count}} apartado con cambios sin guardar",
+    "unsaved_other": "{{count}} apartados con cambios sin guardar",
+    "closedNotice": "Informe cerrado ({{date}}, {{name}}). Nadie puede modificarlo por error: para corregirlo, la administración tiene que reabrirlo.",
+    "closeTitle": "¿Cerrar este informe de {{name}}?",
+    "closeBody": "Tiene {{written}} de {{total}} apartados redactados. Una vez cerrado nadie podrá modificarlo hasta que la administración lo reabra. Ciérralo cuando esté terminado y firmado por la Dirección.",
+    "reopenTitle": "¿Reabrir este informe de {{name}}?",
+    "reopenBody": "Volverá a estar en elaboración y cada profesional podrá corregir su área.",
+    "authorsTitle": "Elaborado por",
+    "authorsEmpty": "Todavía nadie ha redactado ningún apartado.",
+    "header": {
+      "title": "Cabecera",
+      "edit": "Editar cabecera",
+      "fullName": "Apellidos y nombre",
+      "nip": "N.I.P.",
+      "referenceCenter": "Centro de referencia",
+      "requestNumber": "Nº de solicitud",
+      "entryDateMidStay": "Fecha de ingreso",
+      "entryDate": "Fecha de entrada",
+      "exitDate": "Fecha de salida",
+      "exitReason": "Motivo de salida",
+      "fromRecord": "Nombre, nacimiento, DNI y S.I.P. salen de la ficha del residente: se corrigen allí."
+    },
+    "area": {
+      "SOCIAL": "Área social",
+      "HEALTH": "Área de intervención sanitaria",
+      "PSYCHOLOGICAL": "Área de intervención psicológica",
+      "EDUCATIONAL": "Área educativa",
+      "FAMILY": "Área de intervención familiar",
+      "DURATION": "Previsión de la duración del programa",
+      "FOLLOW_UP": "Orientaciones de seguimiento para la unidad de referencia"
+    },
+    "youWrite": "Puedes redactar esta área",
+    "writtenBy": "La redacta: {{who}}",
+    "adaptationHeading": "Grado de adaptación al centro y de implicación en los diferentes componentes de esta área:",
+    "sections": {
+      "SOCIAL_FAMILY_SITUATION": "Situación socio-familiar",
+      "WORK_EDUCATION_ECONOMIC_SITUATION": "Situación laboral, formativa y económica",
+      "WORK_EDUCATION_SITUATION": "Situación laboral, formativa",
+      "JUDICIAL_SITUATION": "Situación judicial",
+      "SOCIAL_EVOLUTION": "Evolución y objetivos alcanzados",
+      "SOCIAL_DIAGNOSIS": "Diagnóstico social (Eje IV en DSM IV-R)",
+      "SOCIAL_OBJECTIVES": "Objetivos planteados",
+      "TOXICOLOGICAL_HISTORY": "Resumen historia toxicológica",
+      "HEALTH_AT_ENTRY": "Situación sanitaria al ingreso",
+      "DETOX_AT_ENTRY": "Controles toxicológicos y estado de desintoxicación al ingreso",
+      "HEALTH_DIAGNOSIS_MID_STAY": "Diagnóstico (Eje III en DSM IV)",
+      "HEALTH_EVOLUTION": "Valoración de la evolución del estado físico-sanitario. Atenciones sanitarias",
+      "HEALTH_EVOLUTION_DURING_PROGRAM": "Evolución del estado físico-sanitario durante el programa",
+      "TOXICOLOGICAL_CONTROLS": "Analíticas y controles toxicológicos",
+      "TOXICOLOGICAL_CONTROLS_DURING_PROGRAM": "Analíticas y controles toxicológicos durante el programa",
+      "OTHER_MEDICAL_CARE": "Otras atenciones médico-sanitarias en programa",
+      "HEALTH_DIAGNOSIS_FINAL": "Diagnóstico (Eje III en DSM IV)",
+      "HEALTH_OBJECTIVES": "Objetivos planteados",
+      "HEALTH_AT_DISCHARGE": "Situación y tratamiento al alta",
+      "PSYCHO_ENTRY_ASSESSMENT": "Valoración inicial. Motivo de ingreso (según el propio usuario)",
+      "PSYCHO_INITIAL_ASSESSMENT": "Valoración inicial",
+      "MOTIVATION_MID_STAY": "Valoración de la motivación (hacia el programa, hacia la abstinencia y al cambio de estilo de vida)",
+      "PSYCHO_EVALUATION_MID_STAY": "Evaluación psicológica: instrumentos, pruebas exploratorias, análisis y conclusiones del caso, diagnóstico dual",
+      "PSYCHO_EVALUATION_FINAL": "Evaluación psicológica: instrumentos, pruebas exploratorias, diagnóstico dual. Conclusiones de la evaluación",
+      "PSYCHO_DIAGNOSIS": "Diagnóstico (Eje I y II en DSM-IV)",
+      "PSYCHO_INTERVENTION": "Intervención psicológica individual requerida",
+      "PSYCHO_OBJECTIVES": "Objetivos planteados",
+      "PSYCHO_INTERVENTION_EVOLUTION": "Intervención y objetivos: evolución",
+      "MOTIVATION_FINAL": "Motivación (hacia la abstinencia y al cambio de estilo de vida)",
+      "PSYCHO_OUTINGS": "Desarrollo y valoración de las Salidas Terapéuticas",
+      "PSYCHO_AT_DISCHARGE": "Situación al alta",
+      "ADAPTATION_HABITS": "En cuanto a hábitos",
+      "ADAPTATION_RESPONSIBILITIES": "En cuanto a actividades-responsabilidades",
+      "ADAPTATION_RULES": "En cuanto a normatividad",
+      "ADAPTATION_WORKSHOPS": "En cuanto a talleres o formación",
+      "ADAPTATION_LEISURE": "En cuanto a ocio y tiempo libre",
+      "PEER_RELATIONSHIP": "Relación con los compañeros",
+      "TEAM_RELATIONSHIP": "Relación con el equipo terapéutico",
+      "EDUCATIONAL_OBJECTIVES": "Objetivos planteados",
+      "EDUCATIONAL_OUTINGS": "Desarrollo y valoración de las Salidas Terapéuticas",
+      "REFERENCE_RELATIVES": "Familiares de referencia en el programa y grado de implicación de los mismos",
+      "FAMILY_RELATIONSHIP": "Relación con la familia y evolución",
+      "FAMILY_AT_DISCHARGE": "Situación al alta",
+      "PROGRAM_DURATION_FORECAST": "Previsión de la duración del programa (en meses)",
+      "DISCHARGE_GROUNDS": "Fundamento de la salida",
+      "AFTER_DISCHARGE_OBJECTIVES": "Objetivos de intervención tras finalización del programa en el centro"
+    },
+    "conflict": {
+      "title": "Otra persona ha guardado este apartado mientras lo editabas",
+      "help": "Tu texto sigue arriba, sin guardar. Compáralo con el suyo y decide.",
+      "theirs": "Lo que hay guardado ahora:",
+      "emptied": "Lo ha dejado vacío.",
+      "keepTheirs": "Quedarme con su versión",
+      "overwrite": "Guardar la mía encima"
+    },
+    "saveSection": "Guardar apartado",
+    "savedSection": "Guardado",
+    "discard": "Descartar cambios",
+    "resident": {
+      "title": "Informes",
+      "help": "Uno de media estancia y uno final por cada estancia. Se crean solos al entrar.",
+      "previewAll": "Vista previa de todos",
+      "pdfAll": "PDF con todos",
+      "pdfType": {
+        "MID_STAY_one": "PDF de media estancia",
+        "MID_STAY_other": "PDF de media estancia ({{count}})",
+        "FINAL_one": "PDF final de programa",
+        "FINAL_other": "PDF final de programa ({{count}})"
+      }
+    },
+    "stay": "Estancia del {{from}} al {{to}}",
+    "stayOngoing": "hoy (sigue en el centro)",
+    "preview": "Vista previa",
+    "downloading": "Preparando el PDF…",
+    "othersEditing_one": "{{count}} apartado lo está editando otra persona",
+    "othersEditing_other": "{{count}} apartados los están editando otras personas",
+    "signaturesHelp": "En el PDF, cada profesional aparece con su firma escaneada. Quien todavía no la ha subido (Mi perfil) deja el hueco para firmar a mano.",
+    "editSection": "Editar «{{section}}»",
+    "tutorsOfResident": "tutores del residente",
+    "lock": {
+      "editing": "{{name}} lo está editando",
+      "busy": "{{name}} lo está editando ahora mismo. Podrás editarlo cuando termine.",
+      "lost": "{{name}} ha empezado a editarlo (tu sesión de edición caducó). Copia tu texto antes de salir para no perderlo."
+    }
   }
 }

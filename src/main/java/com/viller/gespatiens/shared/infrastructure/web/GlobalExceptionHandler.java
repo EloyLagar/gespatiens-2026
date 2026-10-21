@@ -1,6 +1,7 @@
 package com.viller.gespatiens.shared.infrastructure.web;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -40,5 +41,12 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleDataIntegrity(DataIntegrityViolationException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
                 "Conflicto con datos existentes. Vuelve a intentarlo");
+    }
+
+    // Bloqueo optimista (@Version): otra petición guardó lo mismo en el mismo instante
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ProblemDetail handleOptimisticLocking(OptimisticLockingFailureException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                "Otra persona ha guardado a la vez que tú. Recarga y vuelve a intentarlo");
     }
 }

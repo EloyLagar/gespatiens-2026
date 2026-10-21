@@ -4,6 +4,7 @@ import com.viller.gespatiens.patients.domain.Patient;
 import com.viller.gespatiens.patients.domain.PatientAlreadyActiveException;
 import com.viller.gespatiens.patients.domain.PatientNotFoundException;
 import com.viller.gespatiens.patients.domain.PatientRepository;
+import com.viller.gespatiens.patients.domain.StayEvents;
 import com.viller.gespatiens.patients.domain.ResidentNumberAssigner;
 
 import java.time.LocalDate;
@@ -13,10 +14,13 @@ public class ReadmitPatientUseCase {
 
     private final PatientRepository patientRepository;
     private final ResidentNumberAssigner numberAssigner;
+    private final StayEvents stayEvents;
 
-    public ReadmitPatientUseCase(PatientRepository patientRepository, ResidentNumberAssigner numberAssigner) {
+    public ReadmitPatientUseCase(PatientRepository patientRepository, ResidentNumberAssigner numberAssigner,
+                                 StayEvents stayEvents) {
         this.patientRepository = patientRepository;
         this.numberAssigner = numberAssigner;
+        this.stayEvents = stayEvents;
     }
 
     public Patient execute(UUID patientId, LocalDate entryDate) {
@@ -31,6 +35,8 @@ public class ReadmitPatientUseCase {
         int number = numberAssigner.assignLowestFree(patientRepository.findOccupiedNumbers());
 
         patient.readmit(number, entryDate);
-        return patientRepository.save(patient);
+        Patient saved = patientRepository.save(patient);
+        stayEvents.stayStarted(saved.getId(), saved.getEntryDate());
+        return saved;
     }
 }

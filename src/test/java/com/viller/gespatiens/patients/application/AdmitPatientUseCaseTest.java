@@ -1,5 +1,6 @@
 package com.viller.gespatiens.patients.application;
 
+import com.viller.gespatiens.patients.domain.StayEvents;
 import com.viller.gespatiens.patients.domain.CenterFullException;
 import com.viller.gespatiens.patients.domain.Dni;
 import com.viller.gespatiens.patients.domain.Patient;
@@ -20,7 +21,7 @@ class AdmitPatientUseCaseTest {
     private static final LocalDate TODAY = LocalDate.of(2026, 10, 15);
 
     private final InMemoryPatientRepository repository = new InMemoryPatientRepository();
-    private final AdmitPatientUseCase useCase = new AdmitPatientUseCase(repository, new ResidentNumberAssigner());
+    private final AdmitPatientUseCase useCase = new AdmitPatientUseCase(repository, new ResidentNumberAssigner(), StayEvents.none());
 
     // DNIs válidos generados con la letra de control correcta: 00000000T, 00000001R, ...
     private static PatientDetails detailsWithDni(int dniNumber) {

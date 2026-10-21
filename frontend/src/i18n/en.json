@@ -16,7 +16,8 @@
     "closeMenu": "Close menu",
     "notices": "Notices",
     "diary": "Diary",
-    "interventions": "Interventions"
+    "interventions": "Interventions",
+    "reports": "Reports"
   },
   "language": {
     "label": "Language",
@@ -237,7 +238,18 @@
     "password": "Password",
     "passwordHelp": "Your current password is required so nobody can change it from a session left open.",
     "changePassword": "Change password",
-    "passwordChanged": "Password changed."
+    "passwordChanged": "Password changed.",
+    "signature": {
+      "title": "Signature",
+      "help": "Your scanned signature, as a PNG. It is printed next to your name on the reports you have written.",
+      "none": "You haven't uploaded your signature yet.",
+      "alt": "Your scanned signature",
+      "upload": "Upload signature (PNG)",
+      "replace": "Change signature",
+      "remove": "Remove signature",
+      "onlyPng": "The signature must be a PNG image.",
+      "tooBig": "The image can't be larger than 1 MB."
+    }
   },
   "notFound": {
     "title": "This page does not exist",
@@ -489,5 +501,162 @@
     "delete": "Delete",
     "deleteTitle": "Delete this intervention?",
     "deleteBody": "It will disappear from the history of {{name}}. This cannot be undone."
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "{{drafts}} in progress · {{closed}} closed",
+    "listTitle": "Mid-stay and end-of-programme reports",
+    "filterLabel": "Filter by status",
+    "filter": {
+      "DRAFT": "In progress",
+      "CLOSED": "Closed",
+      "all": "All"
+    },
+    "empty": {
+      "DRAFT": "No reports in progress.",
+      "CLOSED": "No report has been closed yet.",
+      "all": "No reports yet. They are created automatically when a resident arrives at the centre.",
+      "section": "Not written yet"
+    },
+    "tableCaption": "Reports, most recently changed first",
+    "col": {
+      "report": "Resident and report",
+      "state": "Status",
+      "progress": "Sections",
+      "updated": "Last change"
+    },
+    "type": {
+      "MID_STAY": "Mid-stay report",
+      "FINAL": "End-of-programme report"
+    },
+    "state": {
+      "DRAFT": "In progress",
+      "CLOSED": "Closed"
+    },
+    "progress": "{{written}} of {{total}} sections written",
+    "notFoundTitle": "Report not found",
+    "downloadPdf": "Download PDF",
+    "pdfFailed": "The PDF could not be generated",
+    "close": "Close report",
+    "reopen": "Reopen",
+    "unsaved_one": "{{count}} section with unsaved changes",
+    "unsaved_other": "{{count}} sections with unsaved changes",
+    "closedNotice": "Report closed ({{date}}, {{name}}). Nobody can change it by mistake: to correct it, administration has to reopen it.",
+    "closeTitle": "Close this report for {{name}}?",
+    "closeBody": "{{written}} of {{total}} sections are written. Once closed, nobody can change it until administration reopens it. Close it when it is finished and signed by the management.",
+    "reopenTitle": "Reopen this report for {{name}}?",
+    "reopenBody": "It will be in progress again and each professional will be able to correct their area.",
+    "authorsTitle": "Written by",
+    "authorsEmpty": "Nobody has written any section yet.",
+    "header": {
+      "title": "Header",
+      "edit": "Edit header",
+      "fullName": "Surname and name",
+      "nip": "NIP",
+      "referenceCenter": "Referring centre",
+      "requestNumber": "Request no.",
+      "entryDateMidStay": "Admission date",
+      "entryDate": "Entry date",
+      "exitDate": "Exit date",
+      "exitReason": "Reason for leaving",
+      "fromRecord": "Name, date of birth, ID and SIP come from the resident's record: correct them there."
+    },
+    "area": {
+      "SOCIAL": "Social area",
+      "HEALTH": "Health care",
+      "PSYCHOLOGICAL": "Psychological care",
+      "EDUCATIONAL": "Educational area",
+      "FAMILY": "Family work",
+      "DURATION": "Expected length of the programme",
+      "FOLLOW_UP": "Follow-up guidance for the referring unit"
+    },
+    "youWrite": "You can write this area",
+    "writtenBy": "Written by: {{who}}",
+    "adaptationHeading": "How well they have adapted to the centre and engaged with each part of this area:",
+    "sections": {
+      "SOCIAL_FAMILY_SITUATION": "Social and family situation",
+      "WORK_EDUCATION_ECONOMIC_SITUATION": "Work, education and financial situation",
+      "WORK_EDUCATION_SITUATION": "Work and education situation",
+      "JUDICIAL_SITUATION": "Legal situation",
+      "SOCIAL_EVOLUTION": "Progress and goals achieved",
+      "SOCIAL_DIAGNOSIS": "Social diagnosis (DSM-IV-TR Axis IV)",
+      "SOCIAL_OBJECTIVES": "Goals set",
+      "TOXICOLOGICAL_HISTORY": "Substance use history summary",
+      "HEALTH_AT_ENTRY": "Health on admission",
+      "DETOX_AT_ENTRY": "Drug tests and detox status on admission",
+      "HEALTH_DIAGNOSIS_MID_STAY": "Diagnosis (DSM-IV Axis III)",
+      "HEALTH_EVOLUTION": "Physical health progress. Health care received",
+      "HEALTH_EVOLUTION_DURING_PROGRAM": "Physical health progress during the programme",
+      "TOXICOLOGICAL_CONTROLS": "Lab tests and drug tests",
+      "TOXICOLOGICAL_CONTROLS_DURING_PROGRAM": "Lab tests and drug tests during the programme",
+      "OTHER_MEDICAL_CARE": "Other medical care during the programme",
+      "HEALTH_DIAGNOSIS_FINAL": "Diagnosis (DSM-IV Axis III)",
+      "HEALTH_OBJECTIVES": "Goals set",
+      "HEALTH_AT_DISCHARGE": "Condition and treatment at discharge",
+      "PSYCHO_ENTRY_ASSESSMENT": "Initial assessment. Reason for admission (in the resident's own words)",
+      "PSYCHO_INITIAL_ASSESSMENT": "Initial assessment",
+      "MOTIVATION_MID_STAY": "Motivation (towards the programme, abstinence and a change of lifestyle)",
+      "PSYCHO_EVALUATION_MID_STAY": "Psychological assessment: instruments, screening tests, case analysis and conclusions, dual diagnosis",
+      "PSYCHO_EVALUATION_FINAL": "Psychological assessment: instruments, screening tests, dual diagnosis. Conclusions",
+      "PSYCHO_DIAGNOSIS": "Diagnosis (DSM-IV Axes I and II)",
+      "PSYCHO_INTERVENTION": "Individual psychological intervention required",
+      "PSYCHO_OBJECTIVES": "Goals set",
+      "PSYCHO_INTERVENTION_EVOLUTION": "Intervention and goals: progress",
+      "MOTIVATION_FINAL": "Motivation (towards abstinence and a change of lifestyle)",
+      "PSYCHO_OUTINGS": "Therapeutic outings: how they went",
+      "PSYCHO_AT_DISCHARGE": "Condition at discharge",
+      "ADAPTATION_HABITS": "Habits",
+      "ADAPTATION_RESPONSIBILITIES": "Activities and responsibilities",
+      "ADAPTATION_RULES": "Rules",
+      "ADAPTATION_WORKSHOPS": "Workshops or training",
+      "ADAPTATION_LEISURE": "Leisure and free time",
+      "PEER_RELATIONSHIP": "Relationship with peers",
+      "TEAM_RELATIONSHIP": "Relationship with the therapeutic team",
+      "EDUCATIONAL_OBJECTIVES": "Goals set",
+      "EDUCATIONAL_OUTINGS": "Therapeutic outings: how they went",
+      "REFERENCE_RELATIVES": "Key relatives in the programme and how involved they are",
+      "FAMILY_RELATIONSHIP": "Relationship with the family and progress",
+      "FAMILY_AT_DISCHARGE": "Situation at discharge",
+      "PROGRAM_DURATION_FORECAST": "Expected length of the programme (in months)",
+      "DISCHARGE_GROUNDS": "Grounds for leaving",
+      "AFTER_DISCHARGE_OBJECTIVES": "Intervention goals after finishing the programme at the centre"
+    },
+    "conflict": {
+      "title": "Someone else saved this section while you were editing it",
+      "help": "Your text is still above, unsaved. Compare it with theirs and decide.",
+      "theirs": "What is saved now:",
+      "emptied": "They left it empty.",
+      "keepTheirs": "Keep their version",
+      "overwrite": "Save mine over it"
+    },
+    "saveSection": "Save section",
+    "savedSection": "Saved",
+    "discard": "Discard changes",
+    "resident": {
+      "title": "Reports",
+      "help": "One mid-stay and one end-of-programme report per stay. They are created automatically on arrival.",
+      "previewAll": "Preview all",
+      "pdfAll": "PDF with all",
+      "pdfType": {
+        "MID_STAY_one": "Mid-stay PDF",
+        "MID_STAY_other": "Mid-stay PDF ({{count}})",
+        "FINAL_one": "End-of-programme PDF",
+        "FINAL_other": "End-of-programme PDF ({{count}})"
+      }
+    },
+    "stay": "Stay from {{from}} to {{to}}",
+    "stayOngoing": "today (still at the centre)",
+    "preview": "Preview",
+    "downloading": "Preparing the PDF…",
+    "othersEditing_one": "{{count}} section is being edited by someone else",
+    "othersEditing_other": "{{count}} sections are being edited by other people",
+    "signaturesHelp": "In the PDF, each professional appears with their scanned signature. Anyone who hasn't uploaded it yet (My profile) gets a blank line to sign by hand.",
+    "editSection": "Edit “{{section}}”",
+    "tutorsOfResident": "the resident's tutors",
+    "lock": {
+      "editing": "{{name}} is editing it",
+      "busy": "{{name}} is editing it right now. You can edit it when they finish.",
+      "lost": "{{name}} has started editing it (your editing session expired). Copy your text before leaving so you don't lose it."
+    }
   }
 }

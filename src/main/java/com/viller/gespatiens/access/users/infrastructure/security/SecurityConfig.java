@@ -30,7 +30,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMINISTRATOR")
                         // RF4: cada empleado gestiona su propio perfil. Va antes que la regla de /api/users/*
                         // porque Spring aplica la primera regla que encaja, y "me" también encajaría en "*"
-                        .requestMatchers("/api/users/me", "/api/users/me/password").authenticated()
+                        .requestMatchers("/api/users/me", "/api/users/me/password", "/api/users/me/signature").authenticated()
+                        // La firma escaneada de otro empleado solo la ve y la cambia la administración
+                        .requestMatchers("/api/users/*/signature").hasRole("ADMINISTRATOR")
                         // RF7: editar, restablecer contraseñas y eliminar perfiles es cosa de la administración
                         .requestMatchers(HttpMethod.PUT, "/api/users/*", "/api/users/*/password").hasRole("ADMINISTRATOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMINISTRATOR")
@@ -48,6 +50,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/diary/activities/*/evaluations").hasAnyRole("SOCIAL_EDUCATOR", "ADMINISTRATOR")
                         // Los tutores de cada residente los asignan la administración y los educadores (decisión del centro)
                         .requestMatchers(HttpMethod.PUT, "/api/interventions/residents/*/tutors").hasAnyRole("ADMINISTRATOR", "SOCIAL_EDUCATOR")
+                        // Cerrar y reabrir informes es cosa de la administración ("fecha y firma de la Dirección
+                        // del recurso"). Qué área redacta cada uno lo decide el dominio
+                        .requestMatchers(HttpMethod.POST, "/api/reports/*/close", "/api/reports/*/reopen").hasRole("ADMINISTRATOR")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 // Sin httpBasic: con él, el navegador abre su propia ventana de usuario y contraseña

@@ -1595,3 +1595,202 @@ button:focus-visible,
     padding: 24px;
   }
 }
+
+// ---------------------------------------------------------------- Informes (RF1, RF2, RF8)
+
+// El tipo de informe, debajo del residente en el listado
+.row-meta {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.report-header__note {
+  margin: 16px 0 0;
+}
+
+// Un área: sus apartados uno debajo de otro, separados por una raya fina
+.report-sections {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.report-section {
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.report-section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+// Los cinco apartados del "Grado de adaptación al centro" cuelgan de su encabezado
+.report-section--nested {
+  padding-left: 24px;
+}
+
+.report-sections__group {
+  margin: 0 0 16px -24px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.report-section__label {
+  margin: 0 0 4px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+// Lo escrito conserva los saltos de línea de quien lo redactó
+.report-section__text {
+  max-width: 80ch;
+  white-space: pre-line;
+}
+
+.report-section__meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.report-section__read .report-section__meta {
+  display: block;
+  margin-top: 4px;
+}
+
+.report-section__edit .cds--text-area__wrapper,
+.report-section__edit .cds--form-item {
+  max-width: 80ch;
+}
+
+.report-section__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  max-width: 80ch;
+  min-height: 32px;
+  margin-top: 8px;
+}
+
+.report-section__status {
+  color: var(--positive-ink);
+}
+
+.report-section__actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+// RF8: las dos versiones del apartado, para que quien editaba elija
+.report-conflict {
+  display: grid;
+  gap: 8px;
+  max-width: 80ch;
+  margin-top: 12px;
+}
+
+.report-conflict__label {
+  font-weight: 600;
+}
+
+// En la ficha: un bloque por estancia, de la más reciente a la más antigua
+.resident-reports {
+  display: grid;
+  gap: var(--gap);
+}
+
+.resident-reports__title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.resident-reports__list {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.resident-reports__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.resident-reports__actions .section-help {
+  margin: 0;
+}
+
+@media (max-width: 671px) {
+  .report-section--nested {
+    padding-left: 12px;
+  }
+
+  .report-sections__group {
+    margin-left: -12px;
+  }
+
+  .report-section__actions {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+// RF8: quién está editando un apartado o la cabecera de un informe
+.editing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  background: var(--notice-bg);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.report-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 4px;
+}
+
+.report-section__head .report-section__label {
+  margin: 0;
+}
+
+.report-section__head .cds--btn {
+  margin-left: auto;
+}
+
+ol.resident-reports {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// La firma escaneada del perfil, sobre blanco como en el papel
+.signature-preview {
+  display: flex;
+  align-items: center;
+  min-height: 96px;
+  max-width: 360px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.signature-preview img {
+  max-width: 100%;
+  max-height: 120px;
+}
