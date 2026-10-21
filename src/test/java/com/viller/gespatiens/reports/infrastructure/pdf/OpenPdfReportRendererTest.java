@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -75,6 +76,18 @@ class OpenPdfReportRendererTest {
         assertTrue(text.contains("Marcos Peña"), text);
         assertTrue(text.contains("Borrador"), text);
         assertTrue(text.contains("PREVISIÓN DE LA DURACIÓN"), text);
+    }
+
+    // Los apartados "En cuanto a..." van en un segundo nivel con una raya, no con una "o" que parece una letra
+    @Test
+    void adaptationItemsUseADashAsSecondLevelBullet() throws IOException {
+        Report report = report(ReportType.MID_STAY);
+        report.write(ReportSection.ADAPTATION_RULES, "Cumple la normativa", 0, rosa, false, NOW);
+
+        String text = text(renderer.render(List.of(new PrintableReport(report, lucia, List.of()))));
+
+        assertTrue(text.contains("–  En cuanto a normatividad"), text);
+        assertFalse(text.contains("o  En cuanto a"), text);
     }
 
     // RF2: varios informes en un único documento, cada uno desde página nueva
