@@ -69,6 +69,8 @@ class SqlDashboardQueriesTest {
         assertTrue(queries.activeResidents() >= 0);
         assertTrue(queries.activeResidentsWithoutBothTutors() <= queries.activeResidents());
         assertTrue(queries.reportsInProgress() >= 0);
+        assertTrue(queries.openMidStayReports().size() <= queries.activeResidents());
+        assertTrue(queries.courtMeasures().size() <= queries.activeResidents());
         assertEquals(0, queries.interventionsBetween(DAY, DAY));
         assertTrue(queries.noticesByWeek(DAY, DAY.plusDays(6)).isEmpty());
     }

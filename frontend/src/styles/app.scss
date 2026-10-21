@@ -2122,6 +2122,11 @@ a.stat__note {
   background: var(--accent);
 }
 
+// Los vencimientos, entre las cifras y los gráficos: es lo primero que hay que atender
+.dashboard-deadlines {
+  margin-bottom: var(--gap);
+}
+
 .dashboard-charts {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);

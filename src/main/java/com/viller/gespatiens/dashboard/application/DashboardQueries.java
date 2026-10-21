@@ -26,6 +26,18 @@ public interface DashboardQueries {
 
     int interventionsBetween(LocalDate from, LocalDate to);
 
+    // Residentes en el centro cuyo informe de media estancia de la estancia en curso sigue en elaboración
+    List<OpenMidStayReport> openMidStayReports();
+
+    // Residentes en el centro con medida judicial y fecha de fin
+    List<CourtMeasure> courtMeasures();
+
+    record OpenMidStayReport(Deadline.Resident resident, LocalDate entryDate, UUID reportId) {
+    }
+
+    record CourtMeasure(Deadline.Resident resident, LocalDate endDate, String court) {
+    }
+
     record ShiftCount(UUID employeeId, String name, String speciality, int morning, int afternoon, int night) {
         public int total() {
             return morning + afternoon + night;
