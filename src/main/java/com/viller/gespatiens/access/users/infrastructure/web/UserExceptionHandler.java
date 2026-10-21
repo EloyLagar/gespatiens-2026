@@ -1,6 +1,7 @@
 package com.viller.gespatiens.access.users.infrastructure.web;
 
 import com.viller.gespatiens.access.users.application.InvalidCredentialsException;
+import com.viller.gespatiens.access.users.application.LoginBlockedException;
 import com.viller.gespatiens.access.users.application.PasswordSetupDeliveryException;
 import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException;
@@ -28,6 +29,14 @@ public class UserExceptionHandler {
     @ExceptionHandler(InvalidCurrentPasswordException.class)
     public ProblemDetail handleInvalidCurrentPassword(InvalidCurrentPasswordException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    // 429: el email está bloqueado por demasiados intentos fallidos. retryAfter dice hasta cuándo
+    @ExceptionHandler(LoginBlockedException.class)
+    public ProblemDetail handleLoginBlocked(LoginBlockedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+        problem.setProperty("retryAfter", ex.getUntil());
+        return problem;
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)

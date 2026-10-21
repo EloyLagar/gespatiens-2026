@@ -58,7 +58,8 @@
     "conflict": "Choca con datos que ya existen.",
     "generic": "Ha ocurrido un error inesperado. Vuelve a intentarlo.",
     "gone": "El enlace ya no es válido.",
-    "badGateway": "No se ha podido enviar el correo. Revisa la configuración del correo e inténtalo de nuevo."
+    "badGateway": "No se ha podido enviar el correo. Revisa la configuración del correo e inténtalo de nuevo.",
+    "tooManyAttempts": "Demasiados intentos fallidos. Espera unos minutos y vuelve a intentarlo."
   },
   "common": {
     "retry": "Reintentar",

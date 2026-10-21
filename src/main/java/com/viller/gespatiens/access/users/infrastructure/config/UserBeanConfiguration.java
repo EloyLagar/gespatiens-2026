@@ -8,6 +8,7 @@ import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.InviteUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
+import com.viller.gespatiens.access.users.application.LoginAttempts;
 import com.viller.gespatiens.access.users.application.LoginUseCase;
 import com.viller.gespatiens.access.users.application.PasswordSetupLinkSender;
 import com.viller.gespatiens.access.users.application.PasswordSetupLinks;
@@ -23,6 +24,7 @@ import com.viller.gespatiens.access.users.domain.PasswordSetupTokenRepository;
 import com.viller.gespatiens.access.users.domain.SignatureRepository;
 import com.viller.gespatiens.access.users.domain.UserRepository;
 import com.viller.gespatiens.access.users.infrastructure.mail.LoggingPasswordSetupLinkSender;
+import com.viller.gespatiens.access.users.infrastructure.security.InMemoryLoginAttempts;
 import com.viller.gespatiens.access.users.infrastructure.mail.MailPasswordSetupLinkSender;
 import com.viller.gespatiens.access.users.infrastructure.mail.PasswordSetupLinkFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -106,8 +108,15 @@ public class UserBeanConfiguration {
 
     @Bean
     public LoginUseCase loginUseCase(UserRepository userRepository, PasswordHasher passwordHasher,
-                                     AccessTokenIssuer accessTokenIssuer) {
-        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer);
+                                     AccessTokenIssuer accessTokenIssuer, LoginAttempts loginAttempts, Clock clock) {
+        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer, loginAttempts, clock);
+    }
+
+    // Decisión del centro: al menos 5 intentos antes de bloquear
+    @Bean
+    public LoginAttempts loginAttempts(@Value("${gespatiens.login.max-attempts}") int maxAttempts,
+                                       @Value("${gespatiens.login.lockout}") Duration lockout) {
+        return new InMemoryLoginAttempts(maxAttempts, lockout);
     }
 
     @Bean
