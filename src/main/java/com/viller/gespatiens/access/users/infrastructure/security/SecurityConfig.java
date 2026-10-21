@@ -50,8 +50,8 @@ public class SecurityConfig {
                         // administración (decisión del centro). Los demás solo las consultan
                         .requestMatchers(HttpMethod.PUT, "/api/diary/activities/*/evaluations",
                                 "/api/diary/activities/*/evaluations/*").hasAnyRole("SOCIAL_EDUCATOR", "ADMINISTRATOR")
-                        // Los tutores de cada residente los asignan la administración y los educadores (decisión del centro)
-                        .requestMatchers(HttpMethod.PUT, "/api/interventions/residents/*/tutors").hasAnyRole("ADMINISTRATOR", "SOCIAL_EDUCATOR")
+                        // Los tutores de cada residente los asigna solo la administración (decisión del centro)
+                        .requestMatchers(HttpMethod.PUT, "/api/interventions/residents/*/tutors").hasRole("ADMINISTRATOR")
                         // Cerrar y reabrir informes es cosa de la administración ("fecha y firma de la Dirección
                         // del recurso"). Qué área redacta cada uno lo decide el dominio
                         .requestMatchers(HttpMethod.POST, "/api/reports/*/close", "/api/reports/*/reopen").hasRole("ADMINISTRATOR")
