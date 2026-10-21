@@ -2678,3 +2678,38 @@ button.rota-chip:disabled {
 button.rota-chip[aria-pressed='false'] {
   font-weight: 400;
 }
+
+// Estancias anteriores de un residente, debajo de la actual
+.stay-history {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.stay-history h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.stay-history__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stay-history__list li {
+  display: flex;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.stay-history__days,
+.stay-history__total {
+  color: var(--muted);
+}
+
+.stay-history__total {
+  margin: 8px 0 0;
+}

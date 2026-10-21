@@ -150,7 +150,11 @@
       "saved": "Record saved.",
       "discharged": "{{name}} is now a former resident. Their record is kept."
     },
-    "interventions": "Tutors and interventions"
+    "interventions": "Tutors and interventions",
+    "previousStays_one": "Previous stay",
+    "previousStays_other": "{{count}} previous stays",
+    "totalDays_one": "{{count}} day in the centre in total",
+    "totalDays_other": "{{count}} days in the centre in total"
   },
   "discharge": {
     "title": "Discharge {{name}}?",
