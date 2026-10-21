@@ -55,3 +55,29 @@ export function updateVisitor(patientId: string, visitorId: string, visitor: Vis
 export function revokeVisitor(patientId: string, visitorId: string) {
   return request<void>(`/patients/${patientId}/visitors/${visitorId}`, { method: 'DELETE' })
 }
+
+// La derivación de un residente (memoria final, 5.2): quién lo deriva y, si la hay, la medida judicial
+export interface Referral {
+  referringInstitution: string | null
+  contactName: string | null
+  contactPhone: string | null
+  courtOrdered: boolean
+  // Solo si courtOrdered
+  court: string | null
+  measureEndDate: IsoDate | null
+  notes: string | null
+  updatedAt: string
+}
+
+export type ReferralInput = Omit<Referral, 'updatedAt'>
+
+// Debe coincidir con Referral.MAX_NOTES_LENGTH en el dominio
+export const REFERRAL_NOTES_MAX_LENGTH = 2000
+
+export function getReferral(patientId: string) {
+  return request<Referral>(`/patients/${patientId}/referral`)
+}
+
+export function updateReferral(patientId: string, referral: ReferralInput) {
+  return request<Referral>(`/patients/${patientId}/referral`, { method: 'PUT', body: referral })
+}

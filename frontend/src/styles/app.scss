@@ -1994,3 +1994,8 @@ ol.resident-reports {
     padding: 20px 24px;
   }
 }
+
+// Textos largos que conservan los saltos de línea de quien los escribió
+.pre-line {
+  white-space: pre-line;
+}
