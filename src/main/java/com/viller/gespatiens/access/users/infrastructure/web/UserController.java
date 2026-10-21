@@ -1,5 +1,6 @@
 package com.viller.gespatiens.access.users.infrastructure.web;
 
+import com.viller.gespatiens.access.users.application.ChangeOwnLanguageUseCase;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
@@ -8,6 +9,7 @@ import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
+import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +38,7 @@ public class UserController {
     private final EditUserUseCase editUserUseCase;
     private final ResetUserPasswordUseCase resetUserPasswordUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
+    private final ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
 
     public UserController(RegisterUserUseCase registerUserUseCase,
                           ListUsersUseCase listUsersUseCase,
@@ -44,7 +47,8 @@ public class UserController {
                           ChangeOwnPasswordUseCase changeOwnPasswordUseCase,
                           EditUserUseCase editUserUseCase,
                           ResetUserPasswordUseCase resetUserPasswordUseCase,
-                          DeleteUserUseCase deleteUserUseCase) {
+                          DeleteUserUseCase deleteUserUseCase,
+                          ChangeOwnLanguageUseCase changeOwnLanguageUseCase) {
         this.registerUserUseCase = registerUserUseCase;
         this.listUsersUseCase = listUsersUseCase;
         this.getUserUseCase = getUserUseCase;
@@ -53,6 +57,7 @@ public class UserController {
         this.editUserUseCase = editUserUseCase;
         this.resetUserPasswordUseCase = resetUserPasswordUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
+        this.changeOwnLanguageUseCase = changeOwnLanguageUseCase;
     }
 
     @GetMapping
@@ -80,6 +85,15 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeMyPassword(Principal principal, @RequestBody ChangeOwnPasswordRequest request) {
         changeOwnPasswordUseCase.execute(currentUserId(principal), request.currentPassword(), request.newPassword());
+    }
+
+    // RNF9: el idioma de la aplicación se guarda en el perfil
+    @PutMapping("/me/language")
+    public UserResponse changeMyLanguage(Principal principal, @RequestBody LanguageRequest request) {
+        return UserResponse.from(changeOwnLanguageUseCase.execute(currentUserId(principal), request.language()));
+    }
+
+    public record LanguageRequest(Language language) {
     }
 
     @GetMapping("/{id}")

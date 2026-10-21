@@ -250,6 +250,10 @@
       "remove": "Quitar firma",
       "onlyPng": "La firma tiene que ser una imagen PNG.",
       "tooBig": "La imagen no puede pasar de 1 MB."
+    },
+    "language": {
+      "title": "Idioma",
+      "help": "El idioma de la aplicación. Se guarda en tu perfil: lo encontrarás igual en cualquier equipo."
     }
   },
   "notFound": {

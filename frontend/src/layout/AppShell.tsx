@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { LanguageSwitch, Wordmark } from '../shared/ui'
+import { useSaveLanguage } from '../features/users/language'
 
 interface NavItem {
   to: string
@@ -14,6 +15,7 @@ interface NavItem {
 export function AppShell() {
   const { t } = useTranslation()
   const { user, logout } = useAuth()
+  const saveLanguage = useSaveLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const menuButton = useRef<HTMLButtonElement>(null)
@@ -64,7 +66,7 @@ export function AppShell() {
         </ul>
       </nav>
       <div className="side-foot">
-        <LanguageSwitch />
+        <LanguageSwitch onChange={saveLanguage} />
         <NavLink to="/perfil" className="user-row">
           <span className="avatar" aria-hidden="true">
             {user.name.charAt(0).toUpperCase()}

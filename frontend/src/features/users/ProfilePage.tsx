@@ -3,14 +3,16 @@ import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { changeMyPassword, updateMe } from '../../api/users'
 import { useAuth } from '../../auth/AuthContext'
-import { ErrorNotice, Field, PageHeader, SuccessNotice } from '../../shared/ui'
+import { ErrorNotice, Field, LanguageSwitch, PageHeader, SuccessNotice } from '../../shared/ui'
 import { PasswordForm } from './EmployeeFormPage'
+import { useSaveLanguage } from './language'
 import { SignatureSection } from './SignatureSection'
 
 // RF4: cada empleado cambia sus datos y su contraseña, salvo el email
 export function ProfilePage() {
   const { t } = useTranslation()
   const { user, replaceUser } = useAuth()
+  const saveLanguage = useSaveLanguage()
   const [name, setName] = useState(user?.name ?? '')
   const [phone, setPhone] = useState(user?.phoneNumber ?? '')
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({})
@@ -82,6 +84,17 @@ export function ProfilePage() {
               setSaved(t('profile.passwordChanged'))
             }}
           />
+        </div>
+      </section>
+
+      {/* Memoria final: "Para cambiar de idioma el empleado deberá acceder a su perfil" */}
+      <section className="settings-row" aria-labelledby="my-language-title">
+        <div className="settings-row__label">
+          <h2 id="my-language-title">{t('profile.language.title')}</h2>
+          <p>{t('profile.language.help')}</p>
+        </div>
+        <div className="settings-row__panel">
+          <LanguageSwitch onChange={saveLanguage} />
         </div>
       </section>
 

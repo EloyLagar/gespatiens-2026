@@ -1,5 +1,6 @@
 package com.viller.gespatiens.access.users.infrastructure.web;
 
+import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 
@@ -11,7 +12,9 @@ public record UserResponse(
         String name,
         String email,
         String phoneNumber,
-        Speciality speciality) {
+        Speciality speciality,
+        // El idioma que ha elegido para la aplicación (RNF9)
+        Language language) {
 
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -19,6 +22,7 @@ public record UserResponse(
                 user.getName(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                user.getSpeciality());
+                user.getSpeciality(),
+                user.getLanguage());
     }
 }

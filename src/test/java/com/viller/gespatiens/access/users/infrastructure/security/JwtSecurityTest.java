@@ -1,6 +1,7 @@
 package com.viller.gespatiens.access.users.infrastructure.security;
 
 import com.viller.gespatiens.access.users.application.AccessTokenIssuer;
+import com.viller.gespatiens.access.users.application.ChangeOwnLanguageUseCase;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
@@ -10,6 +11,7 @@ import com.viller.gespatiens.access.users.application.LoginUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
+import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserRepository;
@@ -70,6 +72,8 @@ class JwtSecurityTest {
     private ResetUserPasswordUseCase resetUserPasswordUseCase;
     @MockitoBean
     private DeleteUserUseCase deleteUserUseCase;
+    @MockitoBean
+    private ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
 
     private final User ana = User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash");
 
@@ -114,7 +118,7 @@ class JwtSecurityTest {
     void roleComesFromTheDatabaseNotFromTheToken() throws Exception {
         // El token se emitió cuando Ana era administradora...
         User anaAdmin = User.reconstitute(ana.getId(), "Ana", "ana@vientos.es", "600111222",
-                Speciality.ADMINISTRATOR, "hash");
+                Speciality.ADMINISTRATOR, "hash", Language.ES);
         String token = bearer(anaAdmin);
         // ...pero la administración le ha quitado el rol: ya no puede dar de alta empleados
         when(userRepository.findById(ana.getId())).thenReturn(Optional.of(ana));
