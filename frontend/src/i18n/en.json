@@ -699,5 +699,21 @@
     "beingEdited": "{{name}} has that activity open in the diary. Try again when they finish.",
     "changed": "Someone else changed that activity. The table has been reloaded: check the mark.",
     "notSaved": "The mark could not be saved."
+  },
+  "referral": {
+    "title": "Referral",
+    "institution": "Referring centre or institution",
+    "institutionHelp": "Addiction unit, prison, social services…",
+    "contactName": "Contact professional",
+    "contactPhone": "Professional's phone",
+    "courtOrdered": "Court order",
+    "courtOrderedLabel": "Admitted under a court order",
+    "yes": "Yes",
+    "no": "No",
+    "court": "Court and case number",
+    "courtHelp": "For example: Criminal Court no. 3 of Valencia, 123/2026",
+    "measureEndDate": "Order ends",
+    "notes": "Information from the institution",
+    "notesHelp": "What the referring institution provides: conditions, follow-up, reports it requires…"
   }
 }

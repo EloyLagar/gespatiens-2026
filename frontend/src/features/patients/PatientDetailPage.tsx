@@ -13,6 +13,7 @@ import { ResidentReportsPanel } from '../reports/ResidentReportsPanel'
 import { bedsOf, nextFreeNumber } from './beds'
 import { detailsOf, PatientForm } from './PatientForm'
 import { ReadmitDialog } from './ReadmitDialog'
+import { ReferralPanel } from './ReferralPanel'
 import { VisitorsPanel } from './VisitorsPanel'
 
 type Flash = 'admitted' | 'readmitted' | 'saved' | 'discharged' | null
@@ -181,6 +182,8 @@ export function PatientDetailPage() {
           </div>
         </dl>
       </section>
+
+      <ReferralPanel patientId={patient.id} canManage={isAdmin} />
 
       <VisitorsPanel patientId={patient.id} canManage={isAdmin} />
 

@@ -699,5 +699,21 @@
     "beingEdited": "{{name}} tiene abierta esa actividad en el diario. Vuelve a intentarlo cuando termine.",
     "changed": "Otra persona ha cambiado esa actividad. La tabla se ha recargado: revisa la nota.",
     "notSaved": "No se ha podido guardar la nota."
+  },
+  "referral": {
+    "title": "Derivación",
+    "institution": "Centro o institución que lo deriva",
+    "institutionHelp": "UCA, centro penitenciario, servicios sociales…",
+    "contactName": "Profesional de referencia",
+    "contactPhone": "Teléfono del profesional",
+    "courtOrdered": "Medida judicial",
+    "courtOrderedLabel": "Ingresa por una medida judicial",
+    "yes": "Sí",
+    "no": "No",
+    "court": "Juzgado y nº de procedimiento",
+    "courtHelp": "Por ejemplo: Juzgado de lo Penal nº 3 de Valencia, 123/2026",
+    "measureEndDate": "Fin de la medida",
+    "notes": "Información de la institución",
+    "notesHelp": "Lo que aporta la institución que lo deriva: condiciones, seguimiento, informes que pide…"
   }
 }

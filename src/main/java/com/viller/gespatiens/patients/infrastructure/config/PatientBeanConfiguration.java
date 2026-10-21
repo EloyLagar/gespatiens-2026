@@ -7,13 +7,17 @@ import com.viller.gespatiens.patients.application.DischargePatientUseCase;
 import com.viller.gespatiens.patients.application.GetPatientUseCase;
 import com.viller.gespatiens.patients.application.ListPatientsUseCase;
 import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
+import com.viller.gespatiens.patients.application.ReferralUseCase;
 import com.viller.gespatiens.patients.application.UpdatePatientDetailsUseCase;
 import com.viller.gespatiens.patients.domain.AuthorizedVisitorRepository;
 import com.viller.gespatiens.patients.domain.PatientRepository;
+import com.viller.gespatiens.patients.domain.ReferralRepository;
 import com.viller.gespatiens.patients.domain.ResidentNumberAssigner;
 import com.viller.gespatiens.patients.domain.StayEvents;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.Clock;
 
 // Los casos de uso y servicios de dominio no llevan anotaciones de Spring: se registran aquí
 @Configuration
@@ -23,6 +27,13 @@ public class PatientBeanConfiguration {
     public AuthorizedVisitorsUseCase authorizedVisitorsUseCase(PatientRepository patientRepository,
                                                                AuthorizedVisitorRepository visitorRepository) {
         return new AuthorizedVisitorsUseCase(patientRepository, visitorRepository);
+    }
+
+    // El Clock lo define NoticeBeanConfiguration
+    @Bean
+    public ReferralUseCase referralUseCase(PatientRepository patientRepository, ReferralRepository referralRepository,
+                                           Clock clock) {
+        return new ReferralUseCase(patientRepository, referralRepository, clock);
     }
 
     @Bean
