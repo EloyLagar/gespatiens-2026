@@ -1047,10 +1047,24 @@ button:focus-visible,
   margin-bottom: 16px;
 }
 
+.filters--four {
+  grid-template-columns: minmax(200px, 1fr) minmax(180px, 1fr) minmax(140px, 180px) minmax(140px, 180px);
+}
+
 @media (max-width: 671px) {
-  .filters {
+  .filters,
+  .filters--four {
     grid-template-columns: 1fr;
   }
+}
+
+// Anterior / siguiente debajo de una lista por páginas
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .list-count {

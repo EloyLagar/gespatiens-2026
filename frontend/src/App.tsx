@@ -16,6 +16,7 @@ import { EmployeesPage } from './features/users/EmployeesPage'
 import { ProfilePage } from './features/users/ProfilePage'
 import { EvaluationsPage } from './features/evaluations/EvaluationsPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
+import { AuditPage } from './features/audit/AuditPage'
 import { ReportPage } from './features/reports/ReportPage'
 import { ReportsPage } from './features/reports/ReportsPage'
 import { RotaPage } from './features/rota/RotaPage'
@@ -47,6 +48,14 @@ export function App() {
           element={
             <RequireAdmin>
               <DashboardPage />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="registro"
+          element={
+            <RequireAdmin>
+              <AuditPage />
             </RequireAdmin>
           }
         />

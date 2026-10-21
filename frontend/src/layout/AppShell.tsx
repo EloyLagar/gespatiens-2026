@@ -1,4 +1,4 @@
-import { Archive, Calendar, ChartLine, Close, Dashboard, Collaborate, Document, Group, Logout, Menu, Notebook, Notification, UserMultiple, UserProfile } from '@carbon/icons-react'
+import { Archive, Calendar, ChartLine, Close, Dashboard, Collaborate, Document, Group, Logout, Menu, Notebook, Notification, RecentlyViewed, UserMultiple, UserProfile } from '@carbon/icons-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
@@ -52,6 +52,8 @@ export function AppShell() {
     { to: '/empleados', label: t('nav.employees'), icon: <Group size={16} /> },
     // Memoria final, 5.1: el panel de control solo lo ve la administración
     ...(isAdmin ? [{ to: '/panel', label: t('nav.dashboard'), icon: <Dashboard size={16} /> }] : []),
+    // RNF7: quién ha consultado o cambiado los datos de cada residente
+    ...(isAdmin ? [{ to: '/registro', label: t('nav.audit'), icon: <RecentlyViewed size={16} /> }] : []),
   ]
 
   const nav = (

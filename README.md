@@ -63,6 +63,9 @@ Requisitos: JDK 25, Node.js 24 y PostgreSQL.
 4. Lo que cada empleado puede hacer depende de su especialidad. Los apartados que no le corresponden se ven en modo
    consulta.
 5. El diario se consulta por día, y las valoraciones por mes y tipo de actividad.
+6. El panel de control avisa de los informes de media estancia que tocan (a los 3 meses de la entrada) y de las
+   medidas judiciales que terminan en los próximos 30 días.
+7. El registro de accesos (solo administración) dice quién ha consultado o cambiado los datos de cada residente.
 
 > [!NOTE]
 > Al dar de alta a un empleado, le llega un correo con un enlace para crear su contraseña. El enlace caduca a los
