@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#0f62fe"/>
-  <path d="M8 11h16M8 16h10M8 21h13" stroke="#fff" stroke-width="2.5" stroke-linecap="square"/>
+  <!-- La "g" de gespatiens en Outfit (el trazado de la propia fuente), en aguamarina sobre el azul de la aplicación -->
+  <rect width="32" height="32" rx="6" fill="#004f84"/>
+  <path fill="#00e1b4" transform="translate(16 16) scale(0.0317 -0.0317) translate(-274 -138)" d="M263 -209Q190 -209 133.5 -182.0Q77 -155 43 -106L101 -47Q130 -84 170.0 -103.5Q210 -123 265 -123Q338 -123 380.5 -84.5Q423 -46 423 19V82Q399 49 361 30Q318 8 263 8Q198 8 146.5 39.0Q95 70 65.0 124.5Q35 179 35.0 247.0Q35 315 65.0 368.5Q95 422 146.5 453.5Q198 485 263 485Q319 485 362 463Q399 444 423 412V475H513V19Q513 -49 481.5 -100.0Q450 -151 393.5 -180.0Q337 -209 263 -209ZM281 93Q325 93 358.5 112.0Q392 131 410.0 165.5Q428 200 428.0 246.0Q428 292 409.5 326.5Q391 361 358.0 380.5Q325 400 280.0 400.0Q235 400 201.0 380.5Q167 361 147.5 326.5Q128 292 128.0 247.0Q128 202 147.5 167.0Q167 132 201.5 112.5Q236 93 281 93Z"/>
 </svg>
