@@ -3,11 +3,12 @@ import type { IsoDate } from './types'
 
 // AuditController en Spring. Solo la administración
 
+// Solo cambios: las consultas no se registran
 export type AuditAction =
-  | 'VIEW_RECORD' | 'ADMIT' | 'EDIT_RECORD' | 'DISCHARGE' | 'READMIT' | 'DELETE_RECORD'
-  | 'VIEW_VISITORS' | 'EDIT_VISITORS' | 'VIEW_REFERRAL' | 'EDIT_REFERRAL'
-  | 'VIEW_REPORT' | 'DOWNLOAD_REPORT' | 'EDIT_REPORT' | 'CLOSE_REPORT' | 'REOPEN_REPORT'
-  | 'VIEW_FOLLOW_UP' | 'EDIT_FOLLOW_UP' | 'ASSIGN_TUTORS'
+  | 'ADMIT' | 'EDIT_RECORD' | 'DISCHARGE' | 'READMIT' | 'DELETE_RECORD'
+  | 'EDIT_VISITORS' | 'EDIT_REFERRAL'
+  | 'EDIT_REPORT' | 'CLOSE_REPORT' | 'REOPEN_REPORT'
+  | 'EDIT_FOLLOW_UP' | 'ASSIGN_TUTORS'
 
 export interface AuditEntry {
   id: string

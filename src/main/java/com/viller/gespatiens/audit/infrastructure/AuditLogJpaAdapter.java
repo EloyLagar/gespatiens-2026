@@ -32,6 +32,11 @@ public class AuditLogJpaAdapter implements AuditLog {
     }
 
     @Override
+    public long deleteBefore(Instant limit) {
+        return jpaRepository.deleteOlderThan(limit);
+    }
+
+    @Override
     public Page search(Filter filter, int page, int size) {
         Specification<AuditEntryJpaEntity> spec = Specification.allOf(
                 equalTo("patientId", filter.patientId()),

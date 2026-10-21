@@ -61,7 +61,7 @@ public class AuditInterceptor implements HandlerInterceptor {
             recordAuditEntry.execute(UUID.fromString(principal.getName()), match.rule().action(), patient,
                     resourceOf(match));
         } catch (RuntimeException e) {
-            log.warn("No se ha podido anotar {} {} en el registro de accesos", request.getMethod(),
+            log.warn("No se ha podido anotar {} {} en el registro de cambios", request.getMethod(),
                     request.getRequestURI(), e);
         }
     }

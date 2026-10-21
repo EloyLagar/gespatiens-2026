@@ -21,7 +21,7 @@
     "evaluations": "Evaluations",
     "dashboard": "Dashboard",
     "rota": "Shifts",
-    "audit": "Access log"
+    "audit": "Change log"
   },
   "language": {
     "label": "Language",
@@ -157,7 +157,7 @@
     "previousStays_other": "{{count}} previous stays",
     "totalDays_one": "{{count}} day in the centre in total",
     "totalDays_other": "{{count}} days in the centre in total",
-    "auditLog": "Who accessed it"
+    "auditLog": "Who changed it"
   },
   "discharge": {
     "title": "Discharge {{name}}?",
@@ -913,8 +913,8 @@
     "text": "This screen belongs to the centre administration. If you think you should have access, ask administration."
   },
   "audit": {
-    "title": "Access log",
-    "subtitle": "Who viewed or changed each resident's data, and when. It cannot be edited or deleted.",
+    "title": "Change log",
+    "subtitle": "Who changed each resident's data, and when. It cannot be edited and is kept for 2 years.",
     "resident": "Resident",
     "anyResident": "All residents",
     "employee": "Staff member",
@@ -923,9 +923,9 @@
     "to": "To",
     "when": "When",
     "what": "What they did",
-    "empty": "No access matches these filters.",
-    "count_one": "{{count}} access",
-    "count_other": "{{count}} accesses",
+    "empty": "No change matches these filters.",
+    "count_one": "{{count}} change",
+    "count_other": "{{count}} changes",
     "formerEmployee": "No longer on the staff",
     "deletedResident": "Record deleted",
     "pages": "Log pages",
@@ -933,22 +933,16 @@
     "older": "Older",
     "page": "Page {{page}} of {{total}}",
     "action": {
-      "VIEW_RECORD": "Viewed the record",
       "ADMIT": "Admitted",
       "EDIT_RECORD": "Edited the record",
       "DISCHARGE": "Discharged",
       "READMIT": "Readmitted",
       "DELETE_RECORD": "Deleted the record",
-      "VIEW_VISITORS": "Viewed the visitors",
       "EDIT_VISITORS": "Changed the visitors",
-      "VIEW_REFERRAL": "Viewed the referral",
       "EDIT_REFERRAL": "Changed the referral",
-      "VIEW_REPORT": "Opened a report",
-      "DOWNLOAD_REPORT": "Downloaded a report as PDF",
       "EDIT_REPORT": "Wrote in a report",
       "CLOSE_REPORT": "Closed a report",
       "REOPEN_REPORT": "Reopened a report",
-      "VIEW_FOLLOW_UP": "Viewed the follow-up",
       "EDIT_FOLLOW_UP": "Changed an intervention",
       "ASSIGN_TUTORS": "Assigned the tutors"
     }

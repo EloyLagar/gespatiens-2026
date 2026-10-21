@@ -7,8 +7,8 @@ import { listUsers } from '../../api/users'
 import { ErrorNotice, LoadingRows, PageHeader } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
 
-// Registro de accesos (RNF7, RGPD). Pregunta: ¿quién ha visto o cambiado los datos de este residente, o qué ha
-// consultado esta persona? Los filtros van en la URL: la ficha del residente enlaza aquí con el suyo puesto
+// Registro de cambios (RNF7, RGPD). Pregunta: ¿quién ha cambiado los datos de este residente, o qué ha
+// cambiado esta persona? Se conserva 2 años. Los filtros van en la URL: la ficha del residente enlaza aquí con el suyo puesto
 export function AuditPage() {
   const { t, i18n } = useTranslation()
   const [params, setParams] = useSearchParams()

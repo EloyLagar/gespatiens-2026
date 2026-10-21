@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-// La administración consulta quién ha visto o cambiado los datos de un residente, o qué ha consultado un
-// empleado, en unas fechas. Una página cada vez, de lo más reciente a lo más antiguo
+// La administración consulta quién ha cambiado los datos de un residente, o qué ha cambiado un empleado,
+// en unas fechas. Una página cada vez, de lo más reciente a lo más antiguo
 public class SearchAuditLogUseCase {
 
     public static final int PAGE_SIZE = 50;

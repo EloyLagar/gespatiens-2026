@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-// Engancha el registro de accesos a las peticiones de la API. Los tests de la capa web (@WebMvcTest) cargan esta
+// Engancha el registro de cambios a las peticiones de la API. Los tests de la capa web (@WebMvcTest) cargan esta
 // configuración pero no los casos de uso: sin ellos, simplemente no se registra nada
 @Configuration
 public class AuditWebConfig implements WebMvcConfigurer {

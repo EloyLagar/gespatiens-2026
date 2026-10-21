@@ -3,8 +3,8 @@ package com.viller.gespatiens.audit.domain;
 import java.time.Instant;
 import java.util.UUID;
 
-// Una línea del registro de accesos: quién hizo qué, cuándo y sobre qué residente. Nunca se modifica ni se
-// borra desde la aplicación. Guarda solo identificadores: si se borra al empleado o al residente, la línea
+// Una línea del registro de cambios: quién hizo qué, cuándo y sobre qué residente. Nunca se modifica, y solo
+// se borra al pasar el plazo de conservación (PurgeAuditLogUseCase). Guarda solo identificadores: si se borra al empleado o al residente, la línea
 // sigue diciendo que el acceso ocurrió.
 // patientId null: no se ha podido saber de qué residente era (p. ej. un informe ya borrado).
 // resourceId: el informe o la intervención concretos, si los hay

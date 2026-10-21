@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-// Qué peticiones se anotan en el registro y cómo se sabe de qué residente son. Solo las que abren o cambian
-// los datos de una persona concreta: los listados no
+// Qué peticiones se anotan en el registro y cómo se sabe de qué residente son. Solo las que cambian los datos
+// de una persona concreta: las consultas no (decisión del centro)
 final class AuditRules {
 
     // De dónde sale el residente
@@ -36,26 +36,19 @@ final class AuditRules {
     private static final PathPatternParser PARSER = new PathPatternParser();
 
     private static final List<Rule> RULES = List.of(
-            rule(HttpMethod.GET, "/api/patients/{patient}", AuditAction.VIEW_RECORD, Source.PATH),
             rule(HttpMethod.POST, "/api/patients", AuditAction.ADMIT, Source.CREATED),
             rule(HttpMethod.PUT, "/api/patients/{patient}", AuditAction.EDIT_RECORD, Source.PATH),
             rule(HttpMethod.POST, "/api/patients/{patient}/discharge", AuditAction.DISCHARGE, Source.PATH),
             rule(HttpMethod.POST, "/api/patients/{patient}/readmit", AuditAction.READMIT, Source.PATH),
             rule(HttpMethod.DELETE, "/api/patients/{patient}", AuditAction.DELETE_RECORD, Source.PATH),
-            rule(HttpMethod.GET, "/api/patients/{patient}/visitors", AuditAction.VIEW_VISITORS, Source.PATH),
             rule(HttpMethod.POST, "/api/patients/{patient}/visitors", AuditAction.EDIT_VISITORS, Source.PATH),
             rule(HttpMethod.PUT, "/api/patients/{patient}/visitors/{visitor}", AuditAction.EDIT_VISITORS, Source.PATH),
             rule(HttpMethod.DELETE, "/api/patients/{patient}/visitors/{visitor}", AuditAction.EDIT_VISITORS, Source.PATH),
-            rule(HttpMethod.GET, "/api/patients/{patient}/referral", AuditAction.VIEW_REFERRAL, Source.PATH),
             rule(HttpMethod.PUT, "/api/patients/{patient}/referral", AuditAction.EDIT_REFERRAL, Source.PATH),
-            rule(HttpMethod.GET, "/api/reports/{id}", AuditAction.VIEW_REPORT, Source.REPORT),
-            rule(HttpMethod.GET, "/api/reports/{id}/pdf", AuditAction.DOWNLOAD_REPORT, Source.REPORT),
-            rule(HttpMethod.GET, "/api/reports/residents/{patient}/pdf", AuditAction.DOWNLOAD_REPORT, Source.PATH),
             rule(HttpMethod.PUT, "/api/reports/{id}/sections/{section}", AuditAction.EDIT_REPORT, Source.REPORT),
             rule(HttpMethod.PUT, "/api/reports/{id}/header", AuditAction.EDIT_REPORT, Source.REPORT),
             rule(HttpMethod.POST, "/api/reports/{id}/close", AuditAction.CLOSE_REPORT, Source.REPORT),
             rule(HttpMethod.POST, "/api/reports/{id}/reopen", AuditAction.REOPEN_REPORT, Source.REPORT),
-            rule(HttpMethod.GET, "/api/interventions/residents/{patient}", AuditAction.VIEW_FOLLOW_UP, Source.PATH),
             rule(HttpMethod.POST, "/api/interventions/residents/{patient}", AuditAction.EDIT_FOLLOW_UP, Source.PATH),
             rule(HttpMethod.PUT, "/api/interventions/residents/{patient}/tutors", AuditAction.ASSIGN_TUTORS, Source.PATH),
             rule(HttpMethod.PUT, "/api/interventions/{id}", AuditAction.EDIT_FOLLOW_UP, Source.INTERVENTION),
