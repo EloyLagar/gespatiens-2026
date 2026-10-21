@@ -4,13 +4,14 @@ import { useTranslation } from 'react-i18next'
 import { ApiError } from '../api/http'
 import { LANGUAGES } from '../i18n'
 
-// El logotipo (RNF5): tres trazos de viento, por "Los Vientos"
-export function Mark({ size = 24 }: { size?: number }) {
+// El logotipo (RNF5), el de la aplicación original: "ges" en aguamarina y "patiens" en el azul de la
+// aplicación, con la tipografía Outfit (memoria final, 4.4). Es texto, así que el lector de pantalla lo lee
+export function Wordmark({ size = 24 }: { size?: number }) {
   return (
-    <svg className="mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <rect width="32" height="32" fill="currentColor" />
-      <path d="M8 11h16M8 16h10M8 21h13" stroke="#fff" strokeWidth="2.5" strokeLinecap="square" />
-    </svg>
+    <span className="wordmark" style={{ fontSize: size }}>
+      <span className="wordmark__ges">ges</span>
+      <span className="wordmark__patiens">patiens</span>
+    </span>
   )
 }
 

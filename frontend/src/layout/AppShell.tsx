@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
-import { LanguageSwitch, Mark } from '../shared/ui'
+import { LanguageSwitch, Wordmark } from '../shared/ui'
 
 interface NavItem {
   to: string
@@ -126,9 +126,8 @@ function Brand({ compact }: { compact?: boolean }) {
   const { t } = useTranslation()
   return (
     <div className="brand">
-      <Mark size={compact ? 24 : 28} />
       <span className="brand__text">
-        <span className="brand__name">{t('app.name')}</span>
+        <span className="brand__name"><Wordmark size={compact ? 22 : 26} /></span>
         {!compact && <span className="brand__scope">{t('app.scopeShort')}</span>}
       </span>
     </div>
