@@ -116,7 +116,7 @@ public class SqlDashboardQueries implements DashboardQueries {
                         """)
                 .getResultList();
         return rows.stream()
-                .map(r -> new OpenMidStayReport(resident(r), ((Date) r[4]).toLocalDate(), (UUID) r[5]))
+                .map(r -> new OpenMidStayReport(resident(r), date(r[4]), (UUID) r[5]))
                 .toList();
     }
 
@@ -133,7 +133,7 @@ public class SqlDashboardQueries implements DashboardQueries {
                         """)
                 .getResultList();
         return rows.stream()
-                .map(r -> new CourtMeasure(resident(r), ((Date) r[4]).toLocalDate(), (String) r[5]))
+                .map(r -> new CourtMeasure(resident(r), date(r[4]), (String) r[5]))
                 .toList();
     }
 
