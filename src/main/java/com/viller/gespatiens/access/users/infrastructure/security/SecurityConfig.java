@@ -58,6 +58,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/reports/*/close", "/api/reports/*/reopen").hasRole("ADMINISTRATOR")
                         // Memoria final, 5.1: un panel "al que solo esta [la administración] pudiese acceder"
                         .requestMatchers("/api/dashboard", "/api/dashboard/**").hasRole("ADMINISTRATOR")
+                        // Cuadrante de turnos: lo consulta todo el personal y lo planifica la administración. Los
+                        // cambios de turno los acuerdan los trabajadores entre ellos (decisión del centro)
+                        .requestMatchers("/api/rota/swaps", "/api/rota/swaps/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/rota", "/api/rota/**").authenticated()
+                        .requestMatchers("/api/rota", "/api/rota/**").hasRole("ADMINISTRATOR")
                         // RF3: el resto de la aplicación solo para empleados autenticados
                         .anyRequest().authenticated())
                 // Sin httpBasic: con él, el navegador abre su propia ventana de usuario y contraseña

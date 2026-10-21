@@ -17,6 +17,7 @@ import { EvaluationsPage } from './features/evaluations/EvaluationsPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
 import { ReportPage } from './features/reports/ReportPage'
 import { ReportsPage } from './features/reports/ReportsPage'
+import { RotaPage } from './features/rota/RotaPage'
 import { AppShell } from './layout/AppShell'
 import { PageHeader } from './shared/ui'
 
@@ -37,6 +38,7 @@ export function App() {
         <Route path="diario" element={<DiaryPage />} />
         <Route path="diario/:date" element={<DiaryPage />} />
         <Route path="valoraciones" element={<EvaluationsPage />} />
+        <Route path="turnos" element={<RotaPage />} />
         <Route
           path="panel"
           element={
