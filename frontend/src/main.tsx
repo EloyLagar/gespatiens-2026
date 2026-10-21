@@ -1,5 +1,7 @@
 import '@fontsource/ibm-plex-sans/400.css'
 import '@fontsource/ibm-plex-sans/600.css'
+// Outfit, solo para el logotipo (memoria final)
+import '@fontsource/outfit/400.css'
 import './styles/app.scss'
 import './i18n'
 import { StrictMode } from 'react'

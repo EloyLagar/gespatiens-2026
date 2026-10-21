@@ -115,9 +115,22 @@ button:focus-visible,
 
 // ---------------------------------------------------------------- Marco
 
-.mark {
-  flex: none;
-  color: var(--accent);
+// El logotipo de la aplicación original (memoria final, 4.4): Outfit, "ges" en aguamarina y "patiens" en azul.
+// Es un logotipo: queda fuera del contraste mínimo de WCAG (1.4.3), pero "patiens" lo cumple de sobra
+.wordmark {
+  font-family: 'Outfit', var(--font);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.wordmark__ges {
+  color: #00e1b4;
+}
+
+.wordmark__patiens {
+  color: #004f84;
 }
 
 .shell {

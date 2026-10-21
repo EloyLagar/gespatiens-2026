@@ -3,7 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthContext'
-import { ErrorNotice, LanguageSwitch, Mark } from '../../shared/ui'
+import { ErrorNotice, LanguageSwitch, Wordmark } from '../../shared/ui'
 
 export function LoginPage() {
   const { t } = useTranslation()
@@ -35,9 +35,8 @@ export function LoginPage() {
     <main className="login">
       <div className="login__panel">
         <div className="login__brand">
-          <Mark size={40} />
           <div>
-            <p className="login__name">{t('app.name')}</p>
+            <p className="login__name"><Wordmark size={32} /></p>
             <p className="login__scope">{t('app.scope')}</p>
           </div>
         </div>
