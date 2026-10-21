@@ -9,17 +9,28 @@ import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.LoginUseCase;
 import com.viller.gespatiens.access.users.application.RegisterUserUseCase;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
+import com.viller.gespatiens.access.users.application.SignatureUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.AdministratorGuard;
 import com.viller.gespatiens.access.users.domain.PasswordHasher;
+import com.viller.gespatiens.access.users.domain.SignatureRepository;
 import com.viller.gespatiens.access.users.domain.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.Clock;
 
 // Los casos de uso no llevan anotaciones de Spring: se registran aquí,
 // así la capa de aplicación no depende del framework
 @Configuration
 public class UserBeanConfiguration {
+
+    // El Clock lo define NoticeBeanConfiguration
+    @Bean
+    public SignatureUseCase signatureUseCase(UserRepository userRepository, SignatureRepository signatureRepository,
+                                             Clock clock) {
+        return new SignatureUseCase(userRepository, signatureRepository, clock);
+    }
 
     @Bean
     public RegisterUserUseCase registerUserUseCase(UserRepository userRepository, PasswordHasher passwordHasher) {

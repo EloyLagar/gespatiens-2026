@@ -13,6 +13,8 @@ import { ResidentsPage } from './features/patients/ResidentsPage'
 import { EmployeeFormPage } from './features/users/EmployeeFormPage'
 import { EmployeesPage } from './features/users/EmployeesPage'
 import { ProfilePage } from './features/users/ProfilePage'
+import { ReportPage } from './features/reports/ReportPage'
+import { ReportsPage } from './features/reports/ReportsPage'
 import { AppShell } from './layout/AppShell'
 import { PageHeader } from './shared/ui'
 
@@ -32,6 +34,8 @@ export function App() {
         <Route path="avisos" element={<NoticesPage />} />
         <Route path="diario" element={<DiaryPage />} />
         <Route path="diario/:date" element={<DiaryPage />} />
+        <Route path="informes" element={<ReportsPage />} />
+        <Route path="informes/:id" element={<ReportPage />} />
         <Route path="intervenciones" element={<InterventionsPage />} />
         <Route path="intervenciones/:patientId" element={<FollowUpPage />} />
         <Route path="residentes" element={<ResidentsPage />} />

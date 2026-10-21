@@ -9,6 +9,7 @@ import com.viller.gespatiens.patients.application.ReadmitPatientUseCase;
 import com.viller.gespatiens.patients.application.UpdatePatientDetailsUseCase;
 import com.viller.gespatiens.patients.domain.PatientRepository;
 import com.viller.gespatiens.patients.domain.ResidentNumberAssigner;
+import com.viller.gespatiens.patients.domain.StayEvents;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,19 +24,22 @@ public class PatientBeanConfiguration {
 
     @Bean
     public AdmitPatientUseCase admitPatientUseCase(PatientRepository patientRepository,
-                                                   ResidentNumberAssigner residentNumberAssigner) {
-        return new AdmitPatientUseCase(patientRepository, residentNumberAssigner);
+                                                   ResidentNumberAssigner residentNumberAssigner,
+                                                   StayEvents stayEvents) {
+        return new AdmitPatientUseCase(patientRepository, residentNumberAssigner, stayEvents);
     }
 
     @Bean
-    public DischargePatientUseCase dischargePatientUseCase(PatientRepository patientRepository) {
-        return new DischargePatientUseCase(patientRepository);
+    public DischargePatientUseCase dischargePatientUseCase(PatientRepository patientRepository,
+                                                           StayEvents stayEvents) {
+        return new DischargePatientUseCase(patientRepository, stayEvents);
     }
 
     @Bean
     public ReadmitPatientUseCase readmitPatientUseCase(PatientRepository patientRepository,
-                                                       ResidentNumberAssigner residentNumberAssigner) {
-        return new ReadmitPatientUseCase(patientRepository, residentNumberAssigner);
+                                                       ResidentNumberAssigner residentNumberAssigner,
+                                                       StayEvents stayEvents) {
+        return new ReadmitPatientUseCase(patientRepository, residentNumberAssigner, stayEvents);
     }
 
     @Bean

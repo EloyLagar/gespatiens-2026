@@ -5,6 +5,7 @@ import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException
 import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException;
 import com.viller.gespatiens.access.users.domain.LastAdministratorException;
 import com.viller.gespatiens.access.users.domain.PhoneNumberAlreadyRegisteredException;
+import com.viller.gespatiens.access.users.domain.SignatureNotFoundException;
 import com.viller.gespatiens.access.users.domain.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -32,8 +33,8 @@ public class UserExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ProblemDetail handleNotFound(UserNotFoundException ex) {
+    @ExceptionHandler({UserNotFoundException.class, SignatureNotFoundException.class})
+    public ProblemDetail handleNotFound(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 }

@@ -1,5 +1,6 @@
 package com.viller.gespatiens.patients.application;
 
+import com.viller.gespatiens.patients.domain.StayEvents;
 import com.viller.gespatiens.patients.domain.Dni;
 import com.viller.gespatiens.patients.domain.Patient;
 import com.viller.gespatiens.patients.domain.PatientAlreadyDischargedException;
@@ -24,7 +25,7 @@ class DischargePatientUseCaseTest {
     private static final LocalDate EXIT = LocalDate.of(2026, 6, 30);
 
     private final InMemoryPatientRepository repository = new InMemoryPatientRepository();
-    private final DischargePatientUseCase useCase = new DischargePatientUseCase(repository);
+    private final DischargePatientUseCase useCase = new DischargePatientUseCase(repository, StayEvents.none());
 
     private Patient admittedPatient() {
         PatientDetails details = new PatientDetails("Juan", "García López", new Dni("12345678Z"),
@@ -52,7 +53,7 @@ class DischargePatientUseCaseTest {
         Patient patient = admittedPatient();
         useCase.execute(patient.getId(), EXIT);
 
-        AdmitPatientUseCase admit = new AdmitPatientUseCase(repository, new ResidentNumberAssigner());
+        AdmitPatientUseCase admit = new AdmitPatientUseCase(repository, new ResidentNumberAssigner(), StayEvents.none());
         PatientDetails other = new PatientDetails("Ana", "Pérez", new Dni("00000001R"),
                 LocalDate.of(1985, 3, 3), "C/ Sol 2", "600333444", null, null, null, null, null);
 

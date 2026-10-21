@@ -9,6 +9,7 @@ import { useAuth } from '../../auth/AuthContext'
 import { ageOn, daysBetween, formatDate, todayIso } from '../../shared/dates'
 import { ConfirmDialog, ErrorNotice, Field, LoadingRows, PageHeader, SuccessNotice } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
+import { ResidentReportsPanel } from '../reports/ResidentReportsPanel'
 import { bedsOf, nextFreeNumber } from './beds'
 import { detailsOf, PatientForm } from './PatientForm'
 import { ReadmitDialog } from './ReadmitDialog'
@@ -176,6 +177,8 @@ export function PatientDetailPage() {
           </div>
         </dl>
       </section>
+
+      <ResidentReportsPanel patientId={patient.id} active={patient.active} />
 
       {/* Lo destructivo va al final, en su propia sección, con la consecuencia dicha en palabras */}
       {!patient.active && isAdmin && (
