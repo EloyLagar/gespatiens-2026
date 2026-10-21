@@ -15,8 +15,7 @@ public class DashboardBeanConfiguration {
 
     @Bean
     public DashboardUseCase dashboardUseCase(DashboardQueries dashboardQueries, Clock clock,
-                                             @Value("${gespatiens.reports.mid-stay-after}") Period midStayAfter,
                                              @Value("${gespatiens.dashboard.deadline-notice}") Period notice) {
-        return new DashboardUseCase(dashboardQueries, clock, midStayAfter, notice);
+        return new DashboardUseCase(dashboardQueries, clock, notice);
     }
 }

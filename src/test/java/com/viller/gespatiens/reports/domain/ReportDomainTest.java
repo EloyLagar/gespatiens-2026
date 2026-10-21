@@ -183,7 +183,7 @@ class ReportDomainTest {
         assertEquals(admin.id(), report.getClosedBy().orElseThrow());
         assertThrows(ReportClosedException.class,
                 () -> report.write(ReportSection.PSYCHO_DIAGNOSIS, "Tarde", 0, psychologist, false, LATER));
-        assertThrows(ReportClosedException.class, () -> report.editHeader("S-1", null, null, null, 0));
+        assertThrows(ReportClosedException.class, () -> report.editHeader("S-1", null, null, null, null, 0));
         assertThrows(ReportNotManageableException.class, () -> report.reopen(educator));
 
         report.reopen(admin);
@@ -197,7 +197,7 @@ class ReportDomainTest {
     void theHeaderOnlyChangesWhatIsWrittenByHandAndDetectsConflicts() {
         Report report = midStay();
 
-        report.editHeader("S-12", "UCA Torrent", "N-1", "Alta", 0);
+        report.editHeader("S-12", "UCA Torrent", "N-1", "Alta", null, 0);
 
         ReportHeader header = report.getHeader();
         assertEquals("UCA Torrent", header.referenceCenter());
@@ -205,7 +205,29 @@ class ReportDomainTest {
         assertNull(header.exitReason());
         assertEquals(STAY, header.entryDate());
         assertEquals(1, report.getHeaderVersion());
-        assertThrows(HeaderConflictException.class, () -> report.editHeader("S-13", null, null, null, 0));
+        assertThrows(HeaderConflictException.class, () -> report.editHeader("S-13", null, null, null, null, 0));
+    }
+
+    // Decisión del centro: el de media estancia toca a mitad del programa; por defecto a los 3 meses y se puede
+    // cambiar. El final no tiene fecha prevista
+    @Test
+    void theMidStayReportIsDueHalfwayAndTheDateCanBeChanged() {
+        Report report = midStay();
+        assertEquals(STAY.plusMonths(3), report.getHeader().dueDate());
+        assertNull(finalReport().getHeader().dueDate());
+
+        report.editHeader(null, null, null, null, STAY.plusMonths(4), 0);
+        assertEquals(STAY.plusMonths(4), report.getHeader().dueDate());
+
+        // Sin fecha vuelve la de por defecto; antes de la entrada no puede tocar
+        report.editHeader(null, null, null, null, null, 1);
+        assertEquals(STAY.plusMonths(3), report.getHeader().dueDate());
+        assertThrows(IllegalArgumentException.class,
+                () -> report.editHeader(null, null, null, null, STAY.minusDays(1), 2));
+
+        Report finalOne = finalReport();
+        finalOne.editHeader(null, null, null, null, STAY.plusMonths(4), 0);
+        assertNull(finalOne.getHeader().dueDate());
     }
 
     // Al dar de baja al residente, la salida pasa a la cabecera, aunque el informe ya esté cerrado

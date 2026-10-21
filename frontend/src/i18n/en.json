@@ -589,7 +589,9 @@
       "entryDate": "Entry date",
       "exitDate": "Exit date",
       "exitReason": "Reason for leaving",
-      "fromRecord": "Name, date of birth, ID and SIP come from the resident's record: correct them there."
+      "fromRecord": "Name, date of birth, ID and SIP come from the resident's record: correct them there.",
+      "dueDate": "Report due date",
+      "dueDateHelp": "Halfway through the programme. By default 3 months after admission; leave it empty to go back to that. The dashboard warns 30 days before."
     },
     "area": {
       "SOCIAL": "Social area",
@@ -777,7 +779,7 @@
     "weekOf_other": "Week of {{date}}: {{count}} notices",
     "deadlines": {
       "title": "Deadlines",
-      "help": "Mid-stay reports that are due (3 months after admission) and court measures ending in the next 30 days, plus anything already overdue.",
+      "help": "Mid-stay reports that are due (on each report's due date, halfway through the programme) and court measures ending in the next 30 days, plus anything already overdue.",
       "none": "Nothing is due in the next 30 days.",
       "resident": "Resident",
       "what": "What is due",

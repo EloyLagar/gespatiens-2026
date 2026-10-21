@@ -104,7 +104,7 @@ public class ReportController {
     public ReportResponse editHeader(Principal principal, @PathVariable UUID id,
                                      @RequestBody HeaderRequest request) {
         return ReportResponse.from(editReportHeaderUseCase.execute(id, request.requestNumber(),
-                request.referenceCenter(), request.nip(), request.exitReason(), request.version(),
+                request.referenceCenter(), request.nip(), request.exitReason(), request.dueDate(), request.version(),
                 currentUserId(principal)));
     }
 

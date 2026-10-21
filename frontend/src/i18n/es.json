@@ -589,7 +589,9 @@
       "entryDate": "Fecha de entrada",
       "exitDate": "Fecha de salida",
       "exitReason": "Motivo de salida",
-      "fromRecord": "Nombre, nacimiento, DNI y S.I.P. salen de la ficha del residente: se corrigen allí."
+      "fromRecord": "Nombre, nacimiento, DNI y S.I.P. salen de la ficha del residente: se corrigen allí.",
+      "dueDate": "Fecha prevista del informe",
+      "dueDateHelp": "A mitad del programa. Por defecto, a los 3 meses de la entrada; vacía vuelve a esa. El panel avisa 30 días antes."
     },
     "area": {
       "SOCIAL": "Área social",
@@ -777,7 +779,7 @@
     "weekOf_other": "Semana del {{date}}: {{count}} avisos",
     "deadlines": {
       "title": "Vencimientos",
-      "help": "Informes de media estancia que tocan (a los 3 meses de la entrada) y medidas judiciales que terminan en los próximos 30 días, y lo que ya ha vencido.",
+      "help": "Informes de media estancia que tocan (en la fecha prevista de cada uno, a mitad del programa) y medidas judiciales que terminan en los próximos 30 días, y lo que ya ha vencido.",
       "none": "Nada vence en los próximos 30 días.",
       "resident": "Residente",
       "what": "Qué vence",

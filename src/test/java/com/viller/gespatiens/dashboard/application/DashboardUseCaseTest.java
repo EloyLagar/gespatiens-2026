@@ -62,12 +62,12 @@ class DashboardUseCaseTest {
         @Override
         public List<OpenMidStayReport> openMidStayReports() {
             return List.of(
-                    // Entró el 1 de agosto: le toca el 1 de noviembre, dentro del plazo de aviso
-                    new OpenMidStayReport(resident(4, "Ruiz"), LocalDate.of(2026, 8, 1), REPORT),
-                    // Entró el 1 de octubre: le toca en enero, todavía no se avisa
-                    new OpenMidStayReport(resident(7, "Gil"), LocalDate.of(2026, 10, 1), UUID.randomUUID()),
-                    // Entró en junio: se le pasó el 1 de septiembre
-                    new OpenMidStayReport(resident(9, "Peña"), LocalDate.of(2026, 6, 1), UUID.randomUUID()));
+                    // Le toca el 1 de noviembre, dentro del plazo de aviso
+                    new OpenMidStayReport(resident(4, "Ruiz"), LocalDate.of(2026, 11, 1), REPORT),
+                    // Le toca en enero: todavía no se avisa
+                    new OpenMidStayReport(resident(7, "Gil"), LocalDate.of(2027, 1, 1), UUID.randomUUID()),
+                    // Se le pasó el 1 de septiembre
+                    new OpenMidStayReport(resident(9, "Peña"), LocalDate.of(2026, 9, 1), UUID.randomUUID()));
         }
 
         @Override
@@ -86,7 +86,7 @@ class DashboardUseCaseTest {
 
     // Hoy es el 21 de octubre de 2026
     private final DashboardUseCase useCase = new DashboardUseCase(queries,
-            Clock.fixed(Instant.parse("2026-10-21T10:00:00Z"), ZoneOffset.UTC), Period.ofMonths(3), Period.ofDays(30));
+            Clock.fixed(Instant.parse("2026-10-21T10:00:00Z"), ZoneOffset.UTC), Period.ofDays(30));
 
     // Memoria final, 5.1: "la cantidad de turnos que realizan distintos trabajadores durante un mes"
     @Test

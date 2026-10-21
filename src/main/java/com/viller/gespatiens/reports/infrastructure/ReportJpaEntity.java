@@ -62,6 +62,17 @@ public class ReportJpaEntity {
     @Column(nullable = false)
     private int headerVersion;
 
+    // Solo en el de media estancia: cuándo toca
+    private LocalDate dueDate;
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
     private UUID createdBy;
 
     @Column(nullable = false)

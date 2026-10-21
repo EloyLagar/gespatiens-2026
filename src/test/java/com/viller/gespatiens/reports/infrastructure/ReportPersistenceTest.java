@@ -74,7 +74,7 @@ class ReportPersistenceTest {
         StaffMember rosa = employee("Rosa", "699999102", Speciality.ADMINISTRATOR);
         try {
             Report report = reportRepository.save(Report.forStay(patient, ReportType.FINAL, DAY.minusYears(1), NOW));
-            report.editHeader("S-1", "UCA", null, "Alta terapéutica", 0);
+            report.editHeader("S-1", "UCA", null, "Alta terapéutica", null, 0);
             report.recordStayEnd(DAY.minusDays(1));
             report.write(ReportSection.PSYCHO_DIAGNOSIS, "Dual", 0, marcos, false, NOW);
             report.write(ReportSection.PSYCHO_AT_DISCHARGE, "Estable", 0, marcos, false, NOW);

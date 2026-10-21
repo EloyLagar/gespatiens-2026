@@ -63,6 +63,8 @@ export interface ReportHeader {
   // Solo en el final. null mientras sigue en el centro
   exitDate: IsoDate | null
   exitReason: string | null
+  // Solo en el de media estancia: cuándo toca (a mitad del programa; por defecto, a los 3 meses de la entrada)
+  dueDate?: IsoDate | null
   version: number
 }
 
@@ -118,6 +120,8 @@ export interface ReportHeaderInput {
   referenceCenter: string | null
   nip: string | null
   exitReason: string | null
+  // null: vuelve a la de por defecto
+  dueDate: IsoDate | null
 }
 
 // Debe coincidir con SectionEntry.MAX_LENGTH en el dominio

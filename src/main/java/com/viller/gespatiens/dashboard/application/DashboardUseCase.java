@@ -26,15 +26,12 @@ public class DashboardUseCase {
 
     private final DashboardQueries queries;
     private final Clock clock;
-    // Cuánto después de la entrada toca el informe de media estancia
-    private final Period midStayAfter;
     // Con cuánta antelación se avisa de lo que vence
     private final Period notice;
 
-    public DashboardUseCase(DashboardQueries queries, Clock clock, Period midStayAfter, Period notice) {
+    public DashboardUseCase(DashboardQueries queries, Clock clock, Period notice) {
         this.queries = queries;
         this.clock = clock;
-        this.midStayAfter = midStayAfter;
         this.notice = notice;
     }
 
@@ -70,8 +67,7 @@ public class DashboardUseCase {
         LocalDate today = LocalDate.now(clock);
         LocalDate horizon = today.plus(notice);
         Stream<Deadline> reports = queries.openMidStayReports().stream()
-                .map(r -> deadline(Deadline.Kind.MID_STAY_REPORT, r.resident(), r.entryDate().plus(midStayAfter), today,
-                        r.reportId(), null));
+                .map(r -> deadline(Deadline.Kind.MID_STAY_REPORT, r.resident(), r.dueDate(), today, r.reportId(), null));
         Stream<Deadline> measures = queries.courtMeasures().stream()
                 .map(m -> deadline(Deadline.Kind.COURT_MEASURE_END, m.resident(), m.endDate(), today, null, m.court()));
         return Stream.concat(reports, measures)
