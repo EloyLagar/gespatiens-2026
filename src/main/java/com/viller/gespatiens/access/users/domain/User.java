@@ -8,7 +8,8 @@ public class User {
     private String email;
     private String phoneNumber;
     private Speciality speciality;
-    // Solo guardamos el hash, nunca la contraseña en claro
+    // Solo guardamos el hash, nunca la contraseña en claro. null mientras el empleado invitado
+    // no haya creado la suya desde el enlace del correo
     private String passwordHash;
     // El idioma de la aplicación que ha elegido (RNF9)
     private Language language;
@@ -25,13 +26,19 @@ public class User {
         this.email = validateEmail(email);
         this.phoneNumber = phoneNumber;
         this.speciality = speciality;
-        this.passwordHash = validatePasswordHash(passwordHash);
+        this.passwordHash = passwordHash == null ? null : validatePasswordHash(passwordHash);
         this.language = language == null ? Language.ES : language;
     }
 
     // Crear un usuario nuevo: el dominio genera el id
     public static User create(String name, String email, String phoneNumber, Speciality speciality, String passwordHash) {
         return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, passwordHash, Language.ES);
+    }
+
+    // Memoria final: la administración da de alta al empleado y este recibe un correo para crear su
+    // propia contraseña. Hasta entonces no puede entrar
+    public static User invite(String name, String email, String phoneNumber, Speciality speciality) {
+        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, null, Language.ES);
     }
 
     // Reconstruir un usuario que ya existía (leído de BD)
@@ -99,6 +106,11 @@ public class User {
 
     public void changePasswordHash(String newPasswordHash) {
         this.passwordHash = validatePasswordHash(newPasswordHash);
+    }
+
+    // false: está invitado y todavía no ha creado su contraseña
+    public boolean hasPassword() {
+        return passwordHash != null;
     }
 
     public boolean isAdministrator() {

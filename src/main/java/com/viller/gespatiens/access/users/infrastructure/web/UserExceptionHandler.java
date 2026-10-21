@@ -1,8 +1,10 @@
 package com.viller.gespatiens.access.users.infrastructure.web;
 
 import com.viller.gespatiens.access.users.application.InvalidCredentialsException;
+import com.viller.gespatiens.access.users.application.PasswordSetupDeliveryException;
 import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException;
+import com.viller.gespatiens.access.users.domain.InvalidPasswordSetupTokenException;
 import com.viller.gespatiens.access.users.domain.LastAdministratorException;
 import com.viller.gespatiens.access.users.domain.PhoneNumberAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.SignatureNotFoundException;
@@ -36,5 +38,18 @@ public class UserExceptionHandler {
     @ExceptionHandler({UserNotFoundException.class, SignatureNotFoundException.class})
     public ProblemDetail handleNotFound(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    // 410: el enlace existió pero ya no sirve (usado, sustituido o caducado). Tampoco se distingue de uno
+    // inventado, para no dar pistas
+    @ExceptionHandler(InvalidPasswordSetupTokenException.class)
+    public ProblemDetail handleInvalidSetupToken(InvalidPasswordSetupTokenException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.GONE, ex.getMessage());
+    }
+
+    // 502: el fallo es del servidor de correo, no de la petición
+    @ExceptionHandler(PasswordSetupDeliveryException.class)
+    public ProblemDetail handleDelivery(PasswordSetupDeliveryException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
     }
 }

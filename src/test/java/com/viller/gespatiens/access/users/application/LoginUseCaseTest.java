@@ -48,6 +48,13 @@ class LoginUseCaseTest {
     }
 
     @Test
+    void invitedEmployeeCannotSignInBeforeCreatingThePassword() {
+        repository.save(User.invite("Luis", "luis@vientos.es", "600333444", Speciality.SOCIAL_EDUCATOR));
+
+        assertThrows(InvalidCredentialsException.class, () -> useCase.execute("luis@vientos.es", "cualquiera"));
+    }
+
+    @Test
     void missingFieldsAreInvalidCredentials() {
         assertThrows(InvalidCredentialsException.class, () -> useCase.execute(null, "secreto123"));
         assertThrows(InvalidCredentialsException.class, () -> useCase.execute("ana@vientos.es", null));

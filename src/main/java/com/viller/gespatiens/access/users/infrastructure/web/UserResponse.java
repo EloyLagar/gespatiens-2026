@@ -14,7 +14,9 @@ public record UserResponse(
         String phoneNumber,
         Speciality speciality,
         // El idioma que ha elegido para la aplicación (RNF9)
-        Language language) {
+        Language language,
+        // Invitado que todavía no ha creado su contraseña desde el correo
+        boolean passwordPending) {
 
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -23,6 +25,7 @@ public record UserResponse(
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getSpeciality(),
-                user.getLanguage());
+                user.getLanguage(),
+                !user.hasPassword());
     }
 }
