@@ -18,7 +18,9 @@ public record DashboardView(
         // De quien más turnos hizo a quien menos
         List<ShiftCount> shifts,
         // Las semanas que tocan el mes, de lunes a domingo, en orden; las que no tuvieron avisos, a 0
-        List<WeekCount> noticesByWeek) {
+        List<WeekCount> noticesByWeek,
+        // Lo que vence pronto o ha vencido, de lo más urgente a lo menos
+        List<Deadline> deadlines) {
 
     public record WeekCount(LocalDate monday, int notices) {
     }

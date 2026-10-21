@@ -5,6 +5,7 @@ import com.viller.gespatiens.access.users.infrastructure.security.SecurityConfig
 import com.viller.gespatiens.dashboard.application.DashboardQueries.ShiftCount;
 import com.viller.gespatiens.dashboard.application.DashboardUseCase;
 import com.viller.gespatiens.dashboard.application.DashboardView;
+import com.viller.gespatiens.dashboard.application.Deadline;
 import com.viller.gespatiens.dashboard.application.DashboardView.WeekCount;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +47,19 @@ class DashboardControllerTest {
     void administrationSeesTheMonth() throws Exception {
         when(dashboardUseCase.execute(YearMonth.of(2026, 10))).thenReturn(new DashboardView(YearMonth.of(2026, 10),
                 27, 32, 3, 12, 40, List.of(new ShiftCount(UUID.randomUUID(), "Pablo", "SOCIAL_EDUCATOR", 4, 2, 3)),
-                List.of(new WeekCount(LocalDate.of(2026, 9, 28), 2))));
+                List.of(new WeekCount(LocalDate.of(2026, 9, 28), 2)),
+                List.of(new Deadline(Deadline.Kind.COURT_MEASURE_END,
+                        new Deadline.Resident(UUID.randomUUID(), 5, "Lucía", "Martínez"), LocalDate.of(2026, 10, 18),
+                        -3, null, "Juzgado de lo Penal nº 3"))));
 
         mockMvc.perform(get("/api/dashboard").param("month", "2026-10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.occupiedPlaces").value(27))
                 .andExpect(jsonPath("$.shifts[0].total").value(9))
-                .andExpect(jsonPath("$.noticesByWeek[0].monday").value("2026-09-28"));
+                .andExpect(jsonPath("$.noticesByWeek[0].monday").value("2026-09-28"))
+                .andExpect(jsonPath("$.deadlines[0].kind").value("COURT_MEASURE_END"))
+                .andExpect(jsonPath("$.deadlines[0].overdue").value(true))
+                .andExpect(jsonPath("$.deadlines[0].resident.number").value(5));
     }
 
     // Memoria final, 5.1: "al que solo esta [la administración] pudiese acceder"

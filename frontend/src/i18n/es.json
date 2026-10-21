@@ -767,7 +767,23 @@
     "noticesTitle": "Avisos por semana",
     "noticesSubtitle": "Avisos publicados cada semana (de lunes a domingo) que toca el mes",
     "weekOf_one": "Semana del {{date}}: {{count}} aviso",
-    "weekOf_other": "Semana del {{date}}: {{count}} avisos"
+    "weekOf_other": "Semana del {{date}}: {{count}} avisos",
+    "deadlines": {
+      "title": "Vencimientos",
+      "help": "Informes de media estancia que tocan (a los 3 meses de la entrada) y medidas judiciales que terminan en los próximos 30 días, y lo que ya ha vencido.",
+      "none": "Nada vence en los próximos 30 días.",
+      "resident": "Residente",
+      "what": "Qué vence",
+      "date": "Fecha",
+      "when": "Plazo",
+      "MID_STAY_REPORT": "Informe de media estancia",
+      "COURT_MEASURE_END": "Fin de la medida judicial",
+      "overdue_one": "Vencido hace {{count}} día",
+      "overdue_other": "Vencido hace {{count}} días",
+      "today": "Vence hoy",
+      "inDays_one": "Mañana",
+      "inDays_other": "En {{count}} días"
+    }
   },
   "rota": {
     "title": "Turnos",

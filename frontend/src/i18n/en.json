@@ -767,7 +767,23 @@
     "noticesTitle": "Notices per week",
     "noticesSubtitle": "Notices posted each week (Monday to Sunday) that touches the month",
     "weekOf_one": "Week of {{date}}: {{count}} notice",
-    "weekOf_other": "Week of {{date}}: {{count}} notices"
+    "weekOf_other": "Week of {{date}}: {{count}} notices",
+    "deadlines": {
+      "title": "Deadlines",
+      "help": "Mid-stay reports that are due (3 months after admission) and court measures ending in the next 30 days, plus anything already overdue.",
+      "none": "Nothing is due in the next 30 days.",
+      "resident": "Resident",
+      "what": "What is due",
+      "date": "Date",
+      "when": "Due",
+      "MID_STAY_REPORT": "Mid-stay report",
+      "COURT_MEASURE_END": "End of court measure",
+      "overdue_one": "Overdue by {{count}} day",
+      "overdue_other": "Overdue by {{count}} days",
+      "today": "Due today",
+      "inDays_one": "Tomorrow",
+      "inDays_other": "In {{count}} days"
+    }
   },
   "rota": {
     "title": "Shifts",
