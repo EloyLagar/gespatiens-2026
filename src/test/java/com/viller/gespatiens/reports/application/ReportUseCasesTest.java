@@ -208,7 +208,7 @@ class ReportUseCasesTest {
     void theHeaderIsCompletedByAnyEmployee() {
         UUID id = reportOf(lucia, ReportType.MID_STAY);
 
-        ReportView view = header.execute(id, "S-1", "UCA Quart", "N-9", null, 0, marcos.id());
+        ReportView view = header.execute(id, "S-1", "UCA Quart", "N-9", null, null, 0, marcos.id());
 
         assertEquals("UCA Quart", view.report().getHeader().referenceCenter());
         assertEquals(List.of("report:" + id + ":header"), lockChecks);

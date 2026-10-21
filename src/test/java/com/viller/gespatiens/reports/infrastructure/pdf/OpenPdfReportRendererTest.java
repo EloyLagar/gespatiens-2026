@@ -39,7 +39,7 @@ class OpenPdfReportRendererTest {
 
     private Report report(ReportType type) {
         Report report = Report.forStay(lucia.id(), type, LocalDate.of(2026, 4, 1), NOW);
-        report.editHeader("S-12", "UCA Quart de Poblet", "N-7", null, 0);
+        report.editHeader("S-12", "UCA Quart de Poblet", "N-7", null, null, 0);
         return report;
     }
 

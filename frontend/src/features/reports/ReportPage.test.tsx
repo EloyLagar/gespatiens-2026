@@ -30,7 +30,7 @@ function report(overrides: Partial<Report> = {}): Report {
     state: 'DRAFT',
     resident: { id: 'p1', number: 5, name: 'Lucía', surname: 'Martínez', dni: '12345678Z', birthDate: '1990-05-03', sip: null, active: true },
     stayStart: '2026-04-01',
-    header: { requestNumber: null, referenceCenter: 'Comunidad Terapéutica Los Vientos', nip: null, entryDate: '2026-04-01', exitDate: null, exitReason: null, version: 0 },
+    header: { requestNumber: null, referenceCenter: 'Comunidad Terapéutica Los Vientos', nip: null, entryDate: '2026-04-01', exitDate: null, exitReason: null, dueDate: '2026-07-01', version: 0 },
     areas: [
       { area: 'HEALTH', writers: ['MEDICAL_TEAM'], tutors: false, writable: false },
       { area: 'PSYCHOLOGICAL', writers: ['PSYCHOLOGIST'], tutors: false, writable: true },

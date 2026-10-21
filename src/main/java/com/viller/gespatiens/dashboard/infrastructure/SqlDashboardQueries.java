@@ -105,13 +105,14 @@ public class SqlDashboardQueries implements DashboardQueries {
     @SuppressWarnings("unchecked")
     public List<OpenMidStayReport> openMidStayReports() {
         List<Object[]> rows = entityManager.createNativeQuery("""
-                        SELECT p.id, p.number, p.name, p.surname, p.entry_date, r.id
+                        SELECT p.id, p.number, p.name, p.surname, r.due_date, r.id
                         FROM reports r
                         JOIN patients p ON p.id = r.patient_id
                         WHERE r.type = 'MID_STAY'
                           AND r.state = 'DRAFT'
                           AND p.exit_date IS NULL
                           AND r.stay_start = p.entry_date
+                          AND r.due_date IS NOT NULL
                         """)
                 .getResultList();
         return rows.stream()

@@ -32,7 +32,8 @@ public interface DashboardQueries {
     // Residentes en el centro con medida judicial y fecha de fin
     List<CourtMeasure> courtMeasures();
 
-    record OpenMidStayReport(Deadline.Resident resident, LocalDate entryDate, UUID reportId) {
+    // dueDate: cuándo toca, la que pone el informe (por defecto a mitad del programa, y se puede cambiar)
+    record OpenMidStayReport(Deadline.Resident resident, LocalDate dueDate, UUID reportId) {
     }
 
     record CourtMeasure(Deadline.Resident resident, LocalDate endDate, String court) {
