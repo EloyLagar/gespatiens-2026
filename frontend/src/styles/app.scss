@@ -1038,6 +1038,32 @@ button:focus-visible,
   margin-top: 32px;
 }
 
+// Buscador y desplegables encima de una lista larga (Informes). En el móvil, uno debajo de otro
+.filters {
+  display: grid;
+  grid-template-columns: minmax(200px, 320px) minmax(160px, 220px) minmax(160px, 220px);
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 671px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+.list-count {
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.list-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
 .toolbar {
   display: flex;
   align-items: center;

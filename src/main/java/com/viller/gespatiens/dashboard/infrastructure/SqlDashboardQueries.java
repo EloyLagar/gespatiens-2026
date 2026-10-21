@@ -79,7 +79,15 @@ public class SqlDashboardQueries implements DashboardQueries {
 
     @Override
     public int reportsInProgress() {
-        return count(entityManager.createNativeQuery("SELECT COUNT(*) FROM reports WHERE state = 'DRAFT'")
+        // Solo los de la estancia en curso de quien sigue en el centro: los de estancias terminadas que nadie
+        // cerró inflaban la cifra y no son trabajo pendiente del día a día
+        return count(entityManager.createNativeQuery("""
+                        SELECT COUNT(*) FROM reports r
+                        JOIN patients p ON p.id = r.patient_id
+                        WHERE r.state = 'DRAFT'
+                          AND p.exit_date IS NULL
+                          AND r.stay_start = p.entry_date
+                        """)
                 .getSingleResult());
     }
 
