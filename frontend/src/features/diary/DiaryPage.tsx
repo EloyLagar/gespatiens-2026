@@ -1,4 +1,4 @@
-import { Button, TextInput } from '@carbon/react'
+import { Button, IconButton, TextInput } from '@carbon/react'
 import { ChevronLeft, ChevronRight } from '@carbon/icons-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -70,8 +70,11 @@ function DiaryDayPage({ date }: { date: string }) {
         subtitle={<span className="capitalize-first">{isToday ? t('diary.today', { date: longDate }) : longDate}</span>}
         actions={
           <div className="day-switcher">
-            <Button kind="tertiary" size="md" hasIconOnly autoAlign tooltipPosition="bottom" renderIcon={ChevronLeft} iconDescription={t('diary.previous')}
-              onClick={() => navigate(`/diario/${shiftDays(date, -1)}`)} />
+            {/* autoAlign: el tooltip se recoloca para no salirse de la página */}
+            <IconButton kind="tertiary" size="md" autoAlign align="bottom" label={t('diary.previous')}
+              onClick={() => navigate(`/diario/${shiftDays(date, -1)}`)}>
+              <ChevronLeft />
+            </IconButton>
             <TextInput
               id="diary-date"
               type="date"
@@ -81,8 +84,10 @@ function DiaryDayPage({ date }: { date: string }) {
               value={date}
               onChange={(e) => e.target.value && navigate(`/diario/${e.target.value}`)}
             />
-            <Button kind="tertiary" size="md" hasIconOnly autoAlign tooltipPosition="bottom" renderIcon={ChevronRight} iconDescription={t('diary.next')}
-              onClick={() => navigate(`/diario/${shiftDays(date, 1)}`)} />
+            <IconButton kind="tertiary" size="md" autoAlign align="bottom" label={t('diary.next')}
+              onClick={() => navigate(`/diario/${shiftDays(date, 1)}`)}>
+              <ChevronRight />
+            </IconButton>
             {!isToday && (
               <Button kind="ghost" size="md" onClick={() => navigate(`/diario/${todayIso()}`)}>
                 {t('diary.goToday')}

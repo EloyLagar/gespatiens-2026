@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { login as loginRequest } from '../api/auth'
+import i18n from '../i18n'
 import { configureHttp } from '../api/http'
 import type { User } from '../api/types'
 import { loadSession, saveSession, sessionFromLogin, type Session } from './session'
@@ -69,6 +70,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     [session, store],
   )
+
+  // RNF9: al entrar (o al recargar), la aplicación se pone en el idioma que el empleado guardó en su perfil
+  const savedLanguage = session?.user.language
+  useEffect(() => {
+    if (savedLanguage) i18n.changeLanguage(savedLanguage.toLowerCase())
+  }, [savedLanguage])
 
   const value = useMemo<AuthState>(
     () => ({

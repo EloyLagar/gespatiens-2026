@@ -69,3 +69,8 @@ export function uploadMySignature(png: Blob) {
 export function removeMySignature() {
   return request<void>('/users/me/signature', { method: 'DELETE' })
 }
+
+// RNF9: el idioma se guarda en el perfil, así el empleado lo encuentra igual en cualquier equipo
+export function changeMyLanguage(language: 'ES' | 'EN') {
+  return request<User>('/users/me/language', { method: 'PUT', body: { language } })
+}

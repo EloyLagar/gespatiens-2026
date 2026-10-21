@@ -22,6 +22,8 @@ export interface User {
   email: string
   phoneNumber: string
   speciality: Speciality
+  // RNF9: el idioma que ha elegido. Puede faltar en una sesión guardada antes de existir
+  language?: 'ES' | 'EN'
 }
 
 export interface LoginResponse {

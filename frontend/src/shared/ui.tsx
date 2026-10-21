@@ -138,7 +138,8 @@ export function LoadingRows({ rows = 5, label }: { rows?: number; label: string 
   )
 }
 
-export function LanguageSwitch() {
+// onChange: además de cambiarlo en pantalla, guardarlo (en el perfil del empleado que ha iniciado sesión)
+export function LanguageSwitch({ onChange }: { onChange?: (language: (typeof LANGUAGES)[number]) => void }) {
   const { t, i18n } = useTranslation()
   return (
     <div className="language-switch" role="group" aria-label={t('language.label')}>
@@ -148,7 +149,10 @@ export function LanguageSwitch() {
           type="button"
           lang={language}
           aria-pressed={i18n.language === language}
-          onClick={() => i18n.changeLanguage(language)}
+          onClick={() => {
+            i18n.changeLanguage(language)
+            onChange?.(language)
+          }}
         >
           {t(`language.${language}`)}
         </button>

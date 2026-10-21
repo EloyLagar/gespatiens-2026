@@ -10,9 +10,12 @@ public class User {
     private Speciality speciality;
     // Solo guardamos el hash, nunca la contraseña en claro
     private String passwordHash;
+    // El idioma de la aplicación que ha elegido (RNF9)
+    private Language language;
 
     // Constructor para reconstruir un usuario ya existente (p.ej. al leerlo de la BD)
-    private User(UUID id, String name, String email, String phoneNumber, Speciality speciality, String passwordHash) {
+    private User(UUID id, String name, String email, String phoneNumber, Speciality speciality, String passwordHash,
+                 Language language) {
         if (id == null) {
             throw new IllegalArgumentException("El id no puede ser null");
         }
@@ -23,16 +26,18 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.speciality = speciality;
         this.passwordHash = validatePasswordHash(passwordHash);
+        this.language = language == null ? Language.ES : language;
     }
 
     // Crear un usuario nuevo: el dominio genera el id
     public static User create(String name, String email, String phoneNumber, Speciality speciality, String passwordHash) {
-        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, passwordHash);
+        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, passwordHash, Language.ES);
     }
 
     // Reconstruir un usuario que ya existía (leído de BD)
-    public static User reconstitute(UUID id, String name, String email, String phoneNumber, Speciality speciality, String passwordHash) {
-        return new User(id, name, email, phoneNumber, speciality, passwordHash);
+    public static User reconstitute(UUID id, String name, String email, String phoneNumber, Speciality speciality,
+                                    String passwordHash, Language language) {
+        return new User(id, name, email, phoneNumber, speciality, passwordHash, language);
     }
 
     // Método auxiliar compartido, para no repetir los tres "if" en ambos constructores
@@ -119,6 +124,17 @@ public class User {
 
     public Speciality getSpeciality() {
         return speciality;
+    }
+
+    public void changeLanguage(Language newLanguage) {
+        if (newLanguage == null) {
+            throw new IllegalArgumentException("Indica el idioma");
+        }
+        this.language = newLanguage;
+    }
+
+    public Language getLanguage() {
+        return language;
     }
 
     public String getPasswordHash() {

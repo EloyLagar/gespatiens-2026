@@ -82,6 +82,7 @@ public class UserRepositoryJpaAdapter implements UserRepository {
         entity.setPhoneNumber(user.getPhoneNumber());
         entity.setSpeciality(user.getSpeciality());
         entity.setPasswordHash(user.getPasswordHash());
+        entity.setLanguage(user.getLanguage());
         return entity;
     }
 
@@ -92,6 +93,7 @@ public class UserRepositoryJpaAdapter implements UserRepository {
                 entity.getEmail(),
                 entity.getPhoneNumber(),
                 entity.getSpeciality(),
-                entity.getPasswordHash());
+                entity.getPasswordHash(),
+                entity.getLanguage());
     }
 }

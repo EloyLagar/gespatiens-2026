@@ -1,5 +1,6 @@
 package com.viller.gespatiens.access.users.infrastructure;
 
+import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +34,10 @@ public class UserJpaEntity {
     @Column(nullable = false)
     private Speciality speciality;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 2)
+    private Language language;
+
     @Column(nullable = false)
     private String passwordHash;
 
@@ -50,6 +55,14 @@ public class UserJpaEntity {
 
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 
     public Speciality getSpeciality() {

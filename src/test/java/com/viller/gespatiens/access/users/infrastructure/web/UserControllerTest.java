@@ -1,5 +1,6 @@
 package com.viller.gespatiens.access.users.infrastructure.web;
 
+import com.viller.gespatiens.access.users.application.ChangeOwnLanguageUseCase;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
@@ -11,6 +12,7 @@ import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.EmailAlreadyRegisteredException;
 import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException;
 import com.viller.gespatiens.access.users.domain.LastAdministratorException;
+import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserNotFoundException;
@@ -81,6 +83,9 @@ class UserControllerTest {
 
     @MockitoBean
     private DeleteUserUseCase deleteUserUseCase;
+
+    @MockitoBean
+    private ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
 
     // La seguridad real necesita estos dos beans; con @WithMockUser no se llegan a usar
     @MockitoBean
@@ -269,5 +274,19 @@ class UserControllerTest {
 
         mockMvc.perform(delete("/api/users/{id}", id))
                 .andExpect(status().isConflict());
+    }
+
+    // RNF9: cada empleado guarda su idioma en el perfil
+    @Test
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
+    void eachEmployeeSavesTheirLanguage() throws Exception {
+        User user = User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash");
+        user.changeLanguage(Language.EN);
+        when(changeOwnLanguageUseCase.execute(ME_ID, Language.EN)).thenReturn(user);
+
+        mockMvc.perform(put("/api/users/me/language").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"language\":\"EN\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.language").value("EN"));
     }
 }

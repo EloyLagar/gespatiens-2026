@@ -250,6 +250,10 @@
       "remove": "Remove signature",
       "onlyPng": "The signature must be a PNG image.",
       "tooBig": "The image can't be larger than 1 MB."
+    },
+    "language": {
+      "title": "Language",
+      "help": "The language of the application. It is saved in your profile, so you'll find it the same on any computer."
     }
   },
   "notFound": {
