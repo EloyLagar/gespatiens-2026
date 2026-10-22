@@ -1,0 +1,48 @@
+# gespatiens completo: PostgreSQL, la API y el frontend. Con "docker compose up --build" queda en
+# http://localhost:8080 con los datos de demostración (perfil demo; contraseña de todo el personal: demo1234).
+# Los valores se pueden cambiar en un fichero .env junto a este (ver .env.example)
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: gespatiens
+      POSTGRES_USER: gespatiens
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-gespatiens-demo}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gespatiens -d gespatiens"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/gespatiens
+      DB_USER: gespatiens
+      DB_PASSWORD: ${DB_PASSWORD:-gespatiens-demo}
+      # Firma las sesiones. El valor por defecto solo vale para probar en este equipo
+      JWT_SECRET: ${JWT_SECRET:-solo-para-la-demo-local-cambiar-antes-de-publicar}
+      # demo: carga los datos de demostración la primera vez. Vacío: base de datos limpia con el administrador
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-demo}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PHONE: ${ADMIN_PHONE:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      FRONTEND_URL: http://localhost:${PORT:-8080}
+      SPRING_JPA_SHOW_SQL: "false"
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - "${PORT:-8080}:80"
+    restart: unless-stopped
+
+volumes:
+  db-data:

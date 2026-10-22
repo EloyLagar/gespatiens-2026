@@ -1,0 +1,9 @@
+.git
+.github
+.idea
+.agents
+.claude
+target
+frontend
+*.pdf
+e2e

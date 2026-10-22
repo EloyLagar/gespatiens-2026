@@ -61,3 +61,43 @@ jobs:
       - run: npm ci
       - run: npx vitest run
       - run: npm run build
+
+  e2e:
+    name: App completa (Docker, datos de demostración y Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Arrancar con docker compose
+        run: docker compose up --build -d
+      # Se espera al mensaje del log y no a un login: los intentos fallidos mientras carga bloquearían la cuenta
+      - name: Esperar a que estén cargados los datos de demostración
+        run: |
+          for i in $(seq 1 120); do
+            if docker compose logs api | grep -q "Datos de demostración cargados"; then echo "Lista"; exit 0; fi
+            sleep 5
+          done
+          docker compose logs api
+          exit 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - name: Pruebas de extremo a extremo
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test
+      - name: Log de la API
+        if: failure()
+        run: docker compose logs api > api.log
+      - name: Informe de Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+            api.log

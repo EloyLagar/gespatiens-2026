@@ -16,7 +16,29 @@ Es la reescritura del proyecto final de DAW (2023/24, originalmente en Laravel) 
 - **Frontend:** React, TypeScript y Vite con el sistema de diseño Carbon (`frontend/`, estilo en `DESIGN.md`).
 - **Informes en PDF:** OpenPDF.
 
-## Instalación
+## Probarla con Docker
+
+Con [Docker Desktop](https://www.docker.com/products/docker-desktop/) basta con un comando. Arranca PostgreSQL, la
+API y el frontend, y carga los datos de demostración la primera vez:
+
+```bash
+docker compose up --build
+```
+
+Abre http://localhost:8080 y entra con `marta.serra@vientos.es` (administración) o con cualquier otro empleado de
+la demostración (`ana.beltran@`, `carmen.lopez@`, `laura.gil@`, `jorge.vidal@`…, todos `@vientos.es`). La contraseña
+de todos es `demo1234`.
+
+Los datos son inventados: diez residentes en el centro y tres antiguos, un mes de diario con valoraciones,
+intervenciones, informes en distintas fases, avisos y el cuadrante de dos meses. Las fechas se cuentan desde el día en
+que se cargan. Para cambiar el puerto, las contraseñas o empezar con la base de datos limpia, copia `.env.example`
+como `.env`. `docker compose down -v` lo borra todo.
+
+> [!WARNING]
+> Los valores por defecto (`JWT_SECRET`, contraseña de la base de datos) solo valen para probar en el propio equipo.
+> Si la app va a estar en internet, cámbialos en el `.env` y usa HTTPS.
+
+## Instalación para desarrollo
 
 Requisitos: JDK 25, Node.js 24 y PostgreSQL.
 
@@ -84,14 +106,25 @@ Requisitos: JDK 25, Node.js 24 y PostgreSQL.
 ## Tests
 
 ```bash
-# Backend. Los tests de persistencia usan PostgreSQL y necesitan las variables DB_PASSWORD y JWT_SECRET
+# Backend. Los que usan PostgreSQL necesitan DB_PASSWORD y JWT_SECRET, y trabajan en su propio esquema
+# (gespatiens_test, que Flyway crea solo): no tocan los datos de la app
 ./mvnw test
 
 # Frontend
 cd frontend
 npm test
 npm run typecheck
+
+# De extremo a extremo (Playwright), contra la app de docker compose con los datos de demostración
+cd e2e
+npm install
+npx playwright install chromium
+npx playwright test
 ```
+
+La integración continua (`.github/workflows/ci.yml`) lo pasa todo en cada push: los tests del backend contra un
+PostgreSQL de usar y tirar, los del frontend con su build, y las pruebas de extremo a extremo sobre la app
+arrancada con `docker compose`.
 
 ## Licencia
 
