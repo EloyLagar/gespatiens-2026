@@ -24,7 +24,8 @@ test('un informe completo se descarga en PDF y se cierra', async ({ page }) => {
   await login(page)
   await page.goto('/informes?q=Lucía&tipo=MID_STAY')
   await page.getByRole('link', { name: 'Lucía Martínez Soler' }).click()
-  await expect(page.getByText('28 de 28 apartados redactados')).toBeVisible()
+  // Sale en la cabecera y en la tabla de apartados
+  await expect(page.getByText('28 de 28 apartados redactados').first()).toBeVisible()
 
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Descargar PDF/ }).click()
@@ -40,7 +41,8 @@ test('el panel avisa de los vencimientos cercanos', async ({ page }) => {
   await page.getByRole('link', { name: 'Panel de control' }).click()
   const deadlines = page.getByRole('table', { name: 'Vencimientos' })
   await expect(deadlines).toBeVisible()
-  await expect(deadlines.getByText('Alejandro Ruiz Peña')).toBeVisible()
+  // Tiene más de un vencimiento, así que sale en varias filas
+  await expect(deadlines.getByText('Alejandro Ruiz Peña').first()).toBeVisible()
   await expect(deadlines.getByText('Fin de la medida judicial').first()).toBeVisible()
 })
 
