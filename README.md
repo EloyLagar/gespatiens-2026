@@ -1,93 +1,115 @@
-# gespatiens
+# Gespatiens
 
-## Descripción
+[![CI](https://github.com/EloyLagar/gespatiens-hexagonal/actions/workflows/ci.yml/badge.svg)](https://github.com/EloyLagar/gespatiens-hexagonal/actions/workflows/ci.yml)
+[![Licencia MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
+![Java 25](https://img.shields.io/badge/Java-25-orange)
+![Spring Boot 4](https://img.shields.io/badge/Spring%20Boot-4-6DB33F)
+![React](https://img.shields.io/badge/React-TypeScript-61DAFB)
 
-**Gespatiens** es una aplicación web para la gestión de la comunidad terapéutica "Los Vientos". Su propósito es
-agilizar la documentación de los residentes: el diario del centro, las actividades y sus valoraciones, las
-intervenciones de los tutores y los informes de media estancia y fin de programa. La administración gestiona las
-fichas de los residentes, los perfiles de los empleados y el cuadrante de turnos. Además, el personal tiene una vía
-de comunicación (los avisos) y herramientas para valorar a los residentes en las actividades que organiza.
+Aplicación web para la gestión de una comunidad terapéutica de tratamiento de adicciones. Reúne en un solo sitio la
+documentación diaria de los residentes: el diario del centro, las actividades y sus valoraciones, las intervenciones
+de los tutores, los informes de media estancia y fin de programa, el cuadrante de turnos y los avisos del personal.
 
-Es la reescritura del proyecto final de DAW (2023/24, originalmente en Laravel) con:
+Es la reescritura completa del proyecto final del ciclo de Desarrollo de Aplicaciones Web (IES Serpis, 2023/24),
+desarrollado originalmente en Laravel, con una arquitectura hexagonal y diseño guiado por el dominio.
 
-- **Backend:** Java 25 y Spring Boot 4, con arquitectura hexagonal y DDD (un módulo por contexto:
-  `access`, `patients`, `diary`, `interventions`, `reports`, `notices`, `rota`, `dashboard`, `editing`).
-- **Base de datos:** PostgreSQL. El esquema lo crean las migraciones de Flyway (`src/main/resources/db/migration`).
-- **Frontend:** React, TypeScript y Vite con el sistema de diseño Carbon (`frontend/`, estilo en `DESIGN.md`).
-- **Informes en PDF:** OpenPDF.
+## Demo
 
-## Probarla con Docker
+| Perfil | Email | Contraseña |
+| --- | --- | --- |
+| Administración | `marta.serra@vientos.es` | `demo1234` |
+| Educación social | `ana.beltran@vientos.es` | `demo1234` |
+| Psicología | `jorge.vidal@vientos.es` | `demo1234` |
+| Equipo médico | `laura.gil@vientos.es` | `demo1234` |
+| Trabajo social | `carmen.lopez@vientos.es` | `demo1234` |
 
-Con [Docker Desktop](https://www.docker.com/products/docker-desktop/) basta con un comando. Arranca PostgreSQL, la
-API y el frontend, y carga los datos de demostración la primera vez:
+Todos los datos son ficticios: diez residentes en el centro y tres antiguos, un mes de diario con valoraciones,
+intervenciones, informes en distintas fases, avisos y dos meses de cuadrante. La demo pública se restablece cada día,
+y el primer acceso puede tardar alrededor de un minuto mientras arranca el servidor.
+
+## Funcionalidades
+
+- **Diario del centro**: turnos de mañana, tarde y noche, actividades programadas por día con su asistencia, salidas
+  terapéuticas y reducciones de actividad.
+- **Valoraciones**: notas de 0 a 10 por actividad y una vista mensual por tipo de actividad.
+- **Intervenciones**: cada residente tiene dos tutores (educador y psicólogo), que son quienes registran sus
+  intervenciones.
+- **Informes**: el informe de media estancia y el de fin de programa se crean solos con cada estancia. Cada área
+  redacta sus apartados, y el informe se firma y se exporta a PDF.
+- **Residentes**: ingreso, reingreso, alta, historial de estancias, derivaciones y visitas autorizadas.
+- **Cuadrante de turnos**: planificación del personal y cambios de turno entre compañeros.
+- **Panel de control**: vencimientos cercanos de informes y de medidas judiciales.
+- **Avisos**: canal de comunicación interno para todo el personal.
+- **Permisos por especialidad**: cada empleado edita lo que le corresponde y consulta el resto.
+- **Edición concurrente segura**: un documento abierto por otra persona queda bloqueado hasta que lo libera.
+- **Registro de cambios**: quién modificó los datos de cada residente y cuándo, durante dos años.
+- **Interfaz accesible (WCAG AA) y bilingüe** (castellano e inglés).
+
+## Arquitectura
+
+El backend está organizado en módulos por contexto delimitado: `access`, `patients`, `diary`, `interventions`,
+`reports`, `rota`, `notices`, `dashboard`, `editing` y `audit`. Cada uno sigue la arquitectura hexagonal:
+
+```
+<módulo>/
+├── domain/          Agregados, objetos de valor y puertos (interfaces de repositorio). Sin dependencias de Spring
+├── application/     Casos de uso
+└── infrastructure/  Adaptadores: controladores REST, persistencia JPA, seguridad y configuración
+```
+
+Los agregados se crean mediante métodos de fábrica que validan sus invariantes, y los identificadores se generan en
+el dominio. El esquema de la base de datos se versiona con migraciones de Flyway.
+
+## Tecnologías
+
+| Capa | Tecnologías |
+| --- | --- |
+| Backend | Java 25, Spring Boot 4, Spring Security (JWT), Spring Data JPA |
+| Base de datos | PostgreSQL, Flyway |
+| Frontend | React, TypeScript, Vite, Carbon Design System |
+| Informes | OpenPDF |
+| Pruebas | JUnit, Vitest, Playwright |
+| Infraestructura | Docker, GitHub Actions, Render, Vercel, Neon |
+
+## Ejecución con Docker
+
+Requisito: [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
 ```bash
 docker compose up --build
 ```
 
-Abre http://localhost:8080 y entra con `marta.serra@vientos.es` (administración) o con cualquier otro empleado de
-la demostración (`ana.beltran@`, `carmen.lopez@`, `laura.gil@`, `jorge.vidal@`…, todos `@vientos.es`). La contraseña
-de todos es `demo1234`.
+Este comando arranca PostgreSQL, la API y el frontend, y carga los datos de demostración. La aplicación queda
+disponible en http://localhost:8080 con las cuentas de la [demo](#demo).
 
-Los datos son inventados: diez residentes en el centro y tres antiguos, un mes de diario con valoraciones,
-intervenciones, informes en distintas fases, avisos y el cuadrante de dos meses. Las fechas se cuentan desde el día en
-que se cargan. Para cambiar el puerto, las contraseñas o empezar con la base de datos limpia, copia `.env.example`
-como `.env`. `docker compose down -v` lo borra todo.
+El puerto, las contraseñas y el perfil se configuran copiando `.env.example` como `.env`. `docker compose down -v`
+elimina los contenedores y los datos.
 
 > [!WARNING]
-> Los valores por defecto (`JWT_SECRET`, contraseña de la base de datos) solo valen para probar en el propio equipo.
-> Si la app va a estar en internet, cámbialos en el `.env` y usa HTTPS.
+> Los valores por defecto de `JWT_SECRET` y de la contraseña de la base de datos solo sirven para uso local.
 
-## Publicarla gratis
-
-Tres servicios con plan gratuito, cada uno con su parte:
-
-| Parte | Servicio | Configuración |
-|---|---|---|
-| Base de datos | [Neon](https://neon.tech) (PostgreSQL) | Ninguna: Flyway crea las tablas al arrancar la API |
-| API | [Render](https://render.com) | `render.yaml` |
-| Frontend | [Vercel](https://vercel.com) | `frontend/vercel.json` |
-
-1. **Neon**: crea un proyecto en la región *AWS Europe Central 1 (Frankfurt)*, la misma que usa la API en Render, con una base de datos `gespatiens` y copia la cadena de conexión *directa* (la que no
-   lleva `-pooler` en el host; Flyway no se lleva bien con el pooler).
-2. **Render**: *New → Blueprint* sobre este repositorio. Pide `DB_URL`
-   (`jdbc:postgresql://<host>/gespatiens?sslmode=require`), `DB_USER`, `DB_PASSWORD` y `FRONTEND_URL` (la dirección
-   que dé Vercel en el paso siguiente; se puede rellenar después). `JWT_SECRET` lo genera Render.
-3. **Vercel**: *Add New → Project* sobre este repositorio con *Root Directory* `frontend`. Detecta Vite solo.
-   Si el servicio de Render no se llama `gespatiens-api`, cambia la dirección en `frontend/vercel.json`.
-
-Vercel reenvía `/api` a Render, así que la app sigue en un solo origen y no hace falta CORS.
-
-Cualquiera puede entrar con las cuentas de la demostración, así que en Render la demo se vuelve a cargar desde cero
-cada día (`DEMO_DAILY_RESET=true`): a las 4:00 o, si la API estaba dormida a esa hora, al despertar.
-
-> [!NOTE]
-> La API gratuita de Render se duerme tras 15 minutos sin visitas y tarda alrededor de un minuto en despertar: el
-> primer inicio de sesión puede ir lento.
-
-## Instalación para desarrollo
+## Desarrollo
 
 Requisitos: JDK 25, Node.js 24 y PostgreSQL.
 
-1. Clona el repositorio.
-2. Crea la base de datos vacía `gespatiens-refactor` en PostgreSQL. Al arrancar, Flyway crea las tablas.
-3. Define las variables de entorno (en IntelliJ, en la configuración de ejecución):
+1. Crea una base de datos vacía `gespatiens-refactor`. Flyway crea las tablas al arrancar.
+2. Define las variables de entorno:
 
-   | Variable | Obligatoria | Para qué |
+   | Variable | Obligatoria | Descripción |
    | --- | --- | --- |
-   | `DB_PASSWORD` | Sí | Contraseña de PostgreSQL. El usuario es `postgres`, o el de `DB_USER` |
-   | `JWT_SECRET` | Sí | Firma las sesiones. Al menos 32 caracteres |
-   | `ADMIN_EMAIL`, `ADMIN_PHONE`, `ADMIN_PASSWORD` | La primera vez | Crean el primer administrador si no existe |
-   | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | No | Servidor SMTP para los correos de bienvenida |
-   | `FRONTEND_URL` | No | A dónde apuntan los enlaces de los correos. Por defecto `http://localhost:5173` |
+   | `DB_PASSWORD` | Sí | Contraseña de PostgreSQL (usuario `postgres` o el indicado en `DB_USER`) |
+   | `JWT_SECRET` | Sí | Clave de firma de las sesiones, de al menos 32 caracteres |
+   | `ADMIN_EMAIL`, `ADMIN_PHONE`, `ADMIN_PASSWORD` | Primer arranque | Crean el primer administrador |
+   | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | No | Servidor SMTP para los correos de alta |
+   | `FRONTEND_URL` | No | Destino de los enlaces de los correos (por defecto `http://localhost:5173`) |
 
-4. Arranca la API (puerto 8080):
+3. Arranca la API en el puerto 8080:
 
    ```bash
    ./mvnw spring-boot:run
    ```
 
-5. Arranca el frontend (puerto 5173). Vite reenvía `/api` a la API:
+4. Arranca el frontend en el puerto 5173. Vite redirige `/api` a la API:
 
    ```bash
    cd frontend
@@ -95,46 +117,13 @@ Requisitos: JDK 25, Node.js 24 y PostgreSQL.
    npm run dev
    ```
 
-6. Abre http://localhost:5173.
+Sin `MAIL_HOST` no se envían correos: el enlace de creación de contraseña de los nuevos empleados se escribe en el
+log. Para probar los correos en local se puede usar [Mailpit](https://mailpit.axllent.org/).
 
-> [!TIP]
-> Sin `MAIL_HOST` no se envía ningún correo: el enlace para crear la contraseña se escribe en el log de Spring
-> Boot. Para ver los correos de verdad en desarrollo sirve un buzón de pruebas como
-> [Mailpit](https://mailpit.axllent.org/) (`MAIL_HOST=localhost`, `MAIL_PORT=1025`, `MAIL_SMTP_AUTH=false`,
-> `MAIL_STARTTLS=false`).
-
-## Uso
-
-1. Entra la primera vez con el administrador de `ADMIN_EMAIL`.
-2. La página inicial son los avisos, visibles para todo el personal.
-3. La barra lateral lleva al diario, los informes, las valoraciones, el cuadrante de turnos, las intervenciones,
-   los residentes, los antiguos residentes y los empleados. La administración tiene además su panel de control.
-4. Lo que cada empleado puede hacer depende de su especialidad. Los apartados que no le corresponden se ven en modo
-   consulta.
-5. El diario se consulta por día, y las valoraciones por mes y tipo de actividad.
-6. El panel de control avisa de los informes de media estancia que tocan (a mitad del programa: por defecto a los
-   3 meses de la entrada, y la fecha se cambia en la cabecera de cada informe) y de las
-   medidas judiciales que terminan en los próximos 30 días.
-7. El registro de cambios (solo administración) dice quién ha cambiado los datos de cada residente; se conserva 2 años.
-
-> [!NOTE]
-> Al dar de alta a un empleado, le llega un correo con un enlace para crear su contraseña. El enlace caduca a los
-> 3 días. Desde la ficha del empleado, la administración puede reenviarlo o enviar uno nuevo a quien haya olvidado
-> su contraseña.
-
-> [!TIP]
-> Cada empleado cambia sus datos, su contraseña, su firma para los informes y el idioma (castellano o inglés) en
-> su perfil.
-
-> [!WARNING]
-> Si un informe, un turno del diario o una actividad está abierto por otra persona, queda bloqueado hasta que lo
-> cierre (RF8). El bloqueo se suelta solo al salir de la página o pasado un tiempo sin actividad.
-
-## Tests
+## Pruebas
 
 ```bash
-# Backend. Los que usan PostgreSQL necesitan DB_PASSWORD y JWT_SECRET, y trabajan en su propio esquema
-# (gespatiens_test, que Flyway crea solo): no tocan los datos de la app
+# Backend (las pruebas de persistencia usan PostgreSQL en un esquema propio, gespatiens_test)
 ./mvnw test
 
 # Frontend
@@ -142,30 +131,34 @@ cd frontend
 npm test
 npm run typecheck
 
-# De extremo a extremo (Playwright), contra la app de docker compose con los datos de demostración
+# Extremo a extremo, contra la aplicación levantada con docker compose
 cd e2e
 npm install
 npx playwright install chromium
 npx playwright test
 ```
 
-La integración continua (`.github/workflows/ci.yml`) lo pasa todo en cada push: los tests del backend contra un
-PostgreSQL de usar y tirar, los del frontend con su build, y las pruebas de extremo a extremo sobre la app
-arrancada con `docker compose`.
+La integración continua ejecuta las tres suites en cada push: el backend contra un PostgreSQL efímero, el frontend
+con su build de producción y las pruebas de extremo a extremo sobre la aplicación completa en Docker.
+
+## Despliegue
+
+| Componente | Servicio | Configuración |
+| --- | --- | --- |
+| Frontend | Vercel | `frontend/vercel.json` |
+| API | Render (Docker) | `render.yaml` |
+| Base de datos | Neon (PostgreSQL) | Migraciones de Flyway |
+
+Vercel sirve el frontend y redirige `/api` a la API, de modo que la aplicación funciona en un único origen, sin
+CORS. La API y la base de datos están en la misma región (Frankfurt). Con `DEMO_DAILY_RESET=true`, los datos de
+demostración se restablecen cada día.
 
 ## Licencia
 
-Este proyecto está licenciado bajo la licencia MIT. Para más detalles, consulta el archivo [LICENSE](LICENSE).
+Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE).
 
 ## Autor
 
-**Eloy Lagar Jaime**
+**Eloy Lagar Jaime** · [GitHub](https://github.com/EloyLagar)
 
-Agradecimientos a Manuel Lagar Naharro por la idea.
-
-## Recursos adicionales
-
-- [Spring Boot](https://spring.io/projects/spring-boot)
-- [React](https://react.dev/)
-- [Carbon Design System](https://carbondesignsystem.com/)
-- [PostgreSQL](https://www.postgresql.org/)
+Gracias a Manuel Lagar Naharro por la idea original.
