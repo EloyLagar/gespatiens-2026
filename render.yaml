@@ -5,6 +5,8 @@ services:
     name: gespatiens-api
     runtime: docker
     plan: free
+    # Junto a la base de datos de Neon (AWS Europe Central 1): cada consulta cruza menos distancia
+    region: frankfurt
     dockerfilePath: ./Dockerfile
     autoDeploy: true
     envVars:
