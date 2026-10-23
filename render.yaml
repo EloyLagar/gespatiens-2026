@@ -1,0 +1,33 @@
+# La API en Render (plan gratuito) a partir del Dockerfile. La base de datos va aparte, en Neon, porque la gratuita
+# de Render se borra a los 30 días. Ver "Publicarla gratis" en el README
+services:
+  - type: web
+    name: gespatiens-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      # Render enruta al puerto que diga PORT; la app escucha en el 8080
+      - key: PORT
+        value: "8080"
+      # jdbc:postgresql://<host directo de Neon, sin -pooler>/gespatiens?sslmode=require
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      # demo: carga los datos de demostración la primera vez
+      - key: SPRING_PROFILES_ACTIVE
+        value: demo
+      # Y la vuelve a cargar desde cero cada día: lo que cambien las visitas no dura
+      - key: DEMO_DAILY_RESET
+        value: "true"
+      # La dirección del frontend en Vercel, para los enlaces de los correos
+      - key: FRONTEND_URL
+        sync: false
+      - key: SPRING_JPA_SHOW_SQL
+        value: "false"

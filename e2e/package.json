@@ -1,0 +1,11 @@
+{
+  "name": "gespatiens-e2e",
+  "private": true,
+  "description": "Pruebas de extremo a extremo con Playwright sobre la app completa con los datos de demostración",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}
