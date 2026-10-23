@@ -1,6 +1,6 @@
 # Gespatiens
 
-[![CI](https://github.com/EloyLagar/gespatiens-hexagonal/actions/workflows/ci.yml/badge.svg)](https://github.com/EloyLagar/gespatiens-hexagonal/actions/workflows/ci.yml)
+[![CI](https://github.com/EloyLagar/gespatiens-2026/actions/workflows/ci.yml/badge.svg)](https://github.com/EloyLagar/gespatiens-2026/actions/workflows/ci.yml)
 [![Licencia MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
 ![Java 25](https://img.shields.io/badge/Java-25-orange)
 ![Spring Boot 4](https://img.shields.io/badge/Spring%20Boot-4-6DB33F)
