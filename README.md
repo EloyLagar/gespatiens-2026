@@ -48,7 +48,7 @@ Tres servicios con plan gratuito, cada uno con su parte:
 | API | [Render](https://render.com) | `render.yaml` |
 | Frontend | [Vercel](https://vercel.com) | `frontend/vercel.json` |
 
-1. **Neon**: crea un proyecto con una base de datos `gespatiens` y copia la cadena de conexión *directa* (la que no
+1. **Neon**: crea un proyecto en la región *AWS Europe Central 1 (Frankfurt)*, la misma que usa la API en Render, con una base de datos `gespatiens` y copia la cadena de conexión *directa* (la que no
    lleva `-pooler` en el host; Flyway no se lleva bien con el pooler).
 2. **Render**: *New → Blueprint* sobre este repositorio. Pide `DB_URL`
    (`jdbc:postgresql://<host>/gespatiens?sslmode=require`), `DB_USER`, `DB_PASSWORD` y `FRONTEND_URL` (la dirección
