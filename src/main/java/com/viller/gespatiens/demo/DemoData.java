@@ -41,7 +41,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -82,7 +85,8 @@ import static java.time.DayOfWeek.WEDNESDAY;
 // residentes, un mes de diario, valoraciones, intervenciones, informes en distintas fases, avisos y el
 // cuadrante. Todo pasa por los casos de uso, con las mismas reglas que en la app, y las fechas se cuentan desde
 // el día en que arranca, así que el panel siempre tiene vencimientos cercanos. Solo actúa sobre una base de
-// datos vacía: nunca mezcla nada con datos que ya existan
+// datos vacía: nunca mezcla nada con datos que ya existan. Con gespatiens.demo.daily-reset (la demo publicada en
+// internet) además la vuelve a cargar desde cero cada día, para que lo que cambien las visitas no dure
 @Component
 @Profile("demo")
 public class DemoData implements ApplicationRunner {
@@ -118,8 +122,10 @@ public class DemoData implements ApplicationRunner {
     private final EditReportHeaderUseCase editHeader;
     private final CloseReportUseCase closeReport;
     private final Clock clock;
+    private final JdbcTemplate jdbc;
+    private final boolean dailyReset;
 
-    private final Random random = new Random(2026);
+    private Random random;
     private final Map<String, UUID> staff = new LinkedHashMap<>();
     private final List<Resident> residents = new ArrayList<>();
 
@@ -133,7 +139,8 @@ public class DemoData implements ApplicationRunner {
                     PublishNoticeUseCase publishNotice, PlanRotaUseCase planRota, SwapsUseCase swaps,
                     PlannedShiftRepository plannedShifts, ReportRepository reportRepository,
                     WriteSectionUseCase writeSection, EditReportHeaderUseCase editHeader,
-                    CloseReportUseCase closeReport, Clock clock) {
+                    CloseReportUseCase closeReport, Clock clock, JdbcTemplate jdbc,
+                    @Value("${gespatiens.demo.daily-reset:false}") boolean dailyReset) {
         this.registerUser = registerUser;
         this.signatures = signatures;
         this.admitPatient = admitPatient;
@@ -158,6 +165,8 @@ public class DemoData implements ApplicationRunner {
         this.editHeader = editHeader;
         this.closeReport = closeReport;
         this.clock = clock;
+        this.jdbc = jdbc;
+        this.dailyReset = dailyReset;
     }
 
     // Un residente de la demostración: cuándo entró, cuándo salió (null si sigue) y sus tutores
@@ -170,15 +179,31 @@ public class DemoData implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        refresh();
+    }
+
+    // Cada noche y al arrancar: la API gratuita se duerme sin visitas y puede no estar despierta a esa hora
+    @Scheduled(cron = "0 0 4 * * *", zone = "Europe/Madrid")
+    public synchronized void refresh() {
+        LocalDate today = LocalDate.now(clock.withZone(CENTRE));
         if (patientRepository.existsByDni(new Dni(FIRST_DNI))) {
-            log.info("Datos de demostración: ya están cargados");
-            return;
-        }
-        if (!patientRepository.findOccupiedNumbers().isEmpty()) {
+            if (!dailyReset || today.equals(loadedOn())) {
+                log.info("Datos de demostración: ya están cargados");
+                return;
+            }
+            wipe();
+            log.info("Datos de demostración: se borran los de otro día para cargarlos de nuevo");
+        } else if (!patientRepository.findOccupiedNumbers().isEmpty()) {
             log.warn("Datos de demostración: la base de datos ya tiene residentes, no se carga nada");
             return;
         }
-        LocalDate today = LocalDate.now(clock.withZone(CENTRE));
+        load(today);
+    }
+
+    private void load(LocalDate today) {
+        random = new Random(2026);
+        staff.clear();
+        residents.clear();
         staff();
         residents(today);
         diary(today);
@@ -187,6 +212,20 @@ public class DemoData implements ApplicationRunner {
         reports(today);
         log.info("Datos de demostración cargados: {} empleados y {} residentes. Contraseña de todos: {}",
                 staff.size(), residents.size(), PASSWORD);
+        jdbc.update("INSERT INTO demo_loads (loaded_on) VALUES (?)", today);
+    }
+
+    private LocalDate loadedOn() {
+        return jdbc.queryForObject("SELECT MAX(loaded_on) FROM demo_loads", LocalDate.class);
+    }
+
+    // Vacía todas las tablas del esquema menos el historial de Flyway, en una sola sentencia
+    private void wipe() {
+        List<String> tables = jdbc.queryForList("""
+                SELECT quote_ident(table_name) FROM information_schema.tables
+                WHERE table_schema = current_schema() AND table_type = 'BASE TABLE'
+                  AND table_name <> 'flyway_schema_history'""", String.class);
+        jdbc.execute("TRUNCATE TABLE " + String.join(", ", tables) + " CASCADE");
     }
 
     // ------------------------------------------------------------------ Personal

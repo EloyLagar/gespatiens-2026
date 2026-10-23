@@ -38,6 +38,33 @@ como `.env`. `docker compose down -v` lo borra todo.
 > Los valores por defecto (`JWT_SECRET`, contraseña de la base de datos) solo valen para probar en el propio equipo.
 > Si la app va a estar en internet, cámbialos en el `.env` y usa HTTPS.
 
+## Publicarla gratis
+
+Tres servicios con plan gratuito, cada uno con su parte:
+
+| Parte | Servicio | Configuración |
+|---|---|---|
+| Base de datos | [Neon](https://neon.tech) (PostgreSQL) | Ninguna: Flyway crea las tablas al arrancar la API |
+| API | [Render](https://render.com) | `render.yaml` |
+| Frontend | [Vercel](https://vercel.com) | `frontend/vercel.json` |
+
+1. **Neon**: crea un proyecto con una base de datos `gespatiens` y copia la cadena de conexión *directa* (la que no
+   lleva `-pooler` en el host; Flyway no se lleva bien con el pooler).
+2. **Render**: *New → Blueprint* sobre este repositorio. Pide `DB_URL`
+   (`jdbc:postgresql://<host>/gespatiens?sslmode=require`), `DB_USER`, `DB_PASSWORD` y `FRONTEND_URL` (la dirección
+   que dé Vercel en el paso siguiente; se puede rellenar después). `JWT_SECRET` lo genera Render.
+3. **Vercel**: *Add New → Project* sobre este repositorio con *Root Directory* `frontend`. Detecta Vite solo.
+   Si el servicio de Render no se llama `gespatiens-api`, cambia la dirección en `frontend/vercel.json`.
+
+Vercel reenvía `/api` a Render, así que la app sigue en un solo origen y no hace falta CORS.
+
+Cualquiera puede entrar con las cuentas de la demostración, así que en Render la demo se vuelve a cargar desde cero
+cada día (`DEMO_DAILY_RESET=true`): a las 4:00 o, si la API estaba dormida a esa hora, al despertar.
+
+> [!NOTE]
+> La API gratuita de Render se duerme tras 15 minutos sin visitas y tarda alrededor de un minuto en despertar: el
+> primer inicio de sesión puede ir lento.
+
 ## Instalación para desarrollo
 
 Requisitos: JDK 25, Node.js 24 y PostgreSQL.
