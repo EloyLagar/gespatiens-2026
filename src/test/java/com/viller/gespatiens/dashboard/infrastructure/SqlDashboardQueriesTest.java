@@ -8,6 +8,17 @@ import com.viller.gespatiens.dashboard.application.DashboardQueries.ShiftCount;
 import com.viller.gespatiens.diary.domain.DayPart;
 import com.viller.gespatiens.diary.domain.ShiftLog;
 import com.viller.gespatiens.diary.domain.ShiftLogRepository;
+import com.viller.gespatiens.patients.domain.Dni;
+import com.viller.gespatiens.patients.domain.Patient;
+import com.viller.gespatiens.patients.domain.PatientDetails;
+import com.viller.gespatiens.patients.domain.PatientRepository;
+import com.viller.gespatiens.patients.domain.Referral;
+import com.viller.gespatiens.patients.domain.ReferralRepository;
+import com.viller.gespatiens.reports.domain.Report;
+import com.viller.gespatiens.reports.domain.ReportRepository;
+import com.viller.gespatiens.reports.domain.ReportType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +47,14 @@ class SqlDashboardQueriesTest {
     private UserRepository userRepository;
     @Autowired
     private ShiftLogRepository shiftLogRepository;
+    @Autowired
+    private PatientRepository patientRepository;
+    @Autowired
+    private ReferralRepository referralRepository;
+    @Autowired
+    private ReportRepository reportRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private UUID employee(String name, String phone) {
         return userRepository.save(User.create(name, name.toLowerCase() + ".panel@vientos.es", phone,
@@ -73,5 +92,31 @@ class SqlDashboardQueriesTest {
         assertTrue(queries.courtMeasures().size() <= queries.activeResidents());
         assertEquals(0, queries.interventionsBetween(DAY, DAY));
         assertTrue(queries.noticesByWeek(DAY, DAY.plusDays(6)).isEmpty());
+    }
+
+    // Los vencimientos leen fechas de la base de datos. Llegan como LocalDate: convertirlas a java.sql.Date
+    // tumbaba el panel en cuanto había un informe con fecha prevista (octubre de 2026)
+    @Test
+    void deadlinesReadTheirDates() {
+        Instant now = Instant.parse("2026-07-01T10:00:00Z");
+        LocalDate entry = LocalDate.of(2026, 7, 1);
+        // Una plaza libre: la base de datos puede tener ya residentes en el centro
+        int place = ((Number) entityManager.createNativeQuery("""
+                SELECT MIN(n) FROM generate_series(1, 32) n
+                WHERE n NOT IN (SELECT number FROM patients WHERE number IS NOT NULL)
+                """).getSingleResult()).intValue();
+        UUID patient = patientRepository.save(Patient.admit(new PatientDetails("Prueba", "Vencimientos Panel",
+                new Dni("99999998T"), LocalDate.of(1980, 1, 1), "C/ Test 2", "699999303", null, null, null, null,
+                null), place, entry)).getId();
+        Report report = Report.forStay(patient, ReportType.MID_STAY, entry, now);
+        reportRepository.save(report);
+        Referral referral = Referral.none(patient, now);
+        referral.update("UCA de Torrent", null, null, true, "Juzgado de lo Penal 3", LocalDate.of(2026, 11, 2), null, now);
+        referralRepository.save(referral);
+
+        var midStay = queries.openMidStayReports().stream().filter(r -> r.reportId().equals(report.getId())).findFirst().orElseThrow();
+        var measure = queries.courtMeasures().stream().filter(m -> m.resident().id().equals(patient)).findFirst().orElseThrow();
+        assertEquals(LocalDate.of(2026, 10, 1), midStay.dueDate());
+        assertEquals(LocalDate.of(2026, 11, 2), measure.endDate());
     }
 }

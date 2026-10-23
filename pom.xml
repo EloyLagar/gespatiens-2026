@@ -28,6 +28,10 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
+		<!-- Los tests que usan PostgreSQL trabajan en su propio esquema, nunca en el de la app: Flyway lo crea
+		     y lo migra solo. Se cambia con -Dtest.db.url=... y -Dtest.db.schema=... -->
+		<test.db.schema>gespatiens_test</test.db.schema>
+		<test.db.url>jdbc:postgresql://localhost:5432/gespatiens-refactor?currentSchema=${test.db.schema}</test.db.url>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -94,6 +98,16 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<spring.datasource.url>${test.db.url}</spring.datasource.url>
+						<spring.flyway.schemas>${test.db.schema}</spring.flyway.schemas>
+					</systemPropertyVariables>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

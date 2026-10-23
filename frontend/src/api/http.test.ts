@@ -56,6 +56,23 @@ describe('request', () => {
     expect(onUnauthorized).not.toHaveBeenCalled()
   })
 
+  // El proxy de Vite responde 502 en texto plano cuando Spring Boot está parado o reiniciándose
+  it('un 502 del proxy, sin ProblemDetail, cuenta como falta de conexión', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async () =>
+      new Response(null, { status: 502, headers: { 'Content-Type': 'text/plain' } })))
+
+    const error = await request('/dashboard?month=2026-10').catch((e: unknown) => e)
+    expect((error as ApiError).status).toBe(0)
+  })
+
+  it('el 502 de la API (el correo no ha salido) conserva su detalle', async () => {
+    vi.stubGlobal('fetch', respond(502, { status: 502, detail: 'No se ha podido enviar el correo a ana@vientos.es' }))
+
+    const error = await request('/users', { method: 'POST', body: {} }).catch((e: unknown) => e)
+    expect((error as ApiError).status).toBe(502)
+    expect((error as ApiError).detail).toBe('No se ha podido enviar el correo a ana@vientos.es')
+  })
+
   it('sin respuesta del servidor lanza un ApiError con estado 0', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
 

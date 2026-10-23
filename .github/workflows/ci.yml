@@ -1,0 +1,103 @@
+# Integración continua: en cada push y pull request se pasan todos los tests, también los que necesitan
+# PostgreSQL (contra una base de datos de usar y tirar, con el mismo nombre y el mismo esquema de tests que en
+# local), y se comprueba que el frontend compila
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend (Java 25 + PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: gespatiens-refactor
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DB_PASSWORD: postgres
+      # Solo para los tests: firma los tokens de la prueba, no protege nada real
+      JWT_SECRET: ci-secret-only-for-tests-0123456789abcdef
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Tests
+        run: ./mvnw -B clean verify
+      - name: Informe de tests
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports
+
+  frontend:
+    name: Frontend (tests, tipos y build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npx vitest run
+      - run: npm run build
+
+  e2e:
+    name: App completa (Docker, datos de demostración y Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Arrancar con docker compose
+        run: docker compose up --build -d
+      # Se espera al mensaje del log y no a un login: los intentos fallidos mientras carga bloquearían la cuenta
+      - name: Esperar a que estén cargados los datos de demostración
+        run: |
+          for i in $(seq 1 120); do
+            if docker compose logs api | grep -q "Datos de demostración cargados"; then echo "Lista"; exit 0; fi
+            sleep 5
+          done
+          docker compose logs api
+          exit 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - name: Pruebas de extremo a extremo
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test
+      - name: Log de la API
+        if: failure()
+        run: docker compose logs api > api.log
+      - name: Informe de Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+            api.log

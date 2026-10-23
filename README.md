@@ -16,7 +16,56 @@ Es la reescritura del proyecto final de DAW (2023/24, originalmente en Laravel) 
 - **Frontend:** React, TypeScript y Vite con el sistema de diseño Carbon (`frontend/`, estilo en `DESIGN.md`).
 - **Informes en PDF:** OpenPDF.
 
-## Instalación
+## Probarla con Docker
+
+Con [Docker Desktop](https://www.docker.com/products/docker-desktop/) basta con un comando. Arranca PostgreSQL, la
+API y el frontend, y carga los datos de demostración la primera vez:
+
+```bash
+docker compose up --build
+```
+
+Abre http://localhost:8080 y entra con `marta.serra@vientos.es` (administración) o con cualquier otro empleado de
+la demostración (`ana.beltran@`, `carmen.lopez@`, `laura.gil@`, `jorge.vidal@`…, todos `@vientos.es`). La contraseña
+de todos es `demo1234`.
+
+Los datos son inventados: diez residentes en el centro y tres antiguos, un mes de diario con valoraciones,
+intervenciones, informes en distintas fases, avisos y el cuadrante de dos meses. Las fechas se cuentan desde el día en
+que se cargan. Para cambiar el puerto, las contraseñas o empezar con la base de datos limpia, copia `.env.example`
+como `.env`. `docker compose down -v` lo borra todo.
+
+> [!WARNING]
+> Los valores por defecto (`JWT_SECRET`, contraseña de la base de datos) solo valen para probar en el propio equipo.
+> Si la app va a estar en internet, cámbialos en el `.env` y usa HTTPS.
+
+## Publicarla gratis
+
+Tres servicios con plan gratuito, cada uno con su parte:
+
+| Parte | Servicio | Configuración |
+|---|---|---|
+| Base de datos | [Neon](https://neon.tech) (PostgreSQL) | Ninguna: Flyway crea las tablas al arrancar la API |
+| API | [Render](https://render.com) | `render.yaml` |
+| Frontend | [Vercel](https://vercel.com) | `frontend/vercel.json` |
+
+1. **Neon**: crea un proyecto con una base de datos `gespatiens` y copia la cadena de conexión *directa* (la que no
+   lleva `-pooler` en el host; Flyway no se lleva bien con el pooler).
+2. **Render**: *New → Blueprint* sobre este repositorio. Pide `DB_URL`
+   (`jdbc:postgresql://<host>/gespatiens?sslmode=require`), `DB_USER`, `DB_PASSWORD` y `FRONTEND_URL` (la dirección
+   que dé Vercel en el paso siguiente; se puede rellenar después). `JWT_SECRET` lo genera Render.
+3. **Vercel**: *Add New → Project* sobre este repositorio con *Root Directory* `frontend`. Detecta Vite solo.
+   Si el servicio de Render no se llama `gespatiens-api`, cambia la dirección en `frontend/vercel.json`.
+
+Vercel reenvía `/api` a Render, así que la app sigue en un solo origen y no hace falta CORS.
+
+Cualquiera puede entrar con las cuentas de la demostración, así que en Render la demo se vuelve a cargar desde cero
+cada día (`DEMO_DAILY_RESET=true`): a las 4:00 o, si la API estaba dormida a esa hora, al despertar.
+
+> [!NOTE]
+> La API gratuita de Render se duerme tras 15 minutos sin visitas y tarda alrededor de un minuto en despertar: el
+> primer inicio de sesión puede ir lento.
+
+## Instalación para desarrollo
 
 Requisitos: JDK 25, Node.js 24 y PostgreSQL.
 
@@ -84,14 +133,25 @@ Requisitos: JDK 25, Node.js 24 y PostgreSQL.
 ## Tests
 
 ```bash
-# Backend. Los tests de persistencia usan PostgreSQL y necesitan las variables DB_PASSWORD y JWT_SECRET
+# Backend. Los que usan PostgreSQL necesitan DB_PASSWORD y JWT_SECRET, y trabajan en su propio esquema
+# (gespatiens_test, que Flyway crea solo): no tocan los datos de la app
 ./mvnw test
 
 # Frontend
 cd frontend
 npm test
 npm run typecheck
+
+# De extremo a extremo (Playwright), contra la app de docker compose con los datos de demostración
+cd e2e
+npm install
+npx playwright install chromium
+npx playwright test
 ```
+
+La integración continua (`.github/workflows/ci.yml`) lo pasa todo en cada push: los tests del backend contra un
+PostgreSQL de usar y tirar, los del frontend con su build, y las pruebas de extremo a extremo sobre la app
+arrancada con `docker compose`.
 
 ## Licencia
 

@@ -90,6 +90,11 @@ async function send(path: string, options: RequestOptions, accept: string): Prom
   }
   if (!response.ok) {
     const problem = await readProblem(response)
+    // 502-504 sin ProblemDetail no los da la API sino el proxy de delante (Vite en desarrollo) cuando no
+    // consigue hablar con ella: es lo mismo que no tener conexión. El 502 de la API (correo) sí trae detalle
+    if (response.status >= 502 && response.status <= 504 && Object.keys(problem).length === 0) {
+      throw new ApiError(0, '')
+    }
     throw new ApiError(response.status, typeof problem.detail === 'string' ? problem.detail : '', problem)
   }
   return response

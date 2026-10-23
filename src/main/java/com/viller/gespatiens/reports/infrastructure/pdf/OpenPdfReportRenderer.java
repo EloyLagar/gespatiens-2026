@@ -140,8 +140,8 @@ public class OpenPdfReportRenderer implements ReportPdfRenderer {
             }
             Optional<SectionEntry> entry = report.getSection(section);
             document.add(item(section.label(), entry.map(SectionEntry::text).orElse(null),
-                    // "o" como en los modelos: el círculo blanco no está en CP1252
-                    section.adaptation() ? 18 : 0, section.adaptation() ? "o" : "•"));
+                    // Segundo nivel con una raya: el círculo blanco no está en CP1252 y una "o" parecía una letra
+                    section.adaptation() ? 18 : 0, section.adaptation() ? "–" : "•"));
         }
 
         document.add(signatures(printable));
