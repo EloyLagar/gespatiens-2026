@@ -15,10 +15,6 @@ desarrollado originalmente en Laravel, con una arquitectura hexagonal y diseño 
 
 **[Ver la demo en línea →](https://gespatiens-2026.vercel.app)**
 
-## Demo
-
-**[gespatiens-2026.vercel.app](https://gespatiens-2026.vercel.app)**
-
 | Perfil | Email | Contraseña |
 | --- | --- | --- |
 | Administración | `marta.serra@vientos.es` | `demo1234` |
