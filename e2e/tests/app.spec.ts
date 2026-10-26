@@ -43,7 +43,8 @@ test('el panel avisa de los vencimientos cercanos', async ({ page }) => {
   await expect(deadlines).toBeVisible()
   // Tiene más de un vencimiento, así que sale en varias filas
   await expect(deadlines.getByText('Alejandro Ruiz Peña').first()).toBeVisible()
-  await expect(deadlines.getByText('Fin de la medida judicial').first()).toBeVisible()
+  // El qué también va repetido en la línea de debajo del nombre, que solo se ve en el móvil: se busca el visible
+  await expect(deadlines.getByText('Fin de la medida judicial').filter({ visible: true }).first()).toBeVisible()
 })
 
 test('las valoraciones del mes muestran las notas de la demostración', async ({ page }) => {
