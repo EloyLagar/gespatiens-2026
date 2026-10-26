@@ -1,5 +1,5 @@
 import { ApiError, download, request } from './http'
-import type { Speciality, User } from './types'
+import type { Speciality, Theme, User } from './types'
 
 export function listUsers() {
   return request<User[]>('/users')
@@ -79,6 +79,11 @@ export function removeMySignature() {
 // RNF9: el idioma se guarda en el perfil, así el empleado lo encuentra igual en cualquier equipo
 export function changeMyLanguage(language: 'ES' | 'EN') {
   return request<User>('/users/me/language', { method: 'PUT', body: { language } })
+}
+
+// Claro, oscuro o el del equipo: se guarda en el perfil, como el idioma
+export function changeMyTheme(theme: Theme) {
+  return request<User>('/users/me/theme', { method: 'PUT', body: { theme } })
 }
 
 // Ha acabado o se ha saltado el tutorial de bienvenida: no le vuelve a salir al entrar

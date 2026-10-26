@@ -30,6 +30,13 @@
     "es": "ES",
     "en": "EN"
   },
+  "theme": {
+    "current": "Theme: {{theme}}",
+    "switchTo": "Switch to: {{theme}}",
+    "SYSTEM": "system",
+    "LIGHT": "light",
+    "DARK": "dark"
+  },
   "speciality": {
     "ADMINISTRATOR": "Administration",
     "SOCIAL_EDUCATOR": "Social education",

@@ -2,6 +2,7 @@ package com.viller.gespatiens.access.users.infrastructure;
 
 import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Speciality;
+import com.viller.gespatiens.access.users.domain.Theme;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,6 +42,10 @@ public class UserJpaEntity {
     @Column(nullable = false)
     private boolean tutorialSeen;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 6)
+    private Theme theme;
+
     // NULL mientras el empleado invitado no haya creado su contraseña
     private String passwordHash;
 
@@ -66,6 +71,14 @@ public class UserJpaEntity {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
     public boolean isTutorialSeen() {

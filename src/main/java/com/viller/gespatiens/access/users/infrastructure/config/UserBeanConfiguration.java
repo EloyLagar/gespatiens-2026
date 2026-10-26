@@ -3,6 +3,7 @@ package com.viller.gespatiens.access.users.infrastructure.config;
 import com.viller.gespatiens.access.users.application.AccessTokenIssuer;
 import com.viller.gespatiens.access.users.application.ChangeOwnLanguageUseCase;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
+import com.viller.gespatiens.access.users.application.ChangeOwnThemeUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
@@ -95,6 +96,11 @@ public class UserBeanConfiguration {
     @Bean
     public ChangeOwnLanguageUseCase changeOwnLanguageUseCase(UserRepository userRepository) {
         return new ChangeOwnLanguageUseCase(userRepository);
+    }
+
+    @Bean
+    public ChangeOwnThemeUseCase changeOwnThemeUseCase(UserRepository userRepository) {
+        return new ChangeOwnThemeUseCase(userRepository);
     }
 
     @Bean

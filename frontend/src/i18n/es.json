@@ -30,6 +30,13 @@
     "es": "ES",
     "en": "EN"
   },
+  "theme": {
+    "current": "Tema: {{theme}}",
+    "switchTo": "Cambiar a: {{theme}}",
+    "SYSTEM": "del sistema",
+    "LIGHT": "claro",
+    "DARK": "oscuro"
+  },
   "speciality": {
     "ADMINISTRATOR": "Administración",
     "SOCIAL_EDUCATOR": "Educación social",
