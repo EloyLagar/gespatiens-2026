@@ -280,6 +280,13 @@
       "title": "Language",
       "help": "The language of the application. It is saved in your profile, so you'll find it the same on any computer."
     },
+    "theme": {
+      "title": "Theme",
+      "help": "Light or dark. With \"System\", the same as your computer. It is saved in your profile.",
+      "SYSTEM": "System",
+      "LIGHT": "Light",
+      "DARK": "Dark"
+    },
     "tutorial": {
       "title": "Tutorial",
       "help": "The tour of the app you saw the first time you signed in, tailored to your speciality.",

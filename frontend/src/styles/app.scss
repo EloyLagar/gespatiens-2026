@@ -34,6 +34,25 @@
   --brand: #004f84;
   --brand-accent: #00e1b4;
   --brand-ink: #d1e2ed;
+  // Lo que no es texto: el fondo al pasar el ratón, el de los campos y los de los estados
+  --hover: #e8e8e8;
+  --row-hover: #f8f8f8;
+  --field: #f4f4f4;
+  --positive-bg: #defbe6;
+  --negative-bg: #fff1f1;
+  --shadow: rgba(0, 0, 0, 0.18);
+  // Texto sobre el acento y sobre la tinta (botones pulsados, avisos emergentes)
+  --on-accent: #ffffff;
+  --on-text: #ffffff;
+  // Los tintes de cada empleado (people.ts): pálidos, con la inicial en tinta oscura
+  --person-1: #e5f6ff;
+  --person-2: #defbe6;
+  --person-3: #fff1f1;
+  --person-4: #f2f4f8;
+  --person-5: #fcf4d6;
+  --person-6: #d9fbfb;
+  --person-7: #ffe2ec;
+  color-scheme: light;
 
   --sidebar: 240px;
   --gap: 16px;
@@ -41,6 +60,44 @@
   --canvas-pad: 32px;
   --row: 48px;
   --font: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+// Tema oscuro (theme.ts): el g100 de Carbon. Cada texto vuelve a llegar a 4,5:1 sobre su superficie (WCAG 2.1
+// AA). La franja de la marca sigue azul: es la identidad del centro, y el texto blanco ya contrasta con ella
+:root[data-theme='dark'] {
+  --ground: #161616;
+  --surface: #262626;
+  --border: #393939;
+  --rule: #333333;
+  --control: #8d8d8d;
+  --text: #f4f4f4;
+  --muted: #c6c6c6; // 8,9:1 sobre #262626
+  --faint: #a8a8a8; // 6,4:1
+  --accent: #78a9ff; // 6,4:1
+  --accent-ink: #a6c8ff; // 6,6:1 sobre el tinte fuerte
+  --tint: #001d6c;
+  --tint-strong: #002d9c;
+  --negative: #ff8389; // 6,4:1
+  --positive-ink: #42be65; // 6,3:1
+  --notice-bg: #302400;
+  --notice-border: #f1c21b;
+  --hover: #393939;
+  --row-hover: #2e2e2e;
+  --field: #393939;
+  --positive-bg: #022d0d;
+  --negative-bg: #520408;
+  --shadow: rgba(0, 0, 0, 0.6);
+  --on-accent: #161616; // 7,7:1 sobre el acento claro
+  --on-text: #161616;
+  // Tintes profundos con la inicial en tinta clara
+  --person-1: #003a6d;
+  --person-2: #044317;
+  --person-3: #750e13;
+  --person-4: #343a3f;
+  --person-5: #483700;
+  --person-6: #004144;
+  --person-7: #740937;
+  color-scheme: dark;
 }
 
 *,
@@ -102,7 +159,7 @@ button:focus-visible,
   z-index: 10;
   padding: 12px 16px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .skip-link:focus {
@@ -289,7 +346,7 @@ button:focus-visible,
 }
 
 .side-nav__link:hover {
-  background: #e8e8e8;
+  background: var(--hover);
   color: var(--text);
   text-decoration: none;
 }
@@ -317,7 +374,7 @@ button:focus-visible,
 }
 
 .user-row:hover {
-  background: #e8e8e8;
+  background: var(--hover);
   text-decoration: none;
 }
 
@@ -378,7 +435,7 @@ button:focus-visible,
 
 .language-switch button[aria-pressed='true'] {
   background: var(--text);
-  color: #fff;
+  color: var(--on-text);
 }
 
 .topbar,
@@ -452,8 +509,8 @@ button:focus-visible,
 .form-section,
 .settings-row__panel,
 .panel {
-  --cds-field: #f4f4f4;
-  --cds-field-hover: #e8e8e8;
+  --cds-field: var(--field);
+  --cds-field-hover: var(--hover);
 }
 
 // ---------------------------------------------------------------- Paneles
@@ -550,7 +607,7 @@ button:focus-visible,
 
 .segmented button[aria-pressed='true'] {
   background: var(--text);
-  color: #fff;
+  color: var(--on-text);
 }
 
 .segmented .num {
@@ -920,7 +977,7 @@ button:focus-visible,
 }
 
 .segmented__option input:hover + span {
-  background: #e8e8e8;
+  background: var(--hover);
 }
 
 .segmented__option input:focus-visible + span {
@@ -934,7 +991,7 @@ button:focus-visible,
 
 .segmented__option--ATTENDED input:checked + span {
   border-color: var(--positive-ink);
-  background: #defbe6;
+  background: var(--positive-bg);
 }
 
 .segmented__option--EXCUSED_ABSENCE input:checked + span {
@@ -944,7 +1001,7 @@ button:focus-visible,
 
 .segmented__option--UNEXCUSED_ABSENCE input:checked + span {
   border-color: var(--negative);
-  background: #fff1f1;
+  background: var(--negative-bg);
 }
 
 // Intervenciones: los tutores de un residente, en fila con su inicial y especialidad
@@ -1210,7 +1267,7 @@ button:focus-visible,
 }
 
 .data-table tbody tr:hover {
-  background: #f8f8f8;
+  background: var(--row-hover);
 }
 
 .data-table .num {
@@ -1992,6 +2049,7 @@ ol.resident-reports {
   margin-bottom: 16px;
   padding: 12px;
   border: 1px solid var(--border);
+  // La firma es tinta oscura sobre papel: el fondo sigue blanco también en el tema oscuro
   background: #fff;
 }
 
@@ -2356,7 +2414,7 @@ a.stat__note {
   padding: 6px 8px;
   transform: translateX(-50%);
   background: var(--text);
-  color: #fff;
+  color: var(--on-text);
   font-size: 12px;
   white-space: nowrap;
   pointer-events: none;
@@ -2847,7 +2905,7 @@ button.rota-chip[aria-pressed='false'] {
   border: 1px solid var(--border);
   border-top: 4px solid var(--brand);
   background: var(--surface);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 6px 24px var(--shadow);
 }
 
 .tour h2 {

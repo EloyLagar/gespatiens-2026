@@ -84,6 +84,7 @@ public class UserRepositoryJpaAdapter implements UserRepository {
         entity.setPasswordHash(user.getPasswordHash());
         entity.setLanguage(user.getLanguage());
         entity.setTutorialSeen(user.hasSeenTutorial());
+        entity.setTheme(user.getTheme());
         return entity;
     }
 
@@ -96,6 +97,7 @@ public class UserRepositoryJpaAdapter implements UserRepository {
                 entity.getSpeciality(),
                 entity.getPasswordHash(),
                 entity.getLanguage(),
-                entity.isTutorialSeen());
+                entity.isTutorialSeen(),
+                entity.getTheme());
     }
 }

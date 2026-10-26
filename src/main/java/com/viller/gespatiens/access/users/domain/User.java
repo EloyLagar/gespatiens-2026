@@ -15,10 +15,12 @@ public class User {
     private Language language;
     // Si ya ha visto (o se ha saltado) el tutorial de bienvenida
     private boolean tutorialSeen;
+    // Claro, oscuro o el de su equipo
+    private Theme theme;
 
     // Constructor para reconstruir un usuario ya existente (p.ej. al leerlo de la BD)
     private User(UUID id, String name, String email, String phoneNumber, Speciality speciality, String passwordHash,
-                 Language language, boolean tutorialSeen) {
+                 Language language, boolean tutorialSeen, Theme theme) {
         if (id == null) {
             throw new IllegalArgumentException("El id no puede ser null");
         }
@@ -31,23 +33,24 @@ public class User {
         this.passwordHash = passwordHash == null ? null : validatePasswordHash(passwordHash);
         this.language = language == null ? Language.ES : language;
         this.tutorialSeen = tutorialSeen;
+        this.theme = theme == null ? Theme.SYSTEM : theme;
     }
 
     // Crear un usuario nuevo: el dominio genera el id
     public static User create(String name, String email, String phoneNumber, Speciality speciality, String passwordHash) {
-        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, passwordHash, Language.ES, false);
+        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, passwordHash, Language.ES, false, Theme.SYSTEM);
     }
 
     // Memoria final: la administración da de alta al empleado y este recibe un correo para crear su
     // propia contraseña. Hasta entonces no puede entrar
     public static User invite(String name, String email, String phoneNumber, Speciality speciality) {
-        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, null, Language.ES, false);
+        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, null, Language.ES, false, Theme.SYSTEM);
     }
 
     // Reconstruir un usuario que ya existía (leído de BD)
     public static User reconstitute(UUID id, String name, String email, String phoneNumber, Speciality speciality,
-                                    String passwordHash, Language language, boolean tutorialSeen) {
-        return new User(id, name, email, phoneNumber, speciality, passwordHash, language, tutorialSeen);
+                                    String passwordHash, Language language, boolean tutorialSeen, Theme theme) {
+        return new User(id, name, email, phoneNumber, speciality, passwordHash, language, tutorialSeen, theme);
     }
 
     // Lo que cabe en la columna users.name. Sin esta comprobación, un nombre más largo llegaba a la base de
@@ -169,6 +172,17 @@ public class User {
 
     public Language getLanguage() {
         return language;
+    }
+
+    public void changeTheme(Theme newTheme) {
+        if (newTheme == null) {
+            throw new IllegalArgumentException("Indica el tema");
+        }
+        this.theme = newTheme;
+    }
+
+    public Theme getTheme() {
+        return theme;
     }
 
     public void markTutorialSeen() {

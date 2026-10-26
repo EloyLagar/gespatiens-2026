@@ -280,6 +280,13 @@
       "title": "Idioma",
       "help": "El idioma de la aplicación. Se guarda en tu perfil: lo encontrarás igual en cualquier equipo."
     },
+    "theme": {
+      "title": "Tema",
+      "help": "Claro u oscuro. Con «Sistema», el mismo que tenga tu equipo. Se guarda en tu perfil.",
+      "SYSTEM": "Sistema",
+      "LIGHT": "Claro",
+      "DARK": "Oscuro"
+    },
     "tutorial": {
       "title": "Tutorial",
       "help": "El recorrido por la aplicación que salió la primera vez que entraste, adaptado a tu especialidad.",
