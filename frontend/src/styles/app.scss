@@ -29,6 +29,7 @@
   --positive-ink: #198038;
   --notice-bg: #fcf4d6;
   --notice-border: #f1c21b;
+  --notice-admin: #004f84; // la marca, 8,6:1 sobre blanco
   // La identidad de la aplicación original (memoria final, 4.4): el azul de la cabecera, el aguamarina del
   // logotipo y el azul claro de su paleta para los textos sobre el azul (6,5:1)
   --brand: #004f84;
@@ -81,6 +82,7 @@
   --positive-ink: #42be65; // 6,3:1
   --notice-bg: #302400;
   --notice-border: #f1c21b;
+  --notice-admin: #5aa9dc; // la marca aclarada, 5,9:1 sobre #262626
   --hover: #393939;
   --row-hover: #2e2e2e;
   --field: #393939;
@@ -656,10 +658,11 @@ button:focus-visible,
   background: var(--surface);
 }
 
-// Los avisos de administración, destacados con el tono claro del azul (y con su etiqueta)
+// Los avisos de administración, destacados con una barra a la izquierda en el color de la marca (y con su
+// etiqueta). Sin fondo azul: en oscuro pesaba más que el propio texto y se confundía con lo seleccionado
 .notice--admin {
-  border-color: var(--tint-strong);
-  background: var(--tint);
+  border-left: 4px solid var(--notice-admin);
+  padding-left: calc(var(--pad) - 3px);
 }
 
 .notice__header {
