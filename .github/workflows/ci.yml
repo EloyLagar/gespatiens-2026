@@ -122,6 +122,8 @@ jobs:
         with:
           name: lighthouse
           path: e2e/.lighthouseci
+          # Es una carpeta oculta, y upload-artifact las salta si no se le pide
+          include-hidden-files: true
           if-no-files-found: ignore
       - name: Log de la API
         if: failure()

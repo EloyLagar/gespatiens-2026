@@ -15,8 +15,8 @@ jobs:
   ping:
     name: Avisar a la API de la demo
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      # Cualquier respuesta vale: lo que importa es que llegue una petición. Se espera hasta 2 minutos por si
-      # estaba dormida
-      - run: curl -sS -o /dev/null -w 'HTTP %{http_code} en %{time_total} s\n' --max-time 120 https://gespatiens-api.onrender.com/api/demo/accounts
+      # Cualquier respuesta vale: lo que importa es que llegue una petición. Si estaba dormida, arrancar Spring
+      # en la instancia gratuita puede pasar de 2 minutos, así que se espera hasta 4 y se reintenta una vez
+      - run: curl -sS -o /dev/null -w 'HTTP %{http_code} en %{time_total} s\n' --max-time 240 --retry 1 --retry-all-errors https://gespatiens-api.onrender.com/api/demo/accounts
