@@ -1583,6 +1583,50 @@ button:focus-visible,
   margin: 0;
 }
 
+// La demo publicada: un botón por perfil antes del formulario
+.login__demo {
+  display: grid;
+  gap: 12px;
+}
+
+.login__demo h2 {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+}
+
+.login__demo p {
+  color: var(--muted);
+}
+
+.login__demo ul {
+  display: grid;
+  gap: 8px;
+}
+
+.login__demo .cds--btn {
+  width: 100%;
+  max-width: none;
+  // Dos líneas: el perfil y, debajo, el nombre de la persona
+  height: auto;
+  min-height: 48px;
+  padding-block: 8px;
+  // Carbon reserva a la derecha el sitio de un icono que estos botones no llevan
+  padding-inline-end: 15px;
+}
+
+.login__demo-name {
+  display: block;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.login__demo .login__demo-or {
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
 // ---------------------------------------------------------------- Tablet y móvil
 
 // Por debajo de 1056px la barra lateral se pliega en una barra superior con menú

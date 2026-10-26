@@ -55,7 +55,12 @@
     "failed": "Could not sign in",
     "entering": "Signing in…",
     "submit": "Sign in",
-    "forgot": "Forgotten your password? Ask administration to send you a link to create a new one."
+    "forgot": "Forgotten your password? Ask administration to send you a link to create a new one.",
+    "waking": "Connecting to the server. If it was asleep, the first time can take up to a minute.",
+    "demoTitle": "Try the demo",
+    "demoLead": "Sign in as one of the fictional staff. The data is reset every day.",
+    "demoAs": "Sign in as {{speciality}}",
+    "demoOr": "Or with email and password"
   },
   "errors": {
     "title": "Something went wrong",
