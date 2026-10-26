@@ -1583,6 +1583,42 @@ button:focus-visible,
   margin: 0;
 }
 
+// Idioma a un lado y la declaración de accesibilidad al otro
+.login__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+// La declaración de accesibilidad: el mismo panel que el login, más ancho porque es texto para leer
+.statement .login__panel {
+  max-width: 720px;
+}
+
+.statement h2 {
+  margin-bottom: 8px;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.statement__list {
+  display: grid;
+  gap: 8px;
+  padding-left: 20px;
+  list-style: disc;
+  // El mismo tamaño que los párrafos: Carbon deja las listas en 14 px
+  font-size: 16px;
+  line-height: 24px;
+}
+
+// Dentro de un párrafo, un enlace no puede distinguirse solo por el color
+.statement p a {
+  text-decoration: underline;
+}
+
 // La demo publicada: un botón por perfil antes del formulario
 .login__demo {
   display: grid;
@@ -1764,6 +1800,12 @@ button:focus-visible,
     width: auto;
   }
 
+  // En el móvil el nombre es lo que se pulsa para abrir la fila: al menos 24 px de alto (WCAG 2.2, 2.5.8)
+  .col-identity > a {
+    display: inline-block;
+    padding-block: 3px;
+  }
+
   .row-sub {
     display: block;
     margin-top: 2px;
@@ -1772,8 +1814,10 @@ button:focus-visible,
     font-weight: 400;
   }
 
+  // Subrayado: dentro de una línea de texto un enlace no puede distinguirse solo por el color
   .row-sub a {
     font-weight: 400;
+    text-decoration: underline;
   }
 
   .form-grid,
@@ -2531,8 +2575,9 @@ a.stat__note {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  // 24 × 24: el tamaño mínimo de un objetivo táctil (WCAG 2.2, 2.5.8)
+  width: 24px;
+  height: 24px;
   border: 1px solid transparent;
   font-size: 12px;
   font-weight: 600;
@@ -2660,7 +2705,7 @@ button.rota-chip:disabled {
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  min-height: 66px;
+  min-height: 76px;
 }
 
 .rota-grid tfoot th,
