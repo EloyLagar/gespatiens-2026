@@ -98,8 +98,9 @@ public class UserBeanConfiguration {
     }
 
     @Bean
-    public MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase(UserRepository userRepository) {
-        return new MarkOwnTutorialSeenUseCase(userRepository);
+    public MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase(UserRepository userRepository,
+                                                                 @Value("${gespatiens.tutorial.every-login}") boolean everyLogin) {
+        return new MarkOwnTutorialSeenUseCase(userRepository, everyLogin);
     }
 
     @Bean
