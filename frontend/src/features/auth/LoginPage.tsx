@@ -1,7 +1,7 @@
 import { Button, InlineNotification, PasswordInput, Stack, TextInput } from '@carbon/react'
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { demoAccounts, type DemoAccount } from '../../api/demo'
 import { useAuth } from '../../auth/AuthContext'
 import { ErrorNotice, LanguageSwitch, Wordmark } from '../../shared/ui'
@@ -140,7 +140,10 @@ export function LoginPage() {
         </form>
 
         <p className="login__help">{t('login.forgot')}</p>
-        <LanguageSwitch />
+        <div className="login__foot">
+          <LanguageSwitch />
+          <Link to="/accesibilidad">{t('accessibility.link')}</Link>
+        </div>
       </div>
     </main>
   )
