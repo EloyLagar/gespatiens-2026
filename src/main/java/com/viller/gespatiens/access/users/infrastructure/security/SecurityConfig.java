@@ -28,6 +28,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         // Y crear la contraseña desde el enlace del correo: quien lo abre aún no puede entrar
                         .requestMatchers("/api/auth/password-setup/*").permitAll()
+                        // Las cuentas de la demo para "Entrar como …". Fuera del perfil demo la ruta no existe
+                        .requestMatchers(HttpMethod.GET, "/api/demo/accounts").permitAll()
                         // Solo la administración puede dar de alta empleados
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMINISTRATOR")
                         // RF4: cada empleado gestiona su propio perfil. Va antes que la regla de /api/users/*

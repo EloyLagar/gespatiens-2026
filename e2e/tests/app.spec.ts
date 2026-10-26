@@ -8,6 +8,14 @@ test('se entra y la portada son los avisos del personal', async ({ page }) => {
   await expect(page.getByText('El grupo terapéutico del viernes pasa a las 17:00.')).toBeVisible()
 })
 
+// En la demo se entra con un clic, sin copiar el email y la contraseña. Jorge solo entra en esta prueba
+test('en la demo se entra con un clic como cualquier perfil', async ({ page }) => {
+  await page.goto('/login')
+  await page.getByRole('button', { name: /Entrar como Psicología/ }).click()
+  await expect(page.getByRole('heading', { level: 1, name: 'Avisos' })).toBeVisible()
+  await expect(page.getByRole('dialog', { name: 'Hola, Jorge' })).toBeVisible()
+})
+
 test('el turno de tarde de hoy se rellena desde el diario', async ({ page }) => {
   await login(page)
   await page.getByRole('link', { name: 'Diario' }).click()

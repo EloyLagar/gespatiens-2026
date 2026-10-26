@@ -55,7 +55,12 @@
     "failed": "No se ha podido entrar",
     "entering": "Entrando…",
     "submit": "Entrar",
-    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te envíe un enlace para crear una nueva."
+    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te envíe un enlace para crear una nueva.",
+    "waking": "Conectando con el servidor. Si estaba en reposo, la primera vez puede tardar hasta un minuto.",
+    "demoTitle": "Probar la demo",
+    "demoLead": "Entra con un perfil del personal ficticio. Los datos se reinician cada día.",
+    "demoAs": "Entrar como {{speciality}}",
+    "demoOr": "O con email y contraseña"
   },
   "errors": {
     "title": "Algo ha fallado",
