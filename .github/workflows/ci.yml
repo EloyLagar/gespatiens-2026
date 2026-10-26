@@ -1,6 +1,7 @@
 # Integración continua: en cada push y pull request se pasan todos los tests, también los que necesitan
 # PostgreSQL (contra una base de datos de usar y tirar, con el mismo nombre y el mismo esquema de tests que en
-# local), y se comprueba que el frontend compila
+# local), y se comprueba que el frontend compila. Después, la app entera: extremo a extremo, accesibilidad (axe en
+# cada pantalla) y Lighthouse. Las coberturas y los informes de Lighthouse los publica informes.yml
 name: CI
 
 on:
@@ -38,6 +39,20 @@ jobs:
           cache: maven
       - name: Tests
         run: ./mvnw -B clean verify
+      # El porcentaje de líneas cubiertas, en el resumen de la ejecución, y el informe de JaCoCo para publicarlo
+      - name: Cobertura
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import csv
+          rows = list(csv.DictReader(open('target/site/jacoco/jacoco.csv')))
+          covered = sum(int(r['LINE_COVERED']) for r in rows)
+          missed = sum(int(r['LINE_MISSED']) for r in rows)
+          print(f"### Cobertura del backend: {100 * covered / (covered + missed):.1f} % de las líneas")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: target/site/jacoco
       - name: Informe de tests
         if: failure()
         uses: actions/upload-artifact@v4
@@ -59,7 +74,13 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
-      - run: npx vitest run
+      - run: npx vitest run --coverage
+      - name: Cobertura
+        run: node -e "const t = require('./coverage/coverage-summary.json').total; console.log('### Cobertura del frontend: ' + t.lines.pct.toFixed(1) + ' % de las líneas')" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage
       - run: npm run build
 
   e2e:
@@ -89,6 +110,18 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
           npx playwright test
+      # Lighthouse en las páginas públicas (login y declaración de accesibilidad): falla si la accesibilidad no
+      # llega a 100; rendimiento, buenas prácticas y SEO solo avisan. Los informes quedan en un enlace público
+      # temporal (sale en el log) y como artefacto
+      - name: Lighthouse
+        working-directory: e2e
+        run: npx -y @lhci/cli@0.15.1 autorun
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse
+          path: e2e/.lighthouseci
+          if-no-files-found: ignore
       - name: Log de la API
         if: failure()
         run: docker compose logs api > api.log

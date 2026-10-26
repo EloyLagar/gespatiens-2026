@@ -1,0 +1,56 @@
+# Publica en GitHub Pages los informes del último CI en verde de master: la cobertura del backend (JaCoCo) y del
+# frontend (Vitest), los de Lighthouse y los datos de las insignias del README (shields.io los lee de aquí).
+# Va aparte del CI para que un fallo al publicar no lo ponga en rojo.
+# Requisito, una sola vez: Settings > Pages > Build and deployment > Source: "GitHub Actions"
+name: Informes
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    name: Publicar los informes
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      # Los artefactos de esa ejecución del CI (o, a mano, de la última en verde de master)
+      - name: Elegir la ejecución del CI
+        id: run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "${{ github.event.workflow_run.id }}" ]; then
+            echo "id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "id=$(gh run list --workflow CI --branch master --status success --limit 1 --json databaseId --jq '.[0].databaseId')" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ steps.run.outputs.id }}
+          github-token: ${{ github.token }}
+          path: site
+      - name: Portada e insignias
+        run: python3 .github/scripts/informes.py site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

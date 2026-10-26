@@ -17,7 +17,8 @@ export function BedStrip({ beds, next }: { beds: Bed[]; next: number | null }) {
               className="bed bed--taken"
               aria-label={t('beds.taken', { number, name: `${patient.name} ${patient.surname}` })}
             >
-              <span className="bed__number num">{number}</span>
+              {/* El espacio cuenta: el nombre accesible tiene que contener el texto visible, "1 Lucía" */}
+              <span className="bed__number num">{number}</span>{' '}
               <span className="bed__name">{patient.name}</span>
             </Link>
           </li>

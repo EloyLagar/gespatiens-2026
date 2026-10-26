@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAdmin, RequireAuth } from './auth/RequireAuth'
+import { AccessibilityPage } from './features/accessibility/AccessibilityPage'
 import { LoginPage } from './features/auth/LoginPage'
 import { PasswordSetupPage } from './features/auth/PasswordSetupPage'
 import { DiaryPage } from './features/diary/DiaryPage'
@@ -30,6 +31,7 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       {/* El enlace del correo para que el empleado nuevo cree su contraseña: sin sesión */}
       <Route path="/crear-contrasena" element={<PasswordSetupPage />} />
+      <Route path="/accesibilidad" element={<AccessibilityPage />} />
       <Route
         element={
           <RequireAuth>
