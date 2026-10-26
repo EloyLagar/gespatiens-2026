@@ -37,6 +37,10 @@
     "LIGHT": "light",
     "DARK": "dark"
   },
+  "demoSwitch": {
+    "label": "Try as",
+    "failed": "Couldn't switch account. Try again."
+  },
   "speciality": {
     "ADMINISTRATOR": "Administration",
     "SOCIAL_EDUCATOR": "Social education",
