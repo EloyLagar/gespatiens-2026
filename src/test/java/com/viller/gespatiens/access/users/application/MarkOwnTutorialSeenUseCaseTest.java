@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MarkOwnTutorialSeenUseCaseTest {
 
     private final InMemoryUserRepository repository = new InMemoryUserRepository();
-    private final MarkOwnTutorialSeenUseCase useCase = new MarkOwnTutorialSeenUseCase(repository);
+    private final MarkOwnTutorialSeenUseCase useCase = new MarkOwnTutorialSeenUseCase(repository, false);
 
     @Test
     void newEmployeesHaveNotSeenTheTutorial() {
@@ -30,6 +30,16 @@ class MarkOwnTutorialSeenUseCaseTest {
         useCase.execute(ana.getId());
 
         assertTrue(repository.findById(ana.getId()).orElseThrow().hasSeenTutorial());
+    }
+
+    // La demo publicada: todos los visitantes entran con las mismas cuentas
+    @Test
+    void withEveryLoginItIsNotRemembered() {
+        User ana = repository.save(User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash"));
+
+        new MarkOwnTutorialSeenUseCase(repository, true).execute(ana.getId());
+
+        assertFalse(repository.findById(ana.getId()).orElseThrow().hasSeenTutorial());
     }
 
     @Test
