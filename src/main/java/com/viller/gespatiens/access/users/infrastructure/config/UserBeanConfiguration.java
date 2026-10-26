@@ -10,6 +10,7 @@ import com.viller.gespatiens.access.users.application.InviteUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.LoginAttempts;
 import com.viller.gespatiens.access.users.application.LoginUseCase;
+import com.viller.gespatiens.access.users.application.MarkOwnTutorialSeenUseCase;
 import com.viller.gespatiens.access.users.application.PasswordSetupLinkSender;
 import com.viller.gespatiens.access.users.application.PasswordSetupLinks;
 import com.viller.gespatiens.access.users.application.PasswordSetupUseCase;
@@ -94,6 +95,12 @@ public class UserBeanConfiguration {
     @Bean
     public ChangeOwnLanguageUseCase changeOwnLanguageUseCase(UserRepository userRepository) {
         return new ChangeOwnLanguageUseCase(userRepository);
+    }
+
+    @Bean
+    public MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase(UserRepository userRepository,
+                                                                 @Value("${gespatiens.tutorial.every-login}") boolean everyLogin) {
+        return new MarkOwnTutorialSeenUseCase(userRepository, everyLogin);
     }
 
     @Bean

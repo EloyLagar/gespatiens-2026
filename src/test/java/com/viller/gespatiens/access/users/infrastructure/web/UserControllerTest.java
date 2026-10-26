@@ -7,6 +7,7 @@ import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.InviteUserUseCase;
+import com.viller.gespatiens.access.users.application.MarkOwnTutorialSeenUseCase;
 import com.viller.gespatiens.access.users.application.PasswordSetupDeliveryException;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
 import com.viller.gespatiens.access.users.application.SendPasswordSetupLinkUseCase;
@@ -88,6 +89,9 @@ class UserControllerTest {
 
     @MockitoBean
     private ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
+
+    @MockitoBean
+    private MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase;
 
     @MockitoBean
     private SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase;
@@ -336,5 +340,25 @@ class UserControllerTest {
                         .content("{\"language\":\"EN\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.language").value("EN"));
+    }
+
+    // El tutorial de bienvenida se marca como visto en el perfil: no vuelve a salir en otro equipo
+    @Test
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
+    void eachEmployeeMarksTheirTutorialAsSeen() throws Exception {
+        User user = User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash");
+        user.markTutorialSeen();
+        when(markOwnTutorialSeenUseCase.execute(ME_ID)).thenReturn(user);
+
+        mockMvc.perform(put("/api/users/me/tutorial"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tutorialSeen").value(true));
+    }
+
+    @Test
+    void markingTheTutorialNeedsASession() throws Exception {
+        mockMvc.perform(put("/api/users/me/tutorial"))
+                .andExpect(status().isUnauthorized());
+        verifyNoInteractions(markOwnTutorialSeenUseCase);
     }
 }

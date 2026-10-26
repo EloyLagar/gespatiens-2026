@@ -1,3 +1,4 @@
+import { ArrowsHorizontal } from '@carbon/icons-react'
 import { Modal, Select, SelectItem } from '@carbon/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -69,7 +70,9 @@ export function MyShifts({ rota, me, swaps, onProposed }: {
                             <button type="button" className="text-action my-calendar__swap"
                               aria-label={t('rota.askSwapFor', { part: t(`rota.part.${shift.part}`), date: formatDate(date, i18n.language) })}
                               onClick={() => setSwapping(shift)}>
-                              {t('rota.askSwap')}
+                              {/* En el móvil la casilla es muy estrecha para el texto: solo el icono */}
+                              <span className="my-calendar__swap-text">{t('rota.askSwap')}</span>
+                              <ArrowsHorizontal size={16} className="my-calendar__swap-icon" aria-hidden="true" />
                             </button>
                           )}
                         </li>

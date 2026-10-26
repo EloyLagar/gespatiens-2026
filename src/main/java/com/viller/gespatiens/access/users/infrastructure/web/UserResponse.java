@@ -16,7 +16,9 @@ public record UserResponse(
         // El idioma que ha elegido para la aplicación (RNF9)
         Language language,
         // Invitado que todavía no ha creado su contraseña desde el correo
-        boolean passwordPending) {
+        boolean passwordPending,
+        // Si ya ha visto el tutorial de bienvenida: si no, le sale al entrar
+        boolean tutorialSeen) {
 
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -26,6 +28,7 @@ public record UserResponse(
                 user.getPhoneNumber(),
                 user.getSpeciality(),
                 user.getLanguage(),
-                !user.hasPassword());
+                !user.hasPassword(),
+                user.hasSeenTutorial());
     }
 }

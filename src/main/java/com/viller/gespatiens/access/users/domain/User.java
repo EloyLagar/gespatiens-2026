@@ -13,10 +13,12 @@ public class User {
     private String passwordHash;
     // El idioma de la aplicación que ha elegido (RNF9)
     private Language language;
+    // Si ya ha visto (o se ha saltado) el tutorial de bienvenida
+    private boolean tutorialSeen;
 
     // Constructor para reconstruir un usuario ya existente (p.ej. al leerlo de la BD)
     private User(UUID id, String name, String email, String phoneNumber, Speciality speciality, String passwordHash,
-                 Language language) {
+                 Language language, boolean tutorialSeen) {
         if (id == null) {
             throw new IllegalArgumentException("El id no puede ser null");
         }
@@ -28,23 +30,24 @@ public class User {
         this.speciality = speciality;
         this.passwordHash = passwordHash == null ? null : validatePasswordHash(passwordHash);
         this.language = language == null ? Language.ES : language;
+        this.tutorialSeen = tutorialSeen;
     }
 
     // Crear un usuario nuevo: el dominio genera el id
     public static User create(String name, String email, String phoneNumber, Speciality speciality, String passwordHash) {
-        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, passwordHash, Language.ES);
+        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, passwordHash, Language.ES, false);
     }
 
     // Memoria final: la administración da de alta al empleado y este recibe un correo para crear su
     // propia contraseña. Hasta entonces no puede entrar
     public static User invite(String name, String email, String phoneNumber, Speciality speciality) {
-        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, null, Language.ES);
+        return new User(UUID.randomUUID(), name, email, phoneNumber, speciality, null, Language.ES, false);
     }
 
     // Reconstruir un usuario que ya existía (leído de BD)
     public static User reconstitute(UUID id, String name, String email, String phoneNumber, Speciality speciality,
-                                    String passwordHash, Language language) {
-        return new User(id, name, email, phoneNumber, speciality, passwordHash, language);
+                                    String passwordHash, Language language, boolean tutorialSeen) {
+        return new User(id, name, email, phoneNumber, speciality, passwordHash, language, tutorialSeen);
     }
 
     // Lo que cabe en la columna users.name. Sin esta comprobación, un nombre más largo llegaba a la base de
@@ -166,6 +169,14 @@ public class User {
 
     public Language getLanguage() {
         return language;
+    }
+
+    public void markTutorialSeen() {
+        this.tutorialSeen = true;
+    }
+
+    public boolean hasSeenTutorial() {
+        return tutorialSeen;
     }
 
     public String getPasswordHash() {

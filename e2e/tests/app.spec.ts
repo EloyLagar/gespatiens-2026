@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
+import { ADMIN, login } from './helpers'
 
 // Los recorridos principales de la app, de punta a punta: pantalla, API y base de datos
 
@@ -43,7 +43,8 @@ test('el panel avisa de los vencimientos cercanos', async ({ page }) => {
   await expect(deadlines).toBeVisible()
   // Tiene más de un vencimiento, así que sale en varias filas
   await expect(deadlines.getByText('Alejandro Ruiz Peña').first()).toBeVisible()
-  await expect(deadlines.getByText('Fin de la medida judicial').first()).toBeVisible()
+  // El qué también va repetido en la línea de debajo del nombre, que solo se ve en el móvil: se busca el visible
+  await expect(deadlines.getByText('Fin de la medida judicial').filter({ visible: true }).first()).toBeVisible()
 })
 
 test('las valoraciones del mes muestran las notas de la demostración', async ({ page }) => {
@@ -53,4 +54,21 @@ test('las valoraciones del mes muestran las notas de la demostración', async ({
   // El taller ocupacional es de lunes a viernes: el mes en curso siempre tiene alguno (salvo su primer fin de semana)
   await page.getByLabel('Actividad').selectOption({ label: 'Taller ocupacional' })
   await expect(page.getByText(/Lucía/).first()).toBeVisible()
+})
+
+// Laura solo entra en esta prueba: con la base de datos recién cargada (como en CI), todavía no lo ha visto
+test('el tutorial de bienvenida es el de la especialidad y no vuelve a salir', async ({ page }) => {
+  await login(page, { email: 'laura.gil@vientos.es', password: ADMIN.password }, { keepTutorial: true })
+  await expect(page.getByRole('dialog', { name: 'Hola, Laura' })).toBeVisible()
+  await expect(page.getByText(/registras las rebajas en el diario/)).toBeVisible()
+  await page.getByRole('button', { name: 'Empezar' }).click()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await expect(page.getByRole('heading', { level: 1, name: 'Diario' })).toBeVisible()
+  await page.getByRole('button', { name: 'Saltar el tutorial' }).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+
+  // Otra pestaña es otra sesión, como entrar desde otro equipo: queda guardado en su perfil
+  const other = await page.context().newPage()
+  await login(other, { email: 'laura.gil@vientos.es', password: ADMIN.password }, { keepTutorial: true })
+  await expect(other.getByRole('dialog')).toHaveCount(0)
 })

@@ -165,10 +165,76 @@ button:focus-visible,
 
 // El logotipo va sobre una franja del azul de la aplicación, en su versión en negativo, como en la cabecera
 // original: así el aguamarina de "ges" se lee (5:1) en lugar de perderse sobre el gris claro
-.sidebar .brand {
+.sidebar__band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 82px;
   margin: -20px -12px 16px;
-  padding: 20px;
+  padding-right: 8px;
   background: var(--brand);
+}
+
+.sidebar .brand {
+  padding: 20px;
+}
+
+.sidebar__toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.sidebar__toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sidebar__toggle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+
+// Menú plegado: solo los iconos. Los nombres siguen ahí para el lector de pantalla, y como
+// título al pasar el ratón
+.shell--rail {
+  --sidebar: 64px;
+}
+
+.shell--rail .sidebar {
+  padding: 20px 8px 16px;
+}
+
+.shell--rail .sidebar__band {
+  justify-content: center;
+  margin: -20px -8px 16px;
+  padding: 0;
+}
+
+// Solo en la barra lateral: el menú del móvil, que reutiliza los mismos enlaces, siempre lleva los nombres
+.shell--rail .sidebar .side-nav__link,
+.shell--rail .sidebar .user-row {
+  justify-content: center;
+}
+
+.shell--rail .sidebar .side-nav__link span,
+.shell--rail .sidebar .user-row__text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.shell--rail .sidebar .user-row > svg,
+.shell--rail .sidebar .language-switch {
+  display: none;
 }
 
 .sidebar .brand__scope,
@@ -342,9 +408,16 @@ button:focus-visible,
 
 .page-header__row {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px 24px;
+}
+
+// Si las acciones no caben al lado del título (la ficha de un residente en una tableta), bajan debajo
+.page-header__text {
+  flex: 1 1 280px;
+  min-width: 0;
 }
 
 .page-header h1 {
@@ -402,9 +475,10 @@ button:focus-visible,
 
 .panel__header {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px 16px;
   margin-bottom: 16px;
 }
 
@@ -691,7 +765,12 @@ button:focus-visible,
 
 .row-actions {
   display: inline-flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.col-action .row-actions {
+  justify-content: flex-end;
 }
 
 .text-action:disabled {
@@ -1096,6 +1175,7 @@ button:focus-visible,
 }
 
 .table-wrap {
+  overflow-x: auto;
   border: 1px solid var(--border);
   background: var(--surface);
 }
@@ -1334,6 +1414,7 @@ button:focus-visible,
 
 .form-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -1562,16 +1643,17 @@ button:focus-visible,
     flex-basis: 100%;
   }
 
-  // Las tablas se convierten en filas de dos líneas: lo importante arriba, el resto en gris debajo
-  .data-table thead {
+  // Las listas se convierten en filas de dos líneas: lo importante arriba, el resto en gris debajo.
+  // Las cuadrículas (cuadrante, valoraciones) no: sin sus cabeceras, los números no se entienden
+  .data-table--stack thead {
     display: none;
   }
 
-  .data-table .col-wide {
+  .data-table--stack .col-wide {
     display: none;
   }
 
-  .data-table td {
+  .data-table--stack td {
     height: auto;
     min-height: 56px;
     padding: 10px 16px;
@@ -1586,6 +1668,10 @@ button:focus-visible,
     margin-top: 2px;
     color: var(--muted);
     font-size: 13px;
+    font-weight: 400;
+  }
+
+  .row-sub a {
     font-weight: 400;
   }
 
@@ -2560,6 +2646,10 @@ button.rota-chip:disabled {
   font-style: italic;
 }
 
+.my-calendar__swap-icon {
+  display: none;
+}
+
 .swap-dialog {
   display: grid;
   gap: 16px;
@@ -2683,8 +2773,22 @@ button.rota-chip:disabled {
     padding: 4px;
   }
 
-  .my-calendar__part {
+  .my-calendar__part,
+  .my-calendar__swap-text {
     display: none;
+  }
+
+  .my-calendar__swap-icon {
+    display: block;
+  }
+
+  // El icono solo es pequeño: la zona que se pulsa, no (WCAG 2.5.8)
+  .my-calendar__swap {
+    display: grid;
+    place-items: center;
+    flex-basis: auto;
+    min-width: 24px;
+    min-height: 24px;
   }
 }
 
@@ -2726,4 +2830,163 @@ button.rota-chip[aria-pressed='false'] {
 
 .stay-history__total {
   margin: 8px 0 0;
+}
+
+// ---------------------------------------------------------------- Tutorial de bienvenida
+
+// Una tarjeta abajo a la derecha, sobre la pantalla que explica. Por debajo de los diálogos de
+// Carbon (z-index 9000) y del enlace para saltar al contenido
+.tour {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 8000;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  padding: 20px 20px 16px;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--brand);
+  background: var(--surface);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+.tour h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+.tour h2:focus {
+  outline: none;
+}
+
+.tour__progress {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.tour__text {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.tour__bar {
+  height: 4px;
+  margin-bottom: 16px;
+  background: var(--rule);
+}
+
+.tour__bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 200ms ease;
+}
+
+.tour__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// Los botones de Carbon reservan sitio para un icono a la derecha: aquí no lo llevan
+.tour__actions .cds--btn {
+  min-width: 0;
+  padding-inline: 16px;
+  align-items: center;
+}
+
+.tour__skip {
+  min-height: 32px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.tour__spacer {
+  flex: 1;
+}
+
+// El final de cada pantalla no queda escondido detrás de la tarjeta
+.shell--touring .canvas {
+  padding-bottom: 320px;
+}
+
+@media (max-width: 671px) {
+  .tour {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    width: auto;
+    max-width: none;
+  }
+}
+
+// ---------------------------------------------------------------- Pantallas estrechas (revisión adaptable)
+
+@media (max-width: 671px) {
+  // Aquí la cabecera va en columna: la base de 280px sería de alto
+  .page-header__text {
+    flex: none;
+  }
+
+  // Un botón nunca más ancho que su caja: el texto largo pasa a dos líneas. La fila de botones no
+  // ensancha el formulario (en una rejilla, un hijo mide al menos lo que su contenido sin partir)
+  .canvas .cds--btn {
+    max-width: 100%;
+    height: auto;
+    white-space: normal;
+  }
+
+  .form-actions {
+    min-width: 0;
+  }
+
+  // La tabla de "Ver como tabla" del panel se desplaza de lado dentro de su tarjeta
+  .chart__table {
+    overflow-x: auto;
+  }
+
+  // Los filtros de las listas ocupan el ancho y, si no caben, pasan a otra fila. Las líneas entre
+  // botones son el fondo que asoma por el hueco, así siguen bien también al partirse en dos filas
+  div.segmented {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--control);
+  }
+
+  div.segmented button {
+    flex: 1 1 auto;
+    padding: 0 10px;
+    white-space: nowrap;
+  }
+
+  div.segmented button + button {
+    border-left: 0;
+  }
+
+  // La etiqueta "Administración" de un aviso baja debajo del autor, alineada con su nombre
+  .notice__header {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .notice__tag {
+    margin-left: 40px;
+  }
+
+  // Las listas de dos líneas: la plaza en menos sitio y las acciones una debajo de otra
+  .data-table--stack .col-number {
+    width: 40px;
+    padding-right: 0;
+  }
+
+  .data-table--stack .row-actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
 }

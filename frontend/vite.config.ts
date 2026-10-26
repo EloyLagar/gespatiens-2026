@@ -7,9 +7,15 @@ export default defineConfig({
   server: {
     port: 5173,
     // En desarrollo el navegador solo habla con Vite: las llamadas a /api se reenvían a Spring Boot.
-    // Para el navegador todo es el mismo origen, así que no hace falta configurar CORS en la API
+    // Para el navegador todo es el mismo origen, así que no hace falta configurar CORS en la API.
+    // API_URL cambia a qué API se reenvían, p. ej. la de la demo en línea para probar solo el frontend
     proxy: {
-      '/api': 'http://localhost:8080',
+      '/api': {
+        target: process.env.API_URL ?? 'http://localhost:8080',
+        changeOrigin: true,
+        // Sin el Origin de Vite, la API lo trata como una petición del mismo origen
+        configure: (proxy) => proxy.on('proxyReq', (request) => request.removeHeader('origin')),
+      },
     },
   },
   css: {

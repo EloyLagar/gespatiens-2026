@@ -68,7 +68,7 @@ export function FormerResidentsPage() {
           <p className="empty">{t('residents.noMatch', { query })}</p>
         ) : (
           <div className="table-wrap">
-            <table className="data-table">
+            <table className="data-table data-table--stack">
               <caption className="visually-hidden">{t('former.tableCaption')}</caption>
               <thead>
                 <tr>
@@ -92,7 +92,11 @@ export function FormerResidentsPage() {
                         {p.name} {p.surname}
                       </Link>
                       <span className="row-sub">
-                        {p.dni} · {t('former.left', { date: formatDate(p.exitDate, i18n.language) })}
+                        {p.dni} · {t('reports.stay', {
+                          from: formatDate(p.entryDate, i18n.language),
+                          to: formatDate(p.exitDate, i18n.language),
+                        })}
+                        {p.exitDate && ` · ${daysBetween(p.entryDate, p.exitDate)} ${t('common.dayUnit', { count: daysBetween(p.entryDate, p.exitDate) })}`}
                       </span>
                     </td>
                     <td className="col-wide">{p.dni}</td>

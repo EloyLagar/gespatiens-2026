@@ -54,7 +54,7 @@ function Deadlines({ data }: { data: Dashboard }) {
         <p className="empty">{t('dashboard.deadlines.none')}</p>
       ) : (
         <div className="table-wrap">
-          <table className="data-table">
+          <table className="data-table data-table--stack">
             <caption className="visually-hidden">{t('dashboard.deadlines.title')}</caption>
             <thead>
               <tr>
@@ -69,28 +69,24 @@ function Deadlines({ data }: { data: Dashboard }) {
               {data.deadlines.map((d) => (
                 <tr key={`${d.kind}-${d.resident.id}`}>
                   <td className="num col-number">{d.resident.number}</td>
-                  <td>
+                  <td className="col-identity">
                     <Link to={`/residentes/${d.resident.id}`}>{d.resident.name} {d.resident.surname}</Link>
+                    {/* En el móvil la fila es de dos líneas: lo que en escritorio son columnas */}
+                    <span className="row-sub">
+                      <DeadlineWhat deadline={d} />
+                      {d.detail && ` (${d.detail})`} · {formatDate(d.dueDate, i18n.language)}
+                    </span>
+                    <span className="row-sub">
+                      <DeadlineTag deadline={d} />
+                    </span>
                   </td>
-                  <td>
-                    {d.kind === 'MID_STAY_REPORT' && d.reportId ? (
-                      <Link to={`/informes/${d.reportId}`}>{t('dashboard.deadlines.MID_STAY_REPORT')}</Link>
-                    ) : (
-                      <>
-                        {t(`dashboard.deadlines.${d.kind}`)}
-                        {d.detail && <span className="row-meta">{d.detail}</span>}
-                      </>
-                    )}
+                  <td className="col-wide">
+                    <DeadlineWhat deadline={d} />
+                    {d.detail && <span className="row-meta">{d.detail}</span>}
                   </td>
-                  <td className="num">{formatDate(d.dueDate, i18n.language)}</td>
-                  <td>
-                    <Tag type={d.overdue ? 'red' : d.daysLeft <= 7 ? 'warm-gray' : 'cool-gray'} size="sm">
-                      {d.overdue
-                        ? t('dashboard.deadlines.overdue', { count: -d.daysLeft })
-                        : d.daysLeft === 0
-                          ? t('dashboard.deadlines.today')
-                          : t('dashboard.deadlines.inDays', { count: d.daysLeft })}
-                    </Tag>
+                  <td className="num col-wide">{formatDate(d.dueDate, i18n.language)}</td>
+                  <td className="col-wide">
+                    <DeadlineTag deadline={d} />
                   </td>
                 </tr>
               ))}
@@ -99,6 +95,30 @@ function Deadlines({ data }: { data: Dashboard }) {
         </div>
       )}
     </section>
+  )
+}
+
+type Deadline = Dashboard['deadlines'][number]
+
+// Qué vence: el informe de media estancia se abre desde aquí
+function DeadlineWhat({ deadline: d }: { deadline: Deadline }) {
+  const { t } = useTranslation()
+  if (d.kind === 'MID_STAY_REPORT' && d.reportId) {
+    return <Link to={`/informes/${d.reportId}`}>{t('dashboard.deadlines.MID_STAY_REPORT')}</Link>
+  }
+  return <>{t(`dashboard.deadlines.${d.kind}`)}</>
+}
+
+function DeadlineTag({ deadline: d }: { deadline: Deadline }) {
+  const { t } = useTranslation()
+  return (
+    <Tag type={d.overdue ? 'red' : d.daysLeft <= 7 ? 'warm-gray' : 'cool-gray'} size="sm">
+      {d.overdue
+        ? t('dashboard.deadlines.overdue', { count: -d.daysLeft })
+        : d.daysLeft === 0
+          ? t('dashboard.deadlines.today')
+          : t('dashboard.deadlines.inDays', { count: d.daysLeft })}
+    </Tag>
   )
 }
 
