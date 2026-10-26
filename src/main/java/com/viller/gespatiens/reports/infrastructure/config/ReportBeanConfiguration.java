@@ -17,6 +17,7 @@ import com.viller.gespatiens.reports.domain.StaffDirectory;
 import com.viller.gespatiens.reports.domain.TutorDirectory;
 import com.viller.gespatiens.reports.infrastructure.pdf.OpenPdfReportRenderer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Clock;
@@ -26,8 +27,8 @@ import java.time.Clock;
 public class ReportBeanConfiguration {
 
     @Bean
-    public ReportPdfRenderer reportPdfRenderer() {
-        return new OpenPdfReportRenderer();
+    public ReportPdfRenderer reportPdfRenderer(@Value("${gespatiens.reports.demo-header:false}") boolean demoHeader) {
+        return new OpenPdfReportRenderer(demoHeader);
     }
 
     @Bean

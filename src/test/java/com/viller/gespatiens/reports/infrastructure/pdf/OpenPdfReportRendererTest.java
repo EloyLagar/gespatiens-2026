@@ -91,6 +91,19 @@ class OpenPdfReportRendererTest {
     }
 
     // RF2: varios informes en un único documento, cada uno desde página nueva
+    // La demo publicada no lleva los logos oficiales del centro: avisa de que los datos son inventados
+    @Test
+    void theDemoHeaderSaysTheDataIsFictional() throws IOException {
+        PrintableReport printable = new PrintableReport(report(ReportType.MID_STAY), lucia, List.of());
+
+        String demo = text(new OpenPdfReportRenderer(true).render(List.of(printable)));
+        String centre = text(renderer.render(List.of(printable)));
+
+        assertTrue(demo.contains("Demostración con datos ficticios"), demo);
+        assertFalse(centre.contains("Demostración con datos ficticios"), centre);
+        assertTrue(demo.contains("INFORME DE MEDIA ESTANCIA"), demo);
+    }
+
     @Test
     void severalReportsGoOneAfterTheOther() throws IOException {
         Report first = report(ReportType.FINAL);
