@@ -65,6 +65,7 @@ public class OpenPdfReportRenderer implements ReportPdfRenderer {
     // Los logos del centro, leídos una sola vez
     private static final byte[] SISAN = logo("logo_SISAN_transparente.png");
     private static final byte[] SIGED = logo("logo_SIGED_transparente.png");
+    private static final byte[] GESPATIENS = logo("logo_gespatiens.png");
 
     private static final Map<String, String> SPECIALITIES = Map.of(
             "ADMINISTRATOR", "Administración",
@@ -72,6 +73,18 @@ public class OpenPdfReportRenderer implements ReportPdfRenderer {
             "SOCIAL_WORKER", "Trabajador/a social",
             "PSYCHOLOGIST", "Psicólogo/a",
             "MEDICAL_TEAM", "Equipo médico");
+
+    // true en la demo publicada: el logo de gespatiens y "datos ficticios" en lugar de los logos oficiales, que no
+    // son de este proyecto y no deben aparecer en documentos que descarga cualquiera
+    private final boolean demoHeader;
+
+    public OpenPdfReportRenderer() {
+        this(false);
+    }
+
+    public OpenPdfReportRenderer(boolean demoHeader) {
+        this.demoHeader = demoHeader;
+    }
 
     @Override
     public byte[] render(List<PrintableReport> reports) {
@@ -109,7 +122,7 @@ public class OpenPdfReportRenderer implements ReportPdfRenderer {
         Report report = printable.report();
         ReportType type = report.getType();
 
-        document.add(logos());
+        document.add(demoHeader ? demoLogos() : logos());
         Paragraph title = new Paragraph(type.title().toUpperCase(), TITLE);
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingAfter(14);
@@ -155,6 +168,20 @@ public class OpenPdfReportRenderer implements ReportPdfRenderer {
         table.setSpacingAfter(18);
         table.addCell(logoCell(SISAN, 40, Element.ALIGN_LEFT));
         table.addCell(logoCell(SIGED, 40, Element.ALIGN_RIGHT));
+        return table;
+    }
+
+    // La cabecera de la demo: gespatiens a la izquierda y, a la derecha, que los datos son inventados
+    private static PdfPTable demoLogos() {
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setSpacingAfter(18);
+        table.addCell(logoCell(GESPATIENS, 30, Element.ALIGN_LEFT));
+        PdfPCell note = new PdfPCell(new Phrase("Demostración con datos ficticios", SMALL));
+        note.setBorder(Rectangle.NO_BORDER);
+        note.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        note.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        table.addCell(note);
         return table;
     }
 
