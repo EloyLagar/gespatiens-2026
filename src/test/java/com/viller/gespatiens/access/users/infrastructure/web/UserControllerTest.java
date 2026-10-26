@@ -2,6 +2,7 @@ package com.viller.gespatiens.access.users.infrastructure.web;
 
 import com.viller.gespatiens.access.users.application.ChangeOwnLanguageUseCase;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
+import com.viller.gespatiens.access.users.application.ChangeOwnThemeUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
@@ -17,6 +18,7 @@ import com.viller.gespatiens.access.users.domain.InvalidCurrentPasswordException
 import com.viller.gespatiens.access.users.domain.LastAdministratorException;
 import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Speciality;
+import com.viller.gespatiens.access.users.domain.Theme;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserNotFoundException;
 import com.viller.gespatiens.access.users.infrastructure.security.CurrentUserJwtConverter;
@@ -92,6 +94,9 @@ class UserControllerTest {
 
     @MockitoBean
     private MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase;
+
+    @MockitoBean
+    private ChangeOwnThemeUseCase changeOwnThemeUseCase;
 
     @MockitoBean
     private SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase;
@@ -340,6 +345,20 @@ class UserControllerTest {
                         .content("{\"language\":\"EN\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.language").value("EN"));
+    }
+
+    // El tema se guarda en el perfil, como el idioma
+    @Test
+    @WithMockUser(username = ME, roles = "PSYCHOLOGIST")
+    void eachEmployeeSavesTheirTheme() throws Exception {
+        User user = User.create("Ana", "ana@vientos.es", "600111222", Speciality.PSYCHOLOGIST, "hash");
+        user.changeTheme(Theme.DARK);
+        when(changeOwnThemeUseCase.execute(ME_ID, Theme.DARK)).thenReturn(user);
+
+        mockMvc.perform(put("/api/users/me/theme").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"theme\":\"DARK\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.theme").value("DARK"));
     }
 
     // El tutorial de bienvenida se marca como visto en el perfil: no vuelve a salir en otro equipo

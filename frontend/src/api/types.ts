@@ -16,6 +16,10 @@ export const SPECIALITIES: Speciality[] = [
   'MEDICAL_TEAM',
 ]
 
+// Claro, oscuro o el del equipo (SYSTEM)
+export const THEMES = ['SYSTEM', 'LIGHT', 'DARK'] as const
+export type Theme = (typeof THEMES)[number]
+
 export interface User {
   id: string
   name: string
@@ -24,6 +28,8 @@ export interface User {
   speciality: Speciality
   // RNF9: el idioma que ha elegido. Puede faltar en una sesión guardada antes de existir
   language?: 'ES' | 'EN'
+  // Puede faltar en una sesión guardada antes de existir
+  theme?: Theme
   // Invitado que todavía no ha creado su contraseña desde el correo
   passwordPending?: boolean
   // Si ya ha visto el tutorial de bienvenida. Se guarda en su perfil: no le vuelve a salir en otro equipo

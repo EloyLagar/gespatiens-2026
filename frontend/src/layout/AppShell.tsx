@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { LanguageSwitch, Wordmark } from '../shared/ui'
+import { ThemeSwitch } from '../features/users/ThemeSwitch'
 import { useSaveLanguage } from '../features/users/language'
 import { useTutorial } from '../features/tutorial/Tutorial'
 
@@ -96,6 +97,7 @@ export function AppShell() {
       </nav>
       <div className="side-foot">
         <LanguageSwitch onChange={saveLanguage} />
+        <ThemeSwitch rail={rail} />
         <NavLink to="/perfil" className="user-row" title={rail ? t('nav.profile') : undefined}>
           <span className="avatar" aria-hidden="true">
             {user.name.charAt(0).toUpperCase()}

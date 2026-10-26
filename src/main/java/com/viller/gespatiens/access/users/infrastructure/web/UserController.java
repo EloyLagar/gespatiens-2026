@@ -2,6 +2,7 @@ package com.viller.gespatiens.access.users.infrastructure.web;
 
 import com.viller.gespatiens.access.users.application.ChangeOwnLanguageUseCase;
 import com.viller.gespatiens.access.users.application.ChangeOwnPasswordUseCase;
+import com.viller.gespatiens.access.users.application.ChangeOwnThemeUseCase;
 import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
@@ -12,6 +13,7 @@ import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
 import com.viller.gespatiens.access.users.application.SendPasswordSetupLinkUseCase;
 import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.Language;
+import com.viller.gespatiens.access.users.domain.Theme;
 import com.viller.gespatiens.access.users.domain.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +45,7 @@ public class UserController {
     private final ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
     private final SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase;
     private final MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase;
+    private final ChangeOwnThemeUseCase changeOwnThemeUseCase;
 
     public UserController(InviteUserUseCase inviteUserUseCase,
                           ListUsersUseCase listUsersUseCase,
@@ -54,7 +57,8 @@ public class UserController {
                           DeleteUserUseCase deleteUserUseCase,
                           ChangeOwnLanguageUseCase changeOwnLanguageUseCase,
                           SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase,
-                          MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase) {
+                          MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase,
+                          ChangeOwnThemeUseCase changeOwnThemeUseCase) {
         this.inviteUserUseCase = inviteUserUseCase;
         this.listUsersUseCase = listUsersUseCase;
         this.getUserUseCase = getUserUseCase;
@@ -66,6 +70,7 @@ public class UserController {
         this.changeOwnLanguageUseCase = changeOwnLanguageUseCase;
         this.sendPasswordSetupLinkUseCase = sendPasswordSetupLinkUseCase;
         this.markOwnTutorialSeenUseCase = markOwnTutorialSeenUseCase;
+        this.changeOwnThemeUseCase = changeOwnThemeUseCase;
     }
 
     @GetMapping
@@ -102,6 +107,15 @@ public class UserController {
     }
 
     public record LanguageRequest(Language language) {
+    }
+
+    // Claro, oscuro o el del equipo: se guarda en el perfil, como el idioma
+    @PutMapping("/me/theme")
+    public UserResponse changeMyTheme(Principal principal, @RequestBody ThemeRequest request) {
+        return UserResponse.from(changeOwnThemeUseCase.execute(currentUserId(principal), request.theme()));
+    }
+
+    public record ThemeRequest(Theme theme) {
     }
 
     // Ha acabado o se ha saltado el tutorial de bienvenida: no le vuelve a salir al entrar

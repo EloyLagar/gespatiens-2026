@@ -2,6 +2,7 @@ package com.viller.gespatiens.access.users.infrastructure.web;
 
 import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Speciality;
+import com.viller.gespatiens.access.users.domain.Theme;
 import com.viller.gespatiens.access.users.domain.User;
 
 import java.util.UUID;
@@ -15,6 +16,8 @@ public record UserResponse(
         Speciality speciality,
         // El idioma que ha elegido para la aplicación (RNF9)
         Language language,
+        // Claro, oscuro o el de su equipo
+        Theme theme,
         // Invitado que todavía no ha creado su contraseña desde el correo
         boolean passwordPending,
         // Si ya ha visto el tutorial de bienvenida: si no, le sale al entrar
@@ -28,6 +31,7 @@ public record UserResponse(
                 user.getPhoneNumber(),
                 user.getSpeciality(),
                 user.getLanguage(),
+                user.getTheme(),
                 !user.hasPassword(),
                 user.hasSeenTutorial());
     }

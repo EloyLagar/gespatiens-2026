@@ -3,6 +3,7 @@ import { login as loginRequest } from '../api/auth'
 import i18n from '../i18n'
 import { configureHttp } from '../api/http'
 import type { User } from '../api/types'
+import { applyTheme } from '../theme'
 import { loadSession, saveSession, sessionFromLogin, type Session } from './session'
 
 interface AuthState {
@@ -76,6 +77,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (savedLanguage) i18n.changeLanguage(savedLanguage.toLowerCase())
   }, [savedLanguage])
+
+  // Y en el tema que guardó (claro, oscuro o el de su equipo)
+  const savedTheme = session?.user.theme
+  useEffect(() => {
+    if (savedTheme) applyTheme(savedTheme)
+  }, [savedTheme])
 
   const value = useMemo<AuthState>(
     () => ({
