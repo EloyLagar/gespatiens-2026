@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import '../../i18n'
 import { applyRememberedTheme, applyTheme } from '../../theme'
-import { ThemeSection } from './ThemeSection'
+import { ThemeSwitch } from './ThemeSwitch'
 
 const auth = {
   user: { id: 'u-1', name: 'Ana', email: 'ana@vientos.es', phoneNumber: '600111222', speciality: 'PSYCHOLOGIST', theme: 'SYSTEM' },
@@ -40,12 +40,12 @@ describe('Tema', () => {
   })
 
   it('el oscuro cambia al momento, se guarda en el perfil y se recuerda en el navegador', async () => {
-    render(<ThemeSection />)
-    expect(screen.getByRole('button', { name: 'Sistema' })).toHaveAttribute('aria-pressed', 'true')
+    render(<ThemeSwitch />)
+    expect(screen.getByRole('button', { name: 'Tema del sistema' })).toHaveAttribute('aria-pressed', 'true')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Oscuro' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Tema oscuro' }))
 
-    expect(screen.getByRole('button', { name: 'Oscuro' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Tema oscuro' })).toHaveAttribute('aria-pressed', 'true')
     expect(root.dataset.theme).toBe('dark')
     expect(changeMyTheme).toHaveBeenCalledWith('DARK')
     expect(auth.replaceUser).toHaveBeenCalledWith(expect.objectContaining({ theme: 'DARK' }))
@@ -54,8 +54,8 @@ describe('Tema', () => {
 
   it('el claro manda aunque el equipo esté en oscuro', async () => {
     systemPrefersDark(true)
-    render(<ThemeSection />)
-    await userEvent.click(screen.getByRole('button', { name: 'Claro' }))
+    render(<ThemeSwitch />)
+    await userEvent.click(screen.getByRole('button', { name: 'Tema claro' }))
     expect(root.dataset.theme).toBe('light')
     expect(root).not.toHaveClass('cds--g100')
   })

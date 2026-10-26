@@ -30,6 +30,12 @@
     "es": "ES",
     "en": "EN"
   },
+  "theme": {
+    "label": "Tema",
+    "SYSTEM": "Tema del sistema",
+    "LIGHT": "Tema claro",
+    "DARK": "Tema oscuro"
+  },
   "speciality": {
     "ADMINISTRATOR": "Administración",
     "SOCIAL_EDUCATOR": "Educación social",
@@ -279,13 +285,6 @@
     "language": {
       "title": "Idioma",
       "help": "El idioma de la aplicación. Se guarda en tu perfil: lo encontrarás igual en cualquier equipo."
-    },
-    "theme": {
-      "title": "Tema",
-      "help": "Claro u oscuro. Con «Sistema», el mismo que tenga tu equipo. Se guarda en tu perfil.",
-      "SYSTEM": "Sistema",
-      "LIGHT": "Claro",
-      "DARK": "Oscuro"
     },
     "tutorial": {
       "title": "Tutorial",

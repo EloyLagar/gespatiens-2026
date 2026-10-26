@@ -7,7 +7,6 @@ import { ErrorNotice, Field, LanguageSwitch, PageHeader, SuccessNotice } from '.
 import { PasswordForm } from './EmployeeFormPage'
 import { useSaveLanguage } from './language'
 import { SignatureSection } from './SignatureSection'
-import { ThemeSection } from './ThemeSection'
 import { useTutorial } from '../tutorial/Tutorial'
 
 // RF4: cada empleado cambia sus datos y su contraseña, salvo el email
@@ -100,8 +99,6 @@ export function ProfilePage() {
           <LanguageSwitch onChange={saveLanguage} />
         </div>
       </section>
-
-      <ThemeSection />
 
       <SignatureSection />
 

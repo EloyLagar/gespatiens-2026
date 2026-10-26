@@ -30,6 +30,12 @@
     "es": "ES",
     "en": "EN"
   },
+  "theme": {
+    "label": "Theme",
+    "SYSTEM": "System theme",
+    "LIGHT": "Light theme",
+    "DARK": "Dark theme"
+  },
   "speciality": {
     "ADMINISTRATOR": "Administration",
     "SOCIAL_EDUCATOR": "Social education",
@@ -279,13 +285,6 @@
     "language": {
       "title": "Language",
       "help": "The language of the application. It is saved in your profile, so you'll find it the same on any computer."
-    },
-    "theme": {
-      "title": "Theme",
-      "help": "Light or dark. With \"System\", the same as your computer. It is saved in your profile.",
-      "SYSTEM": "System",
-      "LIGHT": "Light",
-      "DARK": "Dark"
     },
     "tutorial": {
       "title": "Tutorial",

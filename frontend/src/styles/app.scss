@@ -290,7 +290,7 @@ button:focus-visible,
 }
 
 .shell--rail .sidebar .user-row > svg,
-.shell--rail .sidebar .language-switch {
+.shell--rail .sidebar .side-foot__switches {
   display: none;
 }
 
@@ -436,6 +436,25 @@ button:focus-visible,
 .language-switch button[aria-pressed='true'] {
   background: var(--text);
   color: var(--on-text);
+}
+
+// Idioma y tema, uno al lado del otro en el pie del menú
+.side-foot__switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 8px 4px;
+}
+
+.side-foot__switches .language-switch {
+  margin: 0;
+}
+
+.theme-switch button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  padding: 0 6px;
 }
 
 .topbar,
