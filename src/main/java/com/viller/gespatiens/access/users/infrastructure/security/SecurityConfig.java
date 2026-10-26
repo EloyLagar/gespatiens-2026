@@ -30,6 +30,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/password-setup/*").permitAll()
                         // Las cuentas de la demo para "Entrar como …". Fuera del perfil demo la ruta no existe
                         .requestMatchers(HttpMethod.GET, "/api/demo/accounts").permitAll()
+                        // La documentación de la API (springdoc). Describe las rutas, pero llamarlas sigue
+                        // pidiendo el token. Con API_DOCS=false estas rutas no existen
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html",
+                                "/swagger-ui/**").permitAll()
                         // Solo la administración puede dar de alta empleados
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMINISTRATOR")
                         // RF4: cada empleado gestiona su propio perfil. Va antes que la regla de /api/users/*

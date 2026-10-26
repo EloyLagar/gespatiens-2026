@@ -2,6 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://gespatiens-api.onrender.com/api/:path*" },
+    { "source": "/swagger-ui.html", "destination": "https://gespatiens-api.onrender.com/swagger-ui.html" },
+    { "source": "/swagger-ui/:path*", "destination": "https://gespatiens-api.onrender.com/swagger-ui/:path*" },
+    { "source": "/v3/api-docs", "destination": "https://gespatiens-api.onrender.com/v3/api-docs" },
+    { "source": "/v3/api-docs/:path*", "destination": "https://gespatiens-api.onrender.com/v3/api-docs/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
