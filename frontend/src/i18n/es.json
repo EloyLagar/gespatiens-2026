@@ -37,6 +37,10 @@
     "LIGHT": "claro",
     "DARK": "oscuro"
   },
+  "demoSwitch": {
+    "label": "Probar como",
+    "failed": "No se ha podido cambiar de cuenta. Inténtalo otra vez."
+  },
   "speciality": {
     "ADMINISTRATOR": "Administración",
     "SOCIAL_EDUCATOR": "Educación social",
