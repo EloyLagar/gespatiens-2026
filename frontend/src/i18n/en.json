@@ -55,7 +55,12 @@
     "failed": "Could not sign in",
     "entering": "Signing in…",
     "submit": "Sign in",
-    "forgot": "Forgotten your password? Ask administration to send you a link to create a new one."
+    "forgot": "Forgotten your password? Ask administration to send you a link to create a new one.",
+    "waking": "Connecting to the server. If it was asleep, the first time can take up to a minute.",
+    "demoTitle": "Try the demo",
+    "demoLead": "Sign in as one of the fictional staff. The data is reset every day.",
+    "demoAs": "Sign in as {{speciality}}",
+    "demoOr": "Or with email and password"
   },
   "errors": {
     "title": "Something went wrong",
@@ -1135,5 +1140,38 @@
         "text": "View each resident's record, with their details and health card number. Changes to the record are made by the administration."
       }
     }
+  },
+  "accessibility": {
+    "link": "Accessibility statement",
+    "title": "Accessibility statement",
+    "lead": "gespatiens aims to be usable by all the staff of the centre, including people who use a keyboard, a screen reader, zoom or have low vision.",
+    "statusTitle": "Compliance status",
+    "status": "The application is designed to meet the Web Content Accessibility Guidelines (WCAG) 2.1 at level AA, plus the minimum target size from WCAG 2.2. Automated tests find no failures; the manual review with a screen reader is in progress.",
+    "featuresTitle": "What you can do",
+    "features": [
+      "Use the whole application with the keyboard alone, with a visible focus and a link to skip to the content.",
+      "Read it with a screen reader: every button, field and table has a name, and important changes are announced.",
+      "Choose the light, dark or system theme. In both, text has a contrast of at least 4.5:1.",
+      "Zoom in or use it on a phone: it adapts down to 320 px wide without horizontal page scrolling.",
+      "Use it in Spanish or English.",
+      "If your system asks for reduced motion, the application removes animations."
+    ],
+    "methodTitle": "How it is checked",
+    "method": [
+      "On every code change, an automated test checks every screen with axe, in the light theme, the dark theme and on mobile. If it finds a failure, the change is not released.",
+      "Lighthouse also measures the accessibility of the public pages on every change.",
+      "Colours were chosen by calculating their contrast, in both themes.",
+      "Keyboard navigation and the NVDA screen reader are reviewed by hand."
+    ],
+    "limitsTitle": "Known limitations",
+    "limits": [
+      "Downloaded PDF reports are not tagged for screen readers. The same content can be read on the screen of each report.",
+      "The rota grid has a button per person, day and shift, so it takes long to go through with a screen reader. Each person has their own shifts as a list, in the \"My shifts\" tab."
+    ],
+    "contactTitle": "Report a problem",
+    "contact": "If you find an accessibility barrier, tell us in the project issues on GitHub:",
+    "contactLink": "open an issue",
+    "updated": "Last reviewed: 26 October 2026.",
+    "back": "Back"
   }
 }

@@ -1,0 +1,22 @@
+# La API de la demo está en el plan gratuito de Render, que la duerme tras 15 minutos sin visitas: la primera
+# visita después tarda alrededor de un minuto. Un aviso cada 10 minutos la mantiene despierta de día (06:00 a
+# 23:59 en Madrid en invierno, una hora más en verano), unas 560 horas al mes de las 750 gratuitas. De noche se
+# duerme: la demo se reinicia igual, porque al arrancar comprueba si ya se ha cargado hoy.
+# GitHub retrasa a veces los avisos programados unos minutos y los desactiva si el repositorio pasa 60 días sin
+# cambios: entonces basta con volver a activarlo en la pestaña Actions
+name: Demo despierta
+
+on:
+  schedule:
+    - cron: '*/10 5-22 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Avisar a la API de la demo
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Cualquier respuesta vale: lo que importa es que llegue una petición. Se espera hasta 2 minutos por si
+      # estaba dormida
+      - run: curl -sS -o /dev/null -w 'HTTP %{http_code} en %{time_total} s\n' --max-time 120 https://gespatiens-api.onrender.com/api/demo/accounts

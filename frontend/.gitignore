@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Informe de cobertura (npx vitest run --coverage)
+coverage

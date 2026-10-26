@@ -1,3 +1,6 @@
 node_modules/
 test-results/
 playwright-report/
+
+# Informes de Lighthouse CI
+.lighthouseci/

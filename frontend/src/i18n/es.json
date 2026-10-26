@@ -55,7 +55,12 @@
     "failed": "No se ha podido entrar",
     "entering": "Entrando…",
     "submit": "Entrar",
-    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te envíe un enlace para crear una nueva."
+    "forgot": "¿Has olvidado la contraseña? Pide a la administración que te envíe un enlace para crear una nueva.",
+    "waking": "Conectando con el servidor. Si estaba en reposo, la primera vez puede tardar hasta un minuto.",
+    "demoTitle": "Probar la demo",
+    "demoLead": "Entra con un perfil del personal ficticio. Los datos se reinician cada día.",
+    "demoAs": "Entrar como {{speciality}}",
+    "demoOr": "O con email y contraseña"
   },
   "errors": {
     "title": "Algo ha fallado",
@@ -1135,5 +1140,38 @@
         "text": "Consulta la ficha de cada residente, con sus datos y su SIP. Los cambios en la ficha los hace la administración."
       }
     }
+  },
+  "accessibility": {
+    "link": "Declaración de accesibilidad",
+    "title": "Declaración de accesibilidad",
+    "lead": "gespatiens quiere que todo el personal del centro pueda usarla, también quien navega con teclado, con lector de pantalla, con zoom o con poca visión.",
+    "statusTitle": "Situación de cumplimiento",
+    "status": "La aplicación se ha diseñado para cumplir las Pautas de Accesibilidad para el Contenido Web (WCAG) 2.1 en el nivel AA, y el tamaño mínimo de los botones de las WCAG 2.2. Las pruebas automáticas no encuentran ningún fallo; la revisión manual con lector de pantalla está en curso.",
+    "featuresTitle": "Qué se puede hacer",
+    "features": [
+      "Usar toda la aplicación solo con el teclado, con el foco siempre visible y un enlace para saltar al contenido.",
+      "Leerla con lector de pantalla: cada botón, campo y tabla tiene su nombre, y los cambios importantes se anuncian.",
+      "Elegir el tema claro, el oscuro o el del sistema. En los dos, los textos tienen un contraste de al menos 4,5:1.",
+      "Ampliarla o usarla en el móvil: se adapta hasta 320 px de ancho sin desplazamiento horizontal de la página.",
+      "Usarla en castellano o en inglés.",
+      "Si el sistema pide reducir el movimiento, la aplicación quita las animaciones."
+    ],
+    "methodTitle": "Cómo se comprueba",
+    "method": [
+      "En cada cambio del código, una prueba automática revisa con axe todas las pantallas, en el tema claro, en el oscuro y en el móvil. Si encuentra un fallo, el cambio no se publica.",
+      "Lighthouse mide también la accesibilidad de las páginas públicas en cada cambio.",
+      "Los colores se eligieron calculando su contraste, en los dos temas.",
+      "La navegación con teclado y con el lector de pantalla NVDA se revisa a mano."
+    ],
+    "limitsTitle": "Limitaciones conocidas",
+    "limits": [
+      "Los informes descargados en PDF no están etiquetados para lectores de pantalla. El mismo contenido se puede leer en la pantalla de cada informe.",
+      "El cuadrante de turnos tiene un botón por persona, día y turno: con lector de pantalla es largo de recorrer. Cada persona tiene sus propios turnos en una lista, en la pestaña \"Mis turnos\"."
+    ],
+    "contactTitle": "Comunicar un problema",
+    "contact": "Si encuentras una barrera de accesibilidad, cuéntalo en las incidencias del proyecto en GitHub:",
+    "contactLink": "abrir una incidencia",
+    "updated": "Última revisión: 26 de octubre de 2026.",
+    "back": "Volver"
   }
 }
