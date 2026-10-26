@@ -6,6 +6,7 @@ import com.viller.gespatiens.access.users.application.DeleteUserUseCase;
 import com.viller.gespatiens.access.users.application.EditUserUseCase;
 import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
+import com.viller.gespatiens.access.users.application.MarkOwnTutorialSeenUseCase;
 import com.viller.gespatiens.access.users.application.InviteUserUseCase;
 import com.viller.gespatiens.access.users.application.ResetUserPasswordUseCase;
 import com.viller.gespatiens.access.users.application.SendPasswordSetupLinkUseCase;
@@ -41,6 +42,7 @@ public class UserController {
     private final DeleteUserUseCase deleteUserUseCase;
     private final ChangeOwnLanguageUseCase changeOwnLanguageUseCase;
     private final SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase;
+    private final MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase;
 
     public UserController(InviteUserUseCase inviteUserUseCase,
                           ListUsersUseCase listUsersUseCase,
@@ -51,7 +53,8 @@ public class UserController {
                           ResetUserPasswordUseCase resetUserPasswordUseCase,
                           DeleteUserUseCase deleteUserUseCase,
                           ChangeOwnLanguageUseCase changeOwnLanguageUseCase,
-                          SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase) {
+                          SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase,
+                          MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase) {
         this.inviteUserUseCase = inviteUserUseCase;
         this.listUsersUseCase = listUsersUseCase;
         this.getUserUseCase = getUserUseCase;
@@ -62,6 +65,7 @@ public class UserController {
         this.deleteUserUseCase = deleteUserUseCase;
         this.changeOwnLanguageUseCase = changeOwnLanguageUseCase;
         this.sendPasswordSetupLinkUseCase = sendPasswordSetupLinkUseCase;
+        this.markOwnTutorialSeenUseCase = markOwnTutorialSeenUseCase;
     }
 
     @GetMapping
@@ -98,6 +102,12 @@ public class UserController {
     }
 
     public record LanguageRequest(Language language) {
+    }
+
+    // Ha acabado o se ha saltado el tutorial de bienvenida: no le vuelve a salir al entrar
+    @PutMapping("/me/tutorial")
+    public UserResponse markMyTutorialSeen(Principal principal) {
+        return UserResponse.from(markOwnTutorialSeenUseCase.execute(currentUserId(principal)));
     }
 
     @GetMapping("/{id}")

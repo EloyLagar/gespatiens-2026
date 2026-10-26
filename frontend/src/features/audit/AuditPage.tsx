@@ -77,7 +77,7 @@ export function AuditPage() {
         <>
           <p className="list-count num" aria-live="polite">{t('audit.count', { count: data.totalEntries })}</p>
           <div className="table-wrap">
-            <table className="data-table">
+            <table className="data-table data-table--stack">
               <caption className="visually-hidden">{t('audit.title')}</caption>
               <thead>
                 <tr>
@@ -90,12 +90,21 @@ export function AuditPage() {
               <tbody>
                 {data.entries.map((e) => (
                   <tr key={e.id}>
-                    <td className="num">
+                    <td className="num col-wide">
                       <time dateTime={e.occurredAt}>{when.format(new Date(e.occurredAt))}</time>
                     </td>
-                    <td>{e.actor.name ?? <span className="dash">{t('audit.formerEmployee')}</span>}</td>
-                    <td><ActionCell entry={e} /></td>
-                    <td><ResidentCell entry={e} /></td>
+                    <td className="col-identity">
+                      {e.actor.name ?? <span className="dash">{t('audit.formerEmployee')}</span>}
+                      {/* En el móvil la fila es de dos líneas: lo que en escritorio son columnas */}
+                      <span className="row-sub">
+                        <ActionCell entry={e} /> · <ResidentCell entry={e} />
+                      </span>
+                      <span className="row-sub">
+                        <time dateTime={e.occurredAt}>{when.format(new Date(e.occurredAt))}</time>
+                      </span>
+                    </td>
+                    <td className="col-wide"><ActionCell entry={e} /></td>
+                    <td className="col-wide"><ResidentCell entry={e} /></td>
                   </tr>
                 ))}
               </tbody>

@@ -80,3 +80,8 @@ export function removeMySignature() {
 export function changeMyLanguage(language: 'ES' | 'EN') {
   return request<User>('/users/me/language', { method: 'PUT', body: { language } })
 }
+
+// Ha acabado o se ha saltado el tutorial de bienvenida: no le vuelve a salir al entrar
+export function markMyTutorialSeen() {
+  return request<User>('/users/me/tutorial', { method: 'PUT' })
+}

@@ -33,7 +33,7 @@ public class SecurityConfig {
                         // RF4: cada empleado gestiona su propio perfil. Va antes que la regla de /api/users/*
                         // porque Spring aplica la primera regla que encaja, y "me" también encajaría en "*"
                         .requestMatchers("/api/users/me", "/api/users/me/password", "/api/users/me/signature",
-                                "/api/users/me/language").authenticated()
+                                "/api/users/me/language", "/api/users/me/tutorial").authenticated()
                         // La firma escaneada de otro empleado solo la ve y la cambia la administración
                         .requestMatchers("/api/users/*/signature").hasRole("ADMINISTRATOR")
                         // RF7: editar, restablecer contraseñas y eliminar perfiles es cosa de la administración

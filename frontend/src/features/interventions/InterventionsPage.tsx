@@ -58,7 +58,7 @@ function FollowUpsTable({ summaries, language }: { summaries: FollowUpSummary[];
   const { t } = useTranslation()
   return (
     <div className="table-wrap">
-      <table className="data-table">
+      <table className="data-table data-table--stack">
         <caption className="visually-hidden">{t('interventions.tableCaption')}</caption>
         <thead>
           <tr>
@@ -82,7 +82,7 @@ function FollowUpsTable({ summaries, language }: { summaries: FollowUpSummary[];
                   {s.mine && <span className="you"> ({t('interventions.yourTutee')})</span>}
                   {/* En el móvil la fila es de dos líneas: lo que en escritorio son columnas */}
                   <span className="row-sub">
-                    {tutors ?? t('interventions.noTutors')} ·{' '}
+                    {tutors ?? t('interventions.noTutors')} · {t('interventions.countValue', { count: s.interventionCount })} ·{' '}
                     {s.lastIntervention
                       ? t('interventions.lastOn', { date: formatDate(s.lastIntervention, language) })
                       : t('interventions.none')}

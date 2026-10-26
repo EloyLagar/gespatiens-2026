@@ -139,7 +139,7 @@ function ReportsTable({ reports }: { reports: ReportSummary[] }) {
   const { t, i18n } = useTranslation()
   return (
     <div className="table-wrap">
-      <table className="data-table">
+      <table className="data-table data-table--stack">
         <caption className="visually-hidden">{t('reports.tableCaption')}</caption>
         <thead>
           <tr>
@@ -167,7 +167,8 @@ function ReportsTable({ reports }: { reports: ReportSummary[] }) {
                 </span>
                 {/* En el móvil la fila es de dos líneas: lo que en escritorio son columnas */}
                 <span className="row-sub">
-                  {t(`reports.state.${r.state}`)} · {t('reports.progress', { written: r.writtenSections, total: r.totalSections })}
+                  {t(`reports.state.${r.state}`)} · {t('reports.progress', { written: r.writtenSections, total: r.totalSections })} ·{' '}
+                  {t('reports.updatedWhen', { when: whenPosted(r.lastUpdate, t, i18n.language) })}
                 </span>
               </td>
               <td className="col-wide">

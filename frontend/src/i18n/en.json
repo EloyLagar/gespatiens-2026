@@ -21,7 +21,9 @@
     "evaluations": "Evaluations",
     "dashboard": "Dashboard",
     "rota": "Shifts",
-    "audit": "Change log"
+    "audit": "Change log",
+    "collapseMenu": "Collapse the menu",
+    "expandMenu": "Expand the menu"
   },
   "language": {
     "label": "Language",
@@ -277,6 +279,11 @@
     "language": {
       "title": "Language",
       "help": "The language of the application. It is saved in your profile, so you'll find it the same on any computer."
+    },
+    "tutorial": {
+      "title": "Tutorial",
+      "help": "The tour of the app you saw the first time you signed in, tailored to your speciality.",
+      "start": "Replay the tutorial"
     }
   },
   "notFound": {
@@ -530,7 +537,9 @@
     "deleteBody": "It will disappear from the history of {{name}}. This cannot be undone.",
     "educatorTutor": "Social educator tutor",
     "psychologistTutor": "Psychologist tutor",
-    "unassigned": "Not assigned"
+    "unassigned": "Not assigned",
+    "countValue_one": "{{count}} intervention",
+    "countValue_other": "{{count}} interventions"
   },
   "reports": {
     "title": "Reports",
@@ -695,7 +704,8 @@
     "stayAll": "All",
     "noMatches": "No report matches the search and filters.",
     "showing": "{{shown}} of {{count}}",
-    "showMore": "Show {{count}} more"
+    "showMore": "Show {{count}} more",
+    "updatedWhen": "updated {{when}}"
   },
   "editing": {
     "editing": "{{name}} is editing it",
@@ -945,6 +955,178 @@
       "REOPEN_REPORT": "Reopened a report",
       "EDIT_FOLLOW_UP": "Changed an intervention",
       "ASSIGN_TUTORS": "Assigned the tutors"
+    }
+  },
+  "tutorial": {
+    "progress": "Step {{current}} of {{total}}",
+    "skip": "Skip the tutorial",
+    "begin": "Start",
+    "previous": "Back",
+    "next": "Next",
+    "finish": "Start working",
+    "common": {
+      "welcome": {
+        "title": "Hi, {{name}}",
+        "text": "In a couple of minutes we will show you the sections you will use most. We will open them one by one; you can skip the tutorial at any time and replay it from My profile."
+      },
+      "notices": {
+        "title": "Notices",
+        "text": "This is the home page: what staff need to know today. Anyone can post a notice and the whole team sees it when they sign in. Notices from the administration stand out from the rest."
+      },
+      "diary": {
+        "title": "Diary",
+        "text": "One day per page. Each shift (morning, afternoon and night) records who worked and what the next shift should know. Below are the day's activities, residents' outings and reductions."
+      },
+      "evaluations": {
+        "title": "Evaluations",
+        "text": "The marks for each type of activity over a month, from 0 to 10, with the average for each week and for the month."
+      },
+      "interventions": {
+        "title": "Interventions",
+        "text": "Each resident has two tutors: a social educator and a psychologist. The tutors record their interventions with the resident here."
+      },
+      "reports": {
+        "title": "Reports",
+        "text": "Each resident has a mid-stay report and a final programme report, created automatically on admission. Each speciality writes its own area."
+      },
+      "rota": {
+        "title": "Shifts",
+        "text": "My shifts shows the days you are scheduled this month. If you need to change one, you can propose a swap to a colleague right here."
+      },
+      "residents": {
+        "title": "Residents",
+        "text": "The centre's 32 places and each resident's record: personal details, referral, authorised visitors, stay history and reports."
+      },
+      "employees": {
+        "title": "Employees",
+        "text": "The centre's staff, with their speciality and how to contact each person."
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "text": "Today's figures (occupied places, residents without tutors, reports in progress) and upcoming deadlines. Below, each worker's shifts and the notices per week for the month you choose."
+      },
+      "audit": {
+        "title": "Change log",
+        "text": "Who changed each resident's data, and when. It cannot be modified and is kept for two years."
+      },
+      "profile": {
+        "title": "My profile",
+        "text": "Your details, your password and the app language (Spanish or English). Upload your signature as a PNG here: it is printed on the reports you write. You can replay this tutorial from here."
+      },
+      "end": {
+        "title": "All set",
+        "text": "That's it. We will take you to the notices, the home page. If you get lost, replay the tutorial from My profile."
+      }
+    },
+    "ADMINISTRATOR": {
+      "welcome": {
+        "title": "Hi, {{name}}",
+        "text": "As administration you can do everything in gespatiens: admit residents, add staff, assign tutors, plan shifts and close reports. Let us show you where everything is."
+      },
+      "residents": {
+        "title": "Residents",
+        "text": "Only the administration admits residents, edits their record, manages authorised visitors, discharges or readmits them. Other staff can view the records."
+      },
+      "employees": {
+        "title": "Employees",
+        "text": "Add each employee with their speciality: they will get an email to create their password. The speciality decides what they can do in the app."
+      },
+      "interventions": {
+        "title": "Interventions",
+        "text": "Assign each resident their two tutors: a social educator and a psychologist. The number of residents without tutors is shown at the top and on the dashboard."
+      },
+      "reports": {
+        "title": "Reports",
+        "text": "Each speciality writes its area, and the administration can edit any of them. When the report is complete you close it and download it as a PDF with the signatures."
+      },
+      "diary": {
+        "title": "Diary",
+        "text": "One day per page, with the three shifts, activities, outings and reductions. The administration records reductions together with the medical team, and evaluates activities together with the educators."
+      },
+      "rota": {
+        "title": "Shifts",
+        "text": "In the rota you plan the month: press M, A or N in a person's cell to add or remove that shift. Below you see how many people are on each shift."
+      },
+      "notices": {
+        "title": "Notices",
+        "text": "The home page for all staff. Your notices are marked as coming from the administration, and you can moderate everyone else's."
+      }
+    },
+    "SOCIAL_EDUCATOR": {
+      "welcome": {
+        "title": "Hi, {{name}}",
+        "text": "As a social educator, what you will use most is the diary: shifts, activities and their evaluations. Let us show you where everything is."
+      },
+      "diary": {
+        "title": "Diary",
+        "text": "Fill in your shift with who worked and what the next one should know. Below, in the day's activities, you give each resident a mark; you also record their outings."
+      },
+      "evaluations": {
+        "title": "Evaluations",
+        "text": "The marks for one type of activity over the whole month. You can type the mark (0 to 10) straight into the cell: it is saved when you leave it or press Enter."
+      },
+      "interventions": {
+        "title": "Interventions",
+        "text": "Filter by My tutees to see the residents you tutor and record your interventions with them. Tutors are assigned by the administration."
+      },
+      "reports": {
+        "title": "Reports",
+        "text": "You write the educational area of the reports. If you are the resident's tutor, also the expected duration and the follow-up guidance."
+      }
+    },
+    "SOCIAL_WORKER": {
+      "welcome": {
+        "title": "Hi, {{name}}",
+        "text": "As a social worker, your part is the social and family areas of the reports. Let us show you where everything is."
+      },
+      "residents": {
+        "title": "Residents",
+        "text": "View each resident's record: personal details, referral, authorised visitors and previous stays. Changes to the record are made by the administration."
+      },
+      "reports": {
+        "title": "Reports",
+        "text": "You write the social area and the family intervention area of the mid-stay and final reports. Filter by In progress to see what is pending."
+      },
+      "diary": {
+        "title": "Diary",
+        "text": "One day per page: what happened on each shift, activities, outings and reductions. It keeps you up to date on each resident."
+      }
+    },
+    "PSYCHOLOGIST": {
+      "welcome": {
+        "title": "Hi, {{name}}",
+        "text": "As a psychologist, you tutor residents and write the psychological area of their reports. Let us show you where everything is."
+      },
+      "interventions": {
+        "title": "Interventions",
+        "text": "Filter by My tutees to see the residents you tutor and record your interventions with them. Each resident has a psychologist and a social educator as tutors."
+      },
+      "reports": {
+        "title": "Reports",
+        "text": "You write the psychological intervention area. If you are the resident's tutor, also the expected duration and the follow-up guidance."
+      },
+      "diary": {
+        "title": "Diary",
+        "text": "One day per page: what happened on each shift, activities, outings and reductions. Useful to prepare your interventions."
+      }
+    },
+    "MEDICAL_TEAM": {
+      "welcome": {
+        "title": "Hi, {{name}}",
+        "text": "As the medical team, you record reductions in the diary and write the health area of the reports. Let us show you where everything is."
+      },
+      "diary": {
+        "title": "Diary",
+        "text": "One day per page. In Reductions you add the residents on reduction that day; other staff can only view them. You also see what happened on each shift."
+      },
+      "reports": {
+        "title": "Reports",
+        "text": "You write the health intervention area of the mid-stay and final reports. Filter by In progress to see what is pending."
+      },
+      "residents": {
+        "title": "Residents",
+        "text": "View each resident's record, with their details and health card number. Changes to the record are made by the administration."
+      }
     }
   }
 }

@@ -20,6 +20,7 @@ import { AuditPage } from './features/audit/AuditPage'
 import { ReportPage } from './features/reports/ReportPage'
 import { ReportsPage } from './features/reports/ReportsPage'
 import { RotaPage } from './features/rota/RotaPage'
+import { TutorialProvider } from './features/tutorial/Tutorial'
 import { AppShell } from './layout/AppShell'
 import { PageHeader } from './shared/ui'
 
@@ -32,7 +33,9 @@ export function App() {
       <Route
         element={
           <RequireAuth>
-            <AppShell />
+            <TutorialProvider>
+              <AppShell />
+            </TutorialProvider>
           </RequireAuth>
         }
       >

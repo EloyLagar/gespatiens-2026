@@ -147,7 +147,7 @@ export function OutingsSection({ date, outings, residents, onChanged }: Props) {
         <p className="empty">{t('diary.outings.empty')}</p>
       ) : (
         <div className="table-wrap">
-          <table className="data-table">
+          <table className="data-table data-table--stack">
             <caption className="visually-hidden">{t('diary.outings.caption')}</caption>
             <thead>
               <tr>

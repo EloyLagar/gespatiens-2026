@@ -39,11 +39,12 @@ describe('DashboardPage', () => {
     expect(screen.getByLabelText(/Semana del .*: 7 avisos/)).toBeInTheDocument()
     expect(String(fetchMock.mock.calls[0][0])).toMatch(/^\/api\/dashboard\?month=\d{4}-\d{2}$/)
 
+    // Las filas llevan cada dato dos veces: en su columna y en el resumen del móvil (el CSS oculta uno)
     // Lo que vence: el informe enlaza al informe y la medida dice el juzgado
-    expect(screen.getByText('Vencido hace 50 días')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Informe de media estancia' })).toHaveAttribute('href', '/informes/r9')
+    expect(screen.getAllByText('Vencido hace 50 días')[0]).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'Informe de media estancia' })[0]).toHaveAttribute('href', '/informes/r9')
     expect(screen.getByText('Juzgado de lo Penal nº 3')).toBeInTheDocument()
-    expect(screen.getByText('En 4 días')).toBeInTheDocument()
+    expect(screen.getAllByText('En 4 días')[0]).toBeInTheDocument()
 
     // El desglose, también como tabla
     await userEvent.click(screen.getByText('Ver como tabla'))
