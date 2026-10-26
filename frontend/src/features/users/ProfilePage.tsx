@@ -7,12 +7,14 @@ import { ErrorNotice, Field, LanguageSwitch, PageHeader, SuccessNotice } from '.
 import { PasswordForm } from './EmployeeFormPage'
 import { useSaveLanguage } from './language'
 import { SignatureSection } from './SignatureSection'
+import { useTutorial } from '../tutorial/Tutorial'
 
 // RF4: cada empleado cambia sus datos y su contraseña, salvo el email
 export function ProfilePage() {
   const { t } = useTranslation()
   const { user, replaceUser } = useAuth()
   const saveLanguage = useSaveLanguage()
+  const tutorial = useTutorial()
   const [name, setName] = useState(user?.name ?? '')
   const [phone, setPhone] = useState(user?.phoneNumber ?? '')
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({})
@@ -99,6 +101,18 @@ export function ProfilePage() {
       </section>
 
       <SignatureSection />
+
+      <section className="settings-row" aria-labelledby="my-tutorial-title">
+        <div className="settings-row__label">
+          <h2 id="my-tutorial-title">{t('profile.tutorial.title')}</h2>
+          <p>{t('profile.tutorial.help')}</p>
+        </div>
+        <div className="settings-row__panel">
+          <Button kind="tertiary" onClick={tutorial.start} disabled={tutorial.active}>
+            {t('profile.tutorial.start')}
+          </Button>
+        </div>
+      </section>
     </>
   )
 }

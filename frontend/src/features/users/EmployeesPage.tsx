@@ -39,7 +39,7 @@ export function EmployeesPage() {
           <LoadingRows label={t('common.loading')} />
         ) : (
           <div className="table-wrap">
-            <table className="data-table">
+            <table className="data-table data-table--stack">
               <caption className="visually-hidden">{t('employees.tableCaption')}</caption>
               <thead>
                 <tr>
@@ -71,8 +71,12 @@ export function EmployeesPage() {
                               {t('employees.pending')}
                             </Tag>
                           )}
+                          {/* En el móvil, lo que en escritorio son columnas: el email y el teléfono se pueden pulsar */}
                           <span className="row-sub">
-                            {t(`speciality.${u.speciality}`)} · {u.phoneNumber}
+                            {t(`speciality.${u.speciality}`)} · <a href={`tel:${u.phoneNumber}`}>{u.phoneNumber}</a>
+                          </span>
+                          <span className="row-sub">
+                            <a href={`mailto:${u.email}`}>{u.email}</a>
                           </span>
                         </span>
                       </span>

@@ -125,7 +125,7 @@ export function ReductionsSection({ date, reductions, canEdit, residents, onChan
         <p className="empty">{t('diary.reductions.empty')}</p>
       ) : (
         <div className="table-wrap">
-          <table className="data-table">
+          <table className="data-table data-table--stack">
             <caption className="visually-hidden">{t('diary.reductions.caption')}</caption>
             <thead>
               <tr>

@@ -1,10 +1,32 @@
-import { Archive, Calendar, ChartLine, Close, Dashboard, Collaborate, Document, Group, Logout, Menu, Notebook, Notification, RecentlyViewed, UserMultiple, UserProfile } from '@carbon/icons-react'
+import { Archive, Calendar, ChartLine, Close, Dashboard, Collaborate, Document, Group, Logout, Menu, Notebook, Notification, RecentlyViewed, SidePanelClose, SidePanelOpen, UserMultiple, UserProfile } from '@carbon/icons-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { LanguageSwitch, Wordmark } from '../shared/ui'
 import { useSaveLanguage } from '../features/users/language'
+import { useTutorial } from '../features/tutorial/Tutorial'
+
+// En el escritorio el menú se puede plegar a una columna de iconos, para dar ancho a las tablas
+// grandes (el cuadrante, las valoraciones). Se recuerda en este navegador
+const RAIL_KEY = 'gespatiens.sidebar'
+
+function loadRail(): boolean {
+  try {
+    return localStorage.getItem(RAIL_KEY) === 'rail'
+  } catch {
+    return false
+  }
+}
+
+function saveRail(rail: boolean) {
+  try {
+    if (rail) localStorage.setItem(RAIL_KEY, 'rail')
+    else localStorage.removeItem(RAIL_KEY)
+  } catch {
+    // Sin almacenamiento: se pliega solo hasta recargar
+  }
+}
 
 interface NavItem {
   to: string
@@ -16,7 +38,9 @@ export function AppShell() {
   const { t } = useTranslation()
   const { user, isAdmin, logout } = useAuth()
   const saveLanguage = useSaveLanguage()
+  const tutorial = useTutorial()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [rail, setRail] = useState(loadRail)
   const location = useLocation()
   const menuButton = useRef<HTMLButtonElement>(null)
 
@@ -62,7 +86,7 @@ export function AppShell() {
         <ul>
           {items.map((item) => (
             <li key={item.to}>
-              <NavLink to={item.to} className="side-nav__link">
+              <NavLink to={item.to} className="side-nav__link" title={rail ? item.label : undefined}>
                 {item.icon}
                 <span>{item.label}</span>
               </NavLink>
@@ -72,7 +96,7 @@ export function AppShell() {
       </nav>
       <div className="side-foot">
         <LanguageSwitch onChange={saveLanguage} />
-        <NavLink to="/perfil" className="user-row">
+        <NavLink to="/perfil" className="user-row" title={rail ? t('nav.profile') : undefined}>
           <span className="avatar" aria-hidden="true">
             {user.name.charAt(0).toUpperCase()}
           </span>
@@ -82,7 +106,7 @@ export function AppShell() {
           </span>
           <UserProfile size={16} aria-label={t('nav.profile')} />
         </NavLink>
-        <button type="button" className="side-nav__link side-nav__logout" onClick={logout}>
+        <button type="button" className="side-nav__link side-nav__logout" onClick={logout} title={rail ? t('nav.logout') : undefined}>
           <Logout size={16} />
           <span>{t('nav.logout')}</span>
         </button>
@@ -91,13 +115,29 @@ export function AppShell() {
   )
 
   return (
-    <div className="shell">
+    // Con el tutorial abierto, el final de la pantalla deja sitio a su tarjeta
+    <div className={['shell', rail && 'shell--rail', tutorial.active && 'shell--touring'].filter(Boolean).join(' ')}>
       <a className="skip-link" href="#main">
         {t('nav.skipToContent')}
       </a>
 
       <aside className="sidebar" aria-label={t('app.name')}>
-        <Brand />
+        <div className="sidebar__band">
+          {!rail && <Brand />}
+          <button
+            type="button"
+            className="icon-button sidebar__toggle"
+            aria-expanded={!rail}
+            aria-label={rail ? t('nav.expandMenu') : t('nav.collapseMenu')}
+            title={rail ? t('nav.expandMenu') : t('nav.collapseMenu')}
+            onClick={() => {
+              saveRail(!rail)
+              setRail(!rail)
+            }}
+          >
+            {rail ? <SidePanelOpen size={20} /> : <SidePanelClose size={20} />}
+          </button>
+        </div>
         {nav}
       </aside>
 

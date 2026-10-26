@@ -21,7 +21,9 @@
     "evaluations": "Valoraciones",
     "dashboard": "Panel de control",
     "rota": "Turnos",
-    "audit": "Registro de cambios"
+    "audit": "Registro de cambios",
+    "collapseMenu": "Plegar el menú",
+    "expandMenu": "Desplegar el menú"
   },
   "language": {
     "label": "Idioma",
@@ -277,6 +279,11 @@
     "language": {
       "title": "Idioma",
       "help": "El idioma de la aplicación. Se guarda en tu perfil: lo encontrarás igual en cualquier equipo."
+    },
+    "tutorial": {
+      "title": "Tutorial",
+      "help": "El recorrido por la aplicación que salió la primera vez que entraste, adaptado a tu especialidad.",
+      "start": "Ver el tutorial otra vez"
     }
   },
   "notFound": {
@@ -530,7 +537,9 @@
     "deleteBody": "Desaparecerá del historial de {{name}}. No se puede deshacer.",
     "educatorTutor": "Tutor/a educador/a social",
     "psychologistTutor": "Tutor/a psicólogo/a",
-    "unassigned": "Sin asignar"
+    "unassigned": "Sin asignar",
+    "countValue_one": "{{count}} intervención",
+    "countValue_other": "{{count}} intervenciones"
   },
   "reports": {
     "title": "Informes",
@@ -695,7 +704,8 @@
     "stayAll": "Todas",
     "noMatches": "Ningún informe coincide con la búsqueda y los filtros.",
     "showing": "{{shown}} de {{count}}",
-    "showMore": "Mostrar {{count}} más"
+    "showMore": "Mostrar {{count}} más",
+    "updatedWhen": "modificado {{when}}"
   },
   "editing": {
     "editing": "{{name}} lo está editando",
@@ -945,6 +955,178 @@
       "REOPEN_REPORT": "Reabrió un informe",
       "EDIT_FOLLOW_UP": "Cambió una intervención",
       "ASSIGN_TUTORS": "Asignó los tutores"
+    }
+  },
+  "tutorial": {
+    "progress": "Paso {{current}} de {{total}}",
+    "skip": "Saltar el tutorial",
+    "begin": "Empezar",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "finish": "Empezar a trabajar",
+    "common": {
+      "welcome": {
+        "title": "Hola, {{name}}",
+        "text": "Te enseñamos en un par de minutos los apartados que más vas a usar. Iremos abriéndolos uno a uno; puedes saltarte el tutorial cuando quieras y repetirlo desde Mi perfil."
+      },
+      "notices": {
+        "title": "Avisos",
+        "text": "Es la portada: lo que el personal tiene que saber hoy. Cualquiera puede publicar un aviso y lo verá todo el equipo al entrar. Los de la administración se distinguen del resto."
+      },
+      "diary": {
+        "title": "Diario",
+        "text": "Un día por página. En cada turno (mañana, tarde y noche) se anota quién trabajó y la información de interés para el turno siguiente. Debajo están las actividades del día, las salidas de los residentes y las rebajas."
+      },
+      "evaluations": {
+        "title": "Valoraciones",
+        "text": "Las notas de cada tipo de actividad durante un mes, de 0 a 10, con la media de cada semana y la del mes."
+      },
+      "interventions": {
+        "title": "Intervenciones",
+        "text": "Cada residente tiene dos tutores: un educador social y un psicólogo. Los tutores anotan aquí las intervenciones que hacen con él."
+      },
+      "reports": {
+        "title": "Informes",
+        "text": "Cada residente tiene un informe de media estancia y uno final de programa, que se crean solos al ingresar. Cada especialidad redacta su área."
+      },
+      "rota": {
+        "title": "Turnos",
+        "text": "En Mis turnos ves los días que tienes previstos este mes. Si necesitas cambiar uno, puedes proponer el cambio a un compañero directamente desde aquí."
+      },
+      "residents": {
+        "title": "Residentes",
+        "text": "Las 32 plazas del centro y la ficha de cada residente: datos personales, derivación, visitas autorizadas, historial de estancias e informes."
+      },
+      "employees": {
+        "title": "Empleados",
+        "text": "El personal del centro, con su especialidad y cómo contactar con cada persona."
+      },
+      "dashboard": {
+        "title": "Panel de control",
+        "text": "Las cifras del día (plazas ocupadas, residentes sin tutores, informes en elaboración) y lo que vence pronto. Debajo, los turnos de cada trabajador y los avisos de cada semana en el mes que elijas."
+      },
+      "audit": {
+        "title": "Registro de cambios",
+        "text": "Quién ha cambiado los datos de cada residente, y cuándo. No se puede modificar y se conserva dos años."
+      },
+      "profile": {
+        "title": "Mi perfil",
+        "text": "Tus datos, tu contraseña y el idioma de la aplicación (castellano o inglés). Sube aquí tu firma en PNG: se imprime en los informes que redactes. Desde aquí puedes repetir este tutorial."
+      },
+      "end": {
+        "title": "Ya está",
+        "text": "Eso es todo. Te dejamos en los avisos, que es la portada. Si te pierdes, vuelve a ver el tutorial desde Mi perfil."
+      }
+    },
+    "ADMINISTRATOR": {
+      "welcome": {
+        "title": "Hola, {{name}}",
+        "text": "Como administración, puedes hacer de todo en gespatiens: ingresar residentes, dar de alta al personal, asignar tutores, planificar los turnos y cerrar los informes. Te enseñamos dónde está cada cosa."
+      },
+      "residents": {
+        "title": "Residentes",
+        "text": "Solo la administración ingresa residentes, edita su ficha, gestiona las visitas autorizadas, les da de baja o les reincorpora. El resto del personal consulta las fichas."
+      },
+      "employees": {
+        "title": "Empleados",
+        "text": "Da de alta a cada empleado con su especialidad: recibirá un correo para crear su contraseña. La especialidad decide qué puede hacer en la aplicación."
+      },
+      "interventions": {
+        "title": "Intervenciones",
+        "text": "Asigna a cada residente sus dos tutores: un educador social y un psicólogo. El número de residentes sin tutor sale arriba y en el panel de control."
+      },
+      "reports": {
+        "title": "Informes",
+        "text": "Cada especialidad redacta su área, y la administración puede modificar cualquiera. Cuando el informe está completo, lo cierras y se descarga en PDF con las firmas."
+      },
+      "diary": {
+        "title": "Diario",
+        "text": "Un día por página, con los tres turnos, las actividades, las salidas y las rebajas. La administración, junto al equipo médico, registra las rebajas, y junto a los educadores, valora las actividades."
+      },
+      "rota": {
+        "title": "Turnos",
+        "text": "En el cuadrante planificas el mes: pulsa M, T o N en la casilla de una persona para ponerle o quitarle ese turno. Abajo ves cuántas personas hay en cada turno."
+      },
+      "notices": {
+        "title": "Avisos",
+        "text": "La portada de todo el personal. Tus avisos salen marcados como de la administración, y puedes moderar los del resto."
+      }
+    },
+    "SOCIAL_EDUCATOR": {
+      "welcome": {
+        "title": "Hola, {{name}}",
+        "text": "Como educador o educadora social, lo que más vas a usar es el diario: los turnos, las actividades y sus valoraciones. Te enseñamos dónde está cada cosa."
+      },
+      "diary": {
+        "title": "Diario",
+        "text": "Rellena tu turno con quién trabajó y la información de interés para el siguiente. Debajo, en las actividades del día, pones la nota de cada residente; también anotas sus salidas."
+      },
+      "evaluations": {
+        "title": "Valoraciones",
+        "text": "Las notas de un tipo de actividad durante todo el mes. Puedes escribir la nota (de 0 a 10) directamente en la casilla: se guarda al salir de ella o con Intro."
+      },
+      "interventions": {
+        "title": "Intervenciones",
+        "text": "Filtra por Mis tutorados para ver los residentes de los que eres tutor y anotar las intervenciones con ellos. Los tutores los asigna la administración."
+      },
+      "reports": {
+        "title": "Informes",
+        "text": "Redactas el área educativa de los informes. Si eres tutor del residente, también la previsión de duración y las orientaciones de seguimiento."
+      }
+    },
+    "SOCIAL_WORKER": {
+      "welcome": {
+        "title": "Hola, {{name}}",
+        "text": "Como trabajador o trabajadora social, lo tuyo son las áreas social y familiar de los informes. Te enseñamos dónde está cada cosa."
+      },
+      "residents": {
+        "title": "Residentes",
+        "text": "Consulta la ficha de cada residente: datos personales, derivación, visitas autorizadas y estancias anteriores. Los cambios en la ficha los hace la administración."
+      },
+      "reports": {
+        "title": "Informes",
+        "text": "Redactas el área social y el área de intervención familiar de los informes de media estancia y de fin de programa. Filtra por En elaboración para ver los que faltan."
+      },
+      "diary": {
+        "title": "Diario",
+        "text": "Un día por página: lo que pasó en cada turno, las actividades, las salidas y las rebajas. Te sirve para estar al tanto de cada residente."
+      }
+    },
+    "PSYCHOLOGIST": {
+      "welcome": {
+        "title": "Hola, {{name}}",
+        "text": "Como psicólogo o psicóloga, eres tutor de residentes y redactas el área psicológica de sus informes. Te enseñamos dónde está cada cosa."
+      },
+      "interventions": {
+        "title": "Intervenciones",
+        "text": "Filtra por Mis tutorados para ver los residentes de los que eres tutor y anotar las intervenciones con ellos. Cada residente tiene un psicólogo y un educador social de tutores."
+      },
+      "reports": {
+        "title": "Informes",
+        "text": "Redactas el área de intervención psicológica. Si eres tutor del residente, también la previsión de duración y las orientaciones de seguimiento."
+      },
+      "diary": {
+        "title": "Diario",
+        "text": "Un día por página: lo que pasó en cada turno, las actividades, las salidas y las rebajas. Te sirve para preparar las intervenciones."
+      }
+    },
+    "MEDICAL_TEAM": {
+      "welcome": {
+        "title": "Hola, {{name}}",
+        "text": "Como equipo médico, registras las rebajas en el diario y redactas el área sanitaria de los informes. Te enseñamos dónde está cada cosa."
+      },
+      "diary": {
+        "title": "Diario",
+        "text": "Un día por página. En el apartado Rebajas añades los residentes rebajados ese día; el resto del personal solo las consulta. También ves lo que pasó en cada turno."
+      },
+      "reports": {
+        "title": "Informes",
+        "text": "Redactas el área de intervención sanitaria de los informes de media estancia y de fin de programa. Filtra por En elaboración para ver los que faltan."
+      },
+      "residents": {
+        "title": "Residentes",
+        "text": "Consulta la ficha de cada residente, con sus datos y su SIP. Los cambios en la ficha los hace la administración."
+      }
     }
   }
 }

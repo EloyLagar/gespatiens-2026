@@ -26,6 +26,8 @@ export interface User {
   language?: 'ES' | 'EN'
   // Invitado que todavía no ha creado su contraseña desde el correo
   passwordPending?: boolean
+  // Si ya ha visto el tutorial de bienvenida. Se guarda en su perfil: no le vuelve a salir en otro equipo
+  tutorialSeen?: boolean
 }
 
 export interface LoginResponse {

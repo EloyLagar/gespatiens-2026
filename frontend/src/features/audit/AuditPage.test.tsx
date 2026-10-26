@@ -33,9 +33,9 @@ describe('AuditPage', () => {
 
     expect(await screen.findByText('Cambió la derivación')).toBeInTheDocument()
     expect(screen.getByText('3 cambios')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Cerró un informe' })).toHaveAttribute('href', '/informes/r1')
+    expect(screen.getAllByRole('link', { name: 'Cerró un informe' })[0]).toHaveAttribute('href', '/informes/r1')
     expect(screen.getByText('Ya no está en la plantilla')).toBeInTheDocument()
-    expect(screen.getByText('Ficha borrada')).toBeInTheDocument()
+    expect(screen.getAllByText('Ficha borrada')[0]).toBeInTheDocument()
     const auditCall = fetchMock.mock.calls.map((c) => String(c[0])).find((u) => u.startsWith('/api/audit'))
     expect(auditCall).toContain('patientId=p5')
   })

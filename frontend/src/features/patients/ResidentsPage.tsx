@@ -108,7 +108,7 @@ function ResidentsTable({ patients, language }: { patients: Patient[]; language:
   const { t } = useTranslation()
   return (
     <div className="table-wrap">
-      <table className="data-table">
+      <table className="data-table data-table--stack">
         <caption className="visually-hidden">{t('residents.tableCaption')}</caption>
         <thead>
           <tr>
@@ -131,7 +131,8 @@ function ResidentsTable({ patients, language }: { patients: Patient[]; language:
                 {/* En el móvil la fila es de dos líneas: lo que en escritorio son columnas */}
                 <span className="row-sub">
                   {p.dni} · {t('patient.ageValue', { count: ageOn(p.birthDate) })} ·{' '}
-                  {t('patient.since', { date: formatDate(p.entryDate, language) })}
+                  {t('patient.since', { date: formatDate(p.entryDate, language) })} ·{' '}
+                  {daysBetween(p.entryDate)} {t('common.dayUnit', { count: daysBetween(p.entryDate) })}
                 </span>
               </td>
               <td className="col-wide">{p.dni}</td>

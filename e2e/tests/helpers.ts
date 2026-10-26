@@ -7,10 +7,14 @@ export const ADMIN = {
   password: process.env.E2E_PASSWORD ?? 'demo1234',
 }
 
-export async function login(page: Page, user = ADMIN) {
+// El tutorial de bienvenida sale la primera vez que entra cada empleado (se guarda en su perfil): si sale,
+// se salta, salvo que la prueba sea la del tutorial. Sale junto con los avisos, así que basta mirar una vez
+export async function login(page: Page, user = ADMIN, { keepTutorial = false } = {}) {
   await page.goto('/login')
   await page.getByLabel('Email').fill(user.email)
   await page.getByLabel('Contraseña', { exact: true }).fill(user.password)
   await page.getByRole('button', { name: 'Entrar' }).click()
   await expect(page.getByRole('heading', { level: 1, name: 'Avisos' })).toBeVisible()
+  const skip = page.getByRole('button', { name: 'Saltar el tutorial' })
+  if (!keepTutorial && (await skip.isVisible())) await skip.click()
 }

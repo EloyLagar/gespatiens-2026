@@ -38,6 +38,9 @@ public class UserJpaEntity {
     @Column(nullable = false, length = 2)
     private Language language;
 
+    @Column(nullable = false)
+    private boolean tutorialSeen;
+
     // NULL mientras el empleado invitado no haya creado su contraseña
     private String passwordHash;
 
@@ -63,6 +66,14 @@ public class UserJpaEntity {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    public boolean isTutorialSeen() {
+        return tutorialSeen;
+    }
+
+    public void setTutorialSeen(boolean tutorialSeen) {
+        this.tutorialSeen = tutorialSeen;
     }
 
     public Speciality getSpeciality() {
