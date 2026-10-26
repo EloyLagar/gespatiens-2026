@@ -31,10 +31,11 @@
     "en": "EN"
   },
   "theme": {
-    "label": "Theme",
-    "SYSTEM": "System theme",
-    "LIGHT": "Light theme",
-    "DARK": "Dark theme"
+    "current": "Theme: {{theme}}",
+    "switchTo": "Switch to: {{theme}}",
+    "SYSTEM": "system",
+    "LIGHT": "light",
+    "DARK": "dark"
   },
   "speciality": {
     "ADMINISTRATOR": "Administration",

@@ -96,10 +96,8 @@ export function AppShell() {
         </ul>
       </nav>
       <div className="side-foot">
-        <div className="side-foot__switches">
-          <LanguageSwitch onChange={saveLanguage} />
-          <ThemeSwitch />
-        </div>
+        <LanguageSwitch onChange={saveLanguage} />
+        <ThemeSwitch rail={rail} />
         <NavLink to="/perfil" className="user-row" title={rail ? t('nav.profile') : undefined}>
           <span className="avatar" aria-hidden="true">
             {user.name.charAt(0).toUpperCase()}

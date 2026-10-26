@@ -39,24 +39,33 @@ describe('Tema', () => {
     expect(root).toHaveClass('cds--g100')
   })
 
-  it('el oscuro cambia al momento, se guarda en el perfil y se recuerda en el navegador', async () => {
-    render(<ThemeSwitch />)
-    expect(screen.getByRole('button', { name: 'Tema del sistema' })).toHaveAttribute('aria-pressed', 'true')
-
-    await userEvent.click(screen.getByRole('button', { name: 'Tema oscuro' }))
-
-    expect(screen.getByRole('button', { name: 'Tema oscuro' })).toHaveAttribute('aria-pressed', 'true')
-    expect(root.dataset.theme).toBe('dark')
-    expect(changeMyTheme).toHaveBeenCalledWith('DARK')
-    expect(auth.replaceUser).toHaveBeenCalledWith(expect.objectContaining({ theme: 'DARK' }))
-    expect(localStorage.getItem('gespatiens.theme')).toBe('DARK')
-  })
-
-  it('el claro manda aunque el equipo esté en oscuro', async () => {
+  it('cada pulsación pasa al siguiente: sistema, claro, oscuro y vuelta a empezar', async () => {
     systemPrefersDark(true)
     render(<ThemeSwitch />)
-    await userEvent.click(screen.getByRole('button', { name: 'Tema claro' }))
+    const row = () => screen.getByRole('button', { name: /^Tema:/ })
+    expect(row()).toHaveAccessibleName('Tema: del sistema')
+    expect(row()).toHaveAttribute('title', 'Cambiar a: claro')
+
+    // El claro manda aunque el equipo esté en oscuro
+    await userEvent.click(row())
+    expect(row()).toHaveAccessibleName('Tema: claro')
     expect(root.dataset.theme).toBe('light')
     expect(root).not.toHaveClass('cds--g100')
+
+    await userEvent.click(row())
+    expect(row()).toHaveAccessibleName('Tema: oscuro')
+    expect(root.dataset.theme).toBe('dark')
+
+    await userEvent.click(row())
+    expect(row()).toHaveAccessibleName('Tema: del sistema')
+  })
+
+  it('cambia al momento, se guarda en el perfil y se recuerda en el navegador', async () => {
+    render(<ThemeSwitch />)
+    await userEvent.click(screen.getByRole('button', { name: 'Tema: del sistema' }))
+
+    expect(changeMyTheme).toHaveBeenCalledWith('LIGHT')
+    expect(auth.replaceUser).toHaveBeenCalledWith(expect.objectContaining({ theme: 'LIGHT' }))
+    expect(localStorage.getItem('gespatiens.theme')).toBe('LIGHT')
   })
 })

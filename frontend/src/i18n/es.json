@@ -31,10 +31,11 @@
     "en": "EN"
   },
   "theme": {
-    "label": "Tema",
-    "SYSTEM": "Tema del sistema",
-    "LIGHT": "Tema claro",
-    "DARK": "Tema oscuro"
+    "current": "Tema: {{theme}}",
+    "switchTo": "Cambiar a: {{theme}}",
+    "SYSTEM": "del sistema",
+    "LIGHT": "claro",
+    "DARK": "oscuro"
   },
   "speciality": {
     "ADMINISTRATOR": "Administración",
