@@ -94,6 +94,42 @@ class SqlDashboardQueriesTest {
         assertTrue(queries.noticesByWeek(DAY, DAY.plusDays(6)).isEmpty());
     }
 
+    // ENS: los bloqueos de la última semana, con el nombre si el email es de alguien. Lee un TIMESTAMPTZ y hace un
+    // LEFT JOIN: solo se puede comprobar ejecutándolo
+    @Test
+    void lockoutsAreReadWithTheEmployeeName() {
+        UUID ana = employee("Anabel", "699999304");
+        Instant since = Instant.parse("2099-03-01T00:00:00Z");
+        insertAccess(Instant.parse("2099-03-05T03:12:00Z"), "anabel.panel@vientos.es", ana, "LOCKED", "83.45.120.0");
+        insertAccess(Instant.parse("2099-03-06T04:00:00Z"), "nadie.panel@vientos.es", null, "LOCKED", null);
+        // Un fallo normal y un bloqueo de antes de la semana: no salen
+        insertAccess(Instant.parse("2099-03-05T03:11:00Z"), "anabel.panel@vientos.es", ana, "FAILURE", null);
+        insertAccess(Instant.parse("2099-02-20T03:00:00Z"), "anabel.panel@vientos.es", ana, "LOCKED", null);
+
+        var lockouts = queries.lockoutsSince(since);
+
+        assertEquals(2, lockouts.size());
+        assertEquals("nadie.panel@vientos.es", lockouts.get(0).email());
+        assertEquals(null, lockouts.get(0).employeeName());
+        assertEquals(Instant.parse("2099-03-05T03:12:00Z"), lockouts.get(1).occurredAt());
+        assertEquals("Anabel", lockouts.get(1).employeeName());
+        assertEquals("83.45.120.0", lockouts.get(1).ipAddress());
+    }
+
+    private void insertAccess(Instant at, String email, UUID userId, String outcome, String ip) {
+        entityManager.createNativeQuery("""
+                        INSERT INTO access_log (id, occurred_at, email, user_id, outcome, ip_address)
+                        VALUES (:id, :at, :email, :userId, :outcome, :ip)
+                        """)
+                .setParameter("id", UUID.randomUUID())
+                .setParameter("at", at)
+                .setParameter("email", email)
+                .setParameter("userId", userId)
+                .setParameter("outcome", outcome)
+                .setParameter("ip", ip)
+                .executeUpdate();
+    }
+
     // Los vencimientos leen fechas de la base de datos. Llegan como LocalDate: convertirlas a java.sql.Date
     // tumbaba el panel en cuanto había un informe con fecha prevista (octubre de 2026)
     @Test
