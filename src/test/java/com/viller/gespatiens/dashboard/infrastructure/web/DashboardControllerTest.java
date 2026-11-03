@@ -2,6 +2,7 @@ package com.viller.gespatiens.dashboard.infrastructure.web;
 
 import com.viller.gespatiens.access.users.infrastructure.security.CurrentUserJwtConverter;
 import com.viller.gespatiens.access.users.infrastructure.security.SecurityConfig;
+import com.viller.gespatiens.dashboard.application.DashboardQueries;
 import com.viller.gespatiens.dashboard.application.DashboardQueries.ShiftCount;
 import com.viller.gespatiens.dashboard.application.DashboardUseCase;
 import com.viller.gespatiens.dashboard.application.DashboardView;
@@ -16,6 +17,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -50,7 +52,9 @@ class DashboardControllerTest {
                 List.of(new WeekCount(LocalDate.of(2026, 9, 28), 2)),
                 List.of(new Deadline(Deadline.Kind.COURT_MEASURE_END,
                         new Deadline.Resident(UUID.randomUUID(), 5, "Lucía", "Martínez"), LocalDate.of(2026, 10, 18),
-                        -3, null, "Juzgado de lo Penal nº 3"))));
+                        -3, null, "Juzgado de lo Penal nº 3")),
+                List.of(new DashboardQueries.Lockout(Instant.parse("2026-10-20T03:12:00Z"), "nadie@vientos.es", null,
+                        null, "83.45.120.201"))));
 
         mockMvc.perform(get("/api/dashboard").param("month", "2026-10"))
                 .andExpect(status().isOk())
@@ -58,6 +62,8 @@ class DashboardControllerTest {
                 .andExpect(jsonPath("$.shifts[0].total").value(9))
                 .andExpect(jsonPath("$.noticesByWeek[0].monday").value("2026-09-28"))
                 .andExpect(jsonPath("$.deadlines[0].kind").value("COURT_MEASURE_END"))
+                .andExpect(jsonPath("$.lockouts[0].email").value("nadie@vientos.es"))
+                .andExpect(jsonPath("$.lockouts[0].employee").doesNotExist())
                 .andExpect(jsonPath("$.deadlines[0].overdue").value(true))
                 .andExpect(jsonPath("$.deadlines[0].resident.number").value(5));
     }

@@ -67,7 +67,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/reports/*/close", "/api/reports/*/reopen").hasRole("ADMINISTRATOR")
                         // Memoria final, 5.1: un panel "al que solo esta [la administración] pudiese acceder"
                         .requestMatchers("/api/dashboard", "/api/dashboard/**").hasRole("ADMINISTRATOR")
-                        // El registro de cambios de los datos de los residentes (RNF7): solo la administración
+                        // Cada empleado ve su propio acceso anterior al entrar (ENS op.acc)
+                        .requestMatchers(HttpMethod.GET, "/api/audit/access/mine").authenticated()
+                        // Los registros de cambios (RNF7) y de accesos (ENS): solo la administración
                         .requestMatchers("/api/audit", "/api/audit/**").hasRole("ADMINISTRATOR")
                         // Cuadrante de turnos: lo consulta todo el personal y lo planifica la administración. Los
                         // cambios de turno los acuerdan los trabajadores entre ellos (decisión del centro)

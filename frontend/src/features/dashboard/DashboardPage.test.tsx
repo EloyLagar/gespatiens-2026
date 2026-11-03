@@ -20,6 +20,10 @@ const DATA: Dashboard = {
     { kind: 'COURT_MEASURE_END', resident: { id: 'p2', number: 2, name: 'Elena', surname: 'Mas' }, dueDate: '2026-10-25',
       daysLeft: 4, overdue: false, reportId: null, detail: 'Juzgado de lo Penal nº 3' },
   ],
+  lockouts: [
+    { occurredAt: '2026-10-20T03:12:00Z', email: 'ana@vientos.es', employee: { id: 'e2', name: 'Ana' }, ipAddress: '83.45.120.0' },
+    { occurredAt: '2026-10-19T02:00:00Z', email: 'admin@vientos.es', employee: null, ipAddress: null },
+  ],
 }
 
 describe('DashboardPage', () => {
@@ -46,8 +50,25 @@ describe('DashboardPage', () => {
     expect(screen.getByText('Juzgado de lo Penal nº 3')).toBeInTheDocument()
     expect(screen.getAllByText('En 4 días')[0]).toBeInTheDocument()
 
+    // ENS: los bloqueos de la última semana, con el enlace a los intentos fallidos
+    expect(screen.getByRole('heading', { name: '2 bloqueos en la última semana' })).toBeInTheDocument()
+    expect(screen.getByText('ana@vientos.es')).toBeInTheDocument()
+    expect(screen.getByText(/Email que no es de nadie/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Ver los intentos fallidos en el registro de accesos' }))
+      .toHaveAttribute('href', '/registro/accesos?resultado=failed')
+
     // El desglose, también como tabla
     await userEvent.click(screen.getByText('Ver como tabla'))
     expect(screen.getByRole('columnheader', { name: 'Total' })).toBeVisible()
+  })
+
+  // Sin bloqueos, la sección no sale
+  it('no enseña los bloqueos si no los hay', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async () =>
+      new Response(JSON.stringify({ ...DATA, lockouts: [] }), { status: 200, headers: { 'Content-Type': 'application/json' } })))
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>)
+
+    expect(await screen.findByText('27')).toBeInTheDocument()
+    expect(screen.queryByText(/bloqueos? en la última semana/)).not.toBeInTheDocument()
   })
 })

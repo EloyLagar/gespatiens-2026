@@ -18,6 +18,7 @@ import { ProfilePage } from './features/users/ProfilePage'
 import { EvaluationsPage } from './features/evaluations/EvaluationsPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
 import { AuditPage } from './features/audit/AuditPage'
+import { AccessLogPage } from './features/audit/AccessLogPage'
 import { ReportPage } from './features/reports/ReportPage'
 import { ReportsPage } from './features/reports/ReportsPage'
 import { RotaPage } from './features/rota/RotaPage'
@@ -61,6 +62,14 @@ export function App() {
           element={
             <RequireAdmin>
               <AuditPage />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="registro/accesos"
+          element={
+            <RequireAdmin>
+              <AccessLogPage />
             </RequireAdmin>
           }
         />

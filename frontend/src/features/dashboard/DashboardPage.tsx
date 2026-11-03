@@ -31,6 +31,7 @@ export function DashboardPage() {
       ) : data && (
         <>
           <Figures data={data} />
+          <Lockouts data={data} />
           <Deadlines data={data} />
           <div className="dashboard-charts">
             <ShiftsChart data={data} />
@@ -39,6 +40,33 @@ export function DashboardPage() {
         </>
       )}
     </>
+  )
+}
+
+// ENS: ¿alguien ha estado probando contraseñas? Los emails bloqueados por 5 fallos seguidos en la última semana.
+// Si no hay ninguno, la sección no sale: el panel solo avisa cuando hay algo que mirar
+function Lockouts({ data }: { data: Dashboard }) {
+  const { t, i18n } = useTranslation()
+  if (data.lockouts.length === 0) return null
+  const when = new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-GB' : 'es-ES', { dateStyle: 'short', timeStyle: 'short' })
+  return (
+    <section className="panel dashboard-lockouts" aria-labelledby="lockouts-title">
+      <h2 id="lockouts-title">{t('dashboard.lockouts.title', { count: data.lockouts.length })}</h2>
+      <p className="section-help">{t('dashboard.lockouts.help')}</p>
+      <ul className="lockout-list">
+        {data.lockouts.map((l) => (
+          <li key={`${l.occurredAt}-${l.email}`}>
+            <time className="num" dateTime={l.occurredAt}>{when.format(new Date(l.occurredAt))}</time>
+            <span>
+              {l.employee ? (l.employee.name ?? t('audit.formerEmployee')) : t('dashboard.lockouts.nobody')}
+              {' · '}<span className="access-email">{l.email}</span>
+            </span>
+            <span className="num lockout-list__ip">{l.ipAddress ?? t('access.unknownIp')}</span>
+          </li>
+        ))}
+      </ul>
+      <Link to="/registro/accesos?resultado=failed">{t('dashboard.lockouts.open')}</Link>
+    </section>
   )
 }
 

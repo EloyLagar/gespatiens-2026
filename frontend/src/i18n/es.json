@@ -21,7 +21,7 @@
     "evaluations": "Valoraciones",
     "dashboard": "Panel de control",
     "rota": "Turnos",
-    "audit": "Registro de cambios",
+    "audit": "Registros",
     "collapseMenu": "Plegar el menú",
     "expandMenu": "Desplegar el menú"
   },
@@ -818,6 +818,13 @@
       "today": "Vence hoy",
       "inDays_one": "Mañana",
       "inDays_other": "En {{count}} días"
+    },
+    "lockouts": {
+      "title_one": "{{count}} bloqueo en la última semana",
+      "title_other": "{{count}} bloqueos en la última semana",
+      "help": "Emails bloqueados 15 minutos tras 5 intentos fallidos seguidos. Puede ser alguien que ha olvidado su contraseña, o alguien probando contraseñas.",
+      "nobody": "Email que no es de nadie",
+      "open": "Ver los intentos fallidos en el registro de accesos"
     }
   },
   "rota": {
@@ -973,6 +980,50 @@
       "ASSIGN_TUTORS": "Asignó los tutores"
     }
   },
+  "logs": {
+    "label": "Registros",
+    "changes": "Cambios",
+    "access": "Accesos"
+  },
+  "access": {
+    "title": "Registro de accesos",
+    "subtitle": "Quién ha entrado en la aplicación, desde dónde, los intentos fallidos y los cambios de contraseña. No se puede modificar y se conserva 2 años.",
+    "result": "Resultado",
+    "anyResult": "Todos",
+    "onlyOk": "Entradas",
+    "onlyFailed": "Intentos fallidos",
+    "onlyLocked": "Bloqueos",
+    "who": "Quién",
+    "from": "Desde dónde",
+    "empty": "No hay ningún acceso con estos filtros.",
+    "count_one": "{{count}} acceso",
+    "count_other": "{{count}} accesos",
+    "unknownEmail": "No es el email de nadie de la plantilla",
+    "unknownOrigin": "Sin datos",
+    "unknownIp": "IP desconocida",
+    "outcome": {
+      "SUCCESS": "Entró",
+      "FAILURE": "Contraseña o email incorrectos",
+      "LOCKED": "Bloqueado tras 5 fallos",
+      "BLOCKED": "Intentó entrar bloqueado",
+      "PASSWORD_CHANGED": "Cambió su contraseña",
+      "PASSWORD_CHANGE_REJECTED": "Intentó cambiarla sin saber la actual",
+      "PASSWORD_SET": "Creó su contraseña con el enlace",
+      "PASSWORD_RESET": "Le pusieron una provisional"
+    },
+    "onlyPasswords": "Contraseñas",
+    "by": "Por {{name}}"
+  },
+  "lastAccess": {
+    "previous": "Tu último acceso fue el {{when}}.",
+    "first": "Es tu primer acceso registrado.",
+    "from": "Desde {{where}}.",
+    "failed_one": "Desde entonces ha habido {{count}} intento fallido de entrar con tu email. Si no has sido tú, avísalo a la administración.",
+    "failed_other": "Desde entonces ha habido {{count}} intentos fallidos de entrar con tu email. Si no has sido tú, avísalo a la administración.",
+    "infoIcon": "Información",
+    "warningIcon": "Atención",
+    "close": "Cerrar el aviso del último acceso"
+  },
   "tutorial": {
     "progress": "Paso {{current}} de {{total}}",
     "skip": "Saltar el tutorial",
@@ -1022,8 +1073,8 @@
         "text": "Las cifras del día (plazas ocupadas, residentes sin tutores, informes en elaboración) y lo que vence pronto. Debajo, los turnos de cada trabajador y los avisos de cada semana en el mes que elijas."
       },
       "audit": {
-        "title": "Registro de cambios",
-        "text": "Quién ha cambiado los datos de cada residente, y cuándo. No se puede modificar y se conserva dos años."
+        "title": "Registros",
+        "text": "Dos registros que no se pueden modificar y se conservan dos años: quién ha cambiado los datos de cada residente, y quién ha entrado en la aplicación (o lo ha intentado sin conseguirlo)."
       },
       "profile": {
         "title": "Mi perfil",

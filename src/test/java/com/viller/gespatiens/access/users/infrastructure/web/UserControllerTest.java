@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
+import com.viller.gespatiens.access.users.application.LoginOrigin;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -50,8 +52,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // Levanta solo la capa web + seguridad, con el caso de uso simulado (no necesita PostgreSQL)
 @WebMvcTest(UserController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, LoginOriginResolver.class})
+@TestPropertySource(properties = "gespatiens.access-log.anonymize-ip=false")
 class UserControllerTest {
+
+    // MockMvc hace las peticiones desde 127.0.0.1, sin navegador
+    private static final LoginOrigin LOCAL = new LoginOrigin("127.0.0.1", null);
 
     // Con JWT, el "username" de la autenticación es el id del empleado
     private static final String ME = "7f3c2a10-0000-4000-8000-0000000000aa";
@@ -267,14 +273,14 @@ class UserControllerTest {
         mockMvc.perform(put("/api/users/me/password").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"currentPassword\":\"antigua123\",\"newPassword\":\"nueva12345\"}"))
                 .andExpect(status().isNoContent());
-        verify(changeOwnPasswordUseCase).execute(ME_ID, "antigua123", "nueva12345");
+        verify(changeOwnPasswordUseCase).execute(ME_ID, "antigua123", "nueva12345", LOCAL);
     }
 
     @Test
     @WithMockUser(username = ME)
     void wrongCurrentPasswordReturnsBadRequest() throws Exception {
         doThrow(new InvalidCurrentPasswordException())
-                .when(changeOwnPasswordUseCase).execute(any(), any(), any());
+                .when(changeOwnPasswordUseCase).execute(any(), any(), any(), any());
 
         mockMvc.perform(put("/api/users/me/password").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"currentPassword\":\"mal\",\"newPassword\":\"nueva12345\"}"))
@@ -312,15 +318,16 @@ class UserControllerTest {
         verifyNoInteractions(editUserUseCase, resetUserPasswordUseCase, deleteUserUseCase);
     }
 
+    // Queda anotado en el registro de accesos quién de la administración la puso
     @Test
-    @WithMockUser(roles = "ADMINISTRATOR")
+    @WithMockUser(username = ME, roles = "ADMINISTRATOR")
     void administratorResetsPassword() throws Exception {
         UUID id = UUID.randomUUID();
 
         mockMvc.perform(put("/api/users/{id}/password", id).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPassword\":\"provisional1\"}"))
                 .andExpect(status().isNoContent());
-        verify(resetUserPasswordUseCase).execute(id, "provisional1");
+        verify(resetUserPasswordUseCase).execute(ME_ID, id, "provisional1", LOCAL);
     }
 
     @Test

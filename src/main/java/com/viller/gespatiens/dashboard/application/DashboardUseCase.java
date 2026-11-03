@@ -4,6 +4,7 @@ import com.viller.gespatiens.dashboard.application.DashboardQueries.ShiftCount;
 import com.viller.gespatiens.dashboard.application.DashboardView.WeekCount;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
@@ -23,6 +24,8 @@ public class DashboardUseCase {
 
     // RF10: las plazas del centro
     public static final int TOTAL_PLACES = 32;
+    // ENS: el panel avisa de los emails bloqueados por intentos fallidos en la última semana. No depende del mes
+    public static final Duration LOCKOUTS_WINDOW = Duration.ofDays(7);
 
     private final DashboardQueries queries;
     private final Clock clock;
@@ -58,7 +61,8 @@ public class DashboardUseCase {
 
         return new DashboardView(month, queries.activeResidents(), TOTAL_PLACES,
                 queries.activeResidentsWithoutBothTutors(), queries.reportsInProgress(),
-                queries.interventionsBetween(first, last), shifts, weeks, deadlines());
+                queries.interventionsBetween(first, last), shifts, weeks, deadlines(),
+                queries.lockoutsSince(clock.instant().minus(LOCKOUTS_WINDOW)));
     }
 
     // Lo que vence en el plazo de aviso y lo que ya ha vencido, de lo más urgente a lo menos. No depende del

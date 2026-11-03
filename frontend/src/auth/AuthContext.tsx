@@ -4,7 +4,7 @@ import i18n from '../i18n'
 import { configureHttp } from '../api/http'
 import type { User } from '../api/types'
 import { applyTheme } from '../theme'
-import { loadSession, saveSession, sessionFromLogin, type Session } from './session'
+import { loadSession, saveSession, sessionFromLogin, setLastAccessPending, type Session } from './session'
 
 interface AuthState {
   user: User | null
@@ -40,7 +40,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(next)
   }, [])
 
-  const logout = useCallback(() => store(null), [store])
+  const logout = useCallback(() => {
+    setLastAccessPending(false)
+    store(null)
+  }, [store])
 
   const expire = useCallback(() => {
     if (tokenRef.current) setEndedBecause('expired')
@@ -60,6 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (email: string, password: string) => {
       const response = await loginRequest(email, password)
       setEndedBecause(null)
+      // ENS op.acc: al entrar se le enseña su acceso anterior
+      setLastAccessPending(true)
       store(sessionFromLogin(response))
     },
     [store],

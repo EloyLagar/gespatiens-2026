@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
+import com.viller.gespatiens.access.users.application.LoginOrigin;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -24,8 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // Sin @WithMockUser: quien abre el enlace del correo todavía no puede entrar
 @WebMvcTest(PasswordSetupController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, LoginOriginResolver.class})
+@TestPropertySource(properties = "gespatiens.access-log.anonymize-ip=false")
 class PasswordSetupControllerTest {
+
+    private static final LoginOrigin LOCAL = new LoginOrigin("127.0.0.1", null);
 
     @Autowired
     private MockMvc mockMvc;
@@ -57,7 +62,7 @@ class PasswordSetupControllerTest {
         mockMvc.perform(post("/api/auth/password-setup/abc").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPassword\":\"secreto123\"}"))
                 .andExpect(status().isNoContent());
-        verify(passwordSetupUseCase).complete("abc", "secreto123");
+        verify(passwordSetupUseCase).complete("abc", "secreto123", LOCAL);
     }
 
     @Test
@@ -70,7 +75,7 @@ class PasswordSetupControllerTest {
 
     @Test
     void shortPasswordReturnsBadRequest() throws Exception {
-        when(passwordSetupUseCase.complete("abc", "corta"))
+        when(passwordSetupUseCase.complete("abc", "corta", LOCAL))
                 .thenThrow(new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres"));
 
         mockMvc.perform(post("/api/auth/password-setup/abc").contentType(MediaType.APPLICATION_JSON)

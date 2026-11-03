@@ -10,6 +10,7 @@ import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.InviteUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.LoginAttempts;
+import com.viller.gespatiens.access.users.application.AccessEvents;
 import com.viller.gespatiens.access.users.application.LoginUseCase;
 import com.viller.gespatiens.access.users.application.MarkOwnTutorialSeenUseCase;
 import com.viller.gespatiens.access.users.application.PasswordSetupLinkSender;
@@ -89,8 +90,8 @@ public class UserBeanConfiguration {
     @Bean
     public PasswordSetupUseCase passwordSetupUseCase(PasswordSetupTokenRepository tokenRepository,
                                                      UserRepository userRepository, PasswordHasher passwordHasher,
-                                                     Clock clock) {
-        return new PasswordSetupUseCase(tokenRepository, userRepository, passwordHasher, clock);
+                                                     AccessEvents accessEvents, Clock clock) {
+        return new PasswordSetupUseCase(tokenRepository, userRepository, passwordHasher, accessEvents, clock);
     }
 
     @Bean
@@ -121,8 +122,9 @@ public class UserBeanConfiguration {
 
     @Bean
     public LoginUseCase loginUseCase(UserRepository userRepository, PasswordHasher passwordHasher,
-                                     AccessTokenIssuer accessTokenIssuer, LoginAttempts loginAttempts, Clock clock) {
-        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer, loginAttempts, clock);
+                                     AccessTokenIssuer accessTokenIssuer, LoginAttempts loginAttempts,
+                                     AccessEvents accessEvents, Clock clock) {
+        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer, loginAttempts, accessEvents, clock);
     }
 
     // Decisión del centro: al menos 5 intentos antes de bloquear
@@ -139,8 +141,9 @@ public class UserBeanConfiguration {
 
     @Bean
     public ChangeOwnPasswordUseCase changeOwnPasswordUseCase(UserRepository userRepository,
-                                                             PasswordHasher passwordHasher) {
-        return new ChangeOwnPasswordUseCase(userRepository, passwordHasher);
+                                                             PasswordHasher passwordHasher,
+                                                             AccessEvents accessEvents, Clock clock) {
+        return new ChangeOwnPasswordUseCase(userRepository, passwordHasher, accessEvents, clock);
     }
 
     @Bean
@@ -155,8 +158,9 @@ public class UserBeanConfiguration {
 
     @Bean
     public ResetUserPasswordUseCase resetUserPasswordUseCase(UserRepository userRepository,
-                                                             PasswordHasher passwordHasher) {
-        return new ResetUserPasswordUseCase(userRepository, passwordHasher);
+                                                             PasswordHasher passwordHasher,
+                                                             AccessEvents accessEvents, Clock clock) {
+        return new ResetUserPasswordUseCase(userRepository, passwordHasher, accessEvents, clock);
     }
 
     @Bean

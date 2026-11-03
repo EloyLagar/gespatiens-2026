@@ -14,3 +14,4 @@ el formato de Michael Nygard: **contexto**, **decisión**, **alternativas**, **c
 | [0007](0007-carbon-wcag-e-idiomas.md) | Carbon, WCAG 2.1 AA y dos idiomas desde el principio | Aceptada |
 | [0008](0008-despliegue-gratuito.md) | Despliegue gratuito en Neon, Render y Vercel | Aceptada |
 | [0009](0009-eventos-entre-modulos.md) | Eventos de Spring entre módulos | Aceptada |
+| [0010](0010-registro-de-accesos.md) | Registro de accesos separado del registro de cambios | Aceptada |
