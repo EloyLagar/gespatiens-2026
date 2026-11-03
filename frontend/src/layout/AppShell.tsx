@@ -78,7 +78,7 @@ export function AppShell() {
     { to: '/empleados', label: t('nav.employees'), icon: <Group size={16} /> },
     // Memoria final, 5.1: el panel de control solo lo ve la administración
     ...(isAdmin ? [{ to: '/panel', label: t('nav.dashboard'), icon: <Dashboard size={16} /> }] : []),
-    // RNF7: quién ha consultado o cambiado los datos de cada residente
+    // RNF7 y ENS: quién ha cambiado los datos de cada residente y quién ha entrado en la aplicación
     ...(isAdmin ? [{ to: '/registro', label: t('nav.audit'), icon: <RecentlyViewed size={16} /> }] : []),
   ]
 

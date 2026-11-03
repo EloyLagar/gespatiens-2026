@@ -44,3 +44,45 @@ export function searchAudit(filter: AuditFilter) {
   })
   return request<AuditPage>(`/audit?${params}`)
 }
+
+// ---------------------------------------------------------------- Registro de accesos (AccessLogController)
+
+// SUCCESS: entró. FAILURE: email o contraseña mal. LOCKED: el fallo que bloqueó el email. BLOCKED: lo intentó
+// con el email bloqueado
+export type AccessOutcome = 'SUCCESS' | 'FAILURE' | 'LOCKED' | 'BLOCKED'
+
+export interface AccessEntry {
+  id: string
+  occurredAt: string
+  // El que se escribió, exista o no
+  email: string
+  // null: el email no es de nadie. name null: ya no está en la plantilla
+  employee: { id: string; name: string | null } | null
+  outcome: AccessOutcome
+  ipAddress: string | null
+  userAgent: string | null
+}
+
+export interface AccessPage {
+  entries: AccessEntry[]
+  page: number
+  totalPages: number
+  totalEntries: number
+}
+
+export interface AccessFilter {
+  userId?: string
+  outcomes?: AccessOutcome[]
+  from?: IsoDate
+  to?: IsoDate
+  page?: number
+}
+
+export function searchAccessLog({ outcomes, ...filter }: AccessFilter) {
+  const params = new URLSearchParams()
+  Object.entries(filter).forEach(([key, value]) => {
+    if (value !== undefined && value !== '') params.set(key, String(value))
+  })
+  outcomes?.forEach((o) => params.append('outcome', o))
+  return request<AccessPage>(`/audit/access?${params}`)
+}

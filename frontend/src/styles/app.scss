@@ -1329,6 +1329,46 @@ button:focus-visible,
   display: none;
 }
 
+// Registro de accesos: el email, debajo del nombre, también en escritorio. Puede ser largo: se parte donde haga falta
+.row-sub--always {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.access-email {
+  overflow-wrap: anywhere;
+}
+
+// Los dos registros (cambios y accesos), como pestañas: son enlaces, cada uno con su URL
+.log-tabs {
+  display: flex;
+  gap: 0;
+  margin: 0 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.log-tabs__link {
+  display: inline-block;
+  padding: 12px 16px 10px;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.log-tabs__link:hover {
+  color: var(--text);
+  background: var(--hover);
+}
+
+.log-tabs__link[aria-current='page'] {
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+
 .unit {
   color: var(--muted);
   font-size: 12px;

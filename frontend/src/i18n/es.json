@@ -21,7 +21,7 @@
     "evaluations": "Valoraciones",
     "dashboard": "Panel de control",
     "rota": "Turnos",
-    "audit": "Registro de cambios",
+    "audit": "Registros",
     "collapseMenu": "Plegar el menú",
     "expandMenu": "Desplegar el menú"
   },
@@ -973,6 +973,34 @@
       "ASSIGN_TUTORS": "Asignó los tutores"
     }
   },
+  "logs": {
+    "label": "Registros",
+    "changes": "Cambios",
+    "access": "Accesos"
+  },
+  "access": {
+    "title": "Registro de accesos",
+    "subtitle": "Quién ha entrado en la aplicación, desde dónde, y los intentos fallidos. No se puede modificar y se conserva 2 años.",
+    "result": "Resultado",
+    "anyResult": "Todos",
+    "onlyOk": "Entradas",
+    "onlyFailed": "Intentos fallidos",
+    "onlyLocked": "Bloqueos",
+    "who": "Quién",
+    "from": "Desde dónde",
+    "empty": "No hay ningún acceso con estos filtros.",
+    "count_one": "{{count}} acceso",
+    "count_other": "{{count}} accesos",
+    "unknownEmail": "No es el email de nadie de la plantilla",
+    "unknownOrigin": "Sin datos",
+    "unknownIp": "IP desconocida",
+    "outcome": {
+      "SUCCESS": "Entró",
+      "FAILURE": "Contraseña o email incorrectos",
+      "LOCKED": "Bloqueado tras 5 fallos",
+      "BLOCKED": "Intentó entrar bloqueado"
+    }
+  },
   "tutorial": {
     "progress": "Paso {{current}} de {{total}}",
     "skip": "Saltar el tutorial",
@@ -1022,8 +1050,8 @@
         "text": "Las cifras del día (plazas ocupadas, residentes sin tutores, informes en elaboración) y lo que vence pronto. Debajo, los turnos de cada trabajador y los avisos de cada semana en el mes que elijas."
       },
       "audit": {
-        "title": "Registro de cambios",
-        "text": "Quién ha cambiado los datos de cada residente, y cuándo. No se puede modificar y se conserva dos años."
+        "title": "Registros",
+        "text": "Dos registros que no se pueden modificar y se conservan dos años: quién ha cambiado los datos de cada residente, y quién ha entrado en la aplicación (o lo ha intentado sin conseguirlo)."
       },
       "profile": {
         "title": "Mi perfil",

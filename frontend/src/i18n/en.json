@@ -21,7 +21,7 @@
     "evaluations": "Evaluations",
     "dashboard": "Dashboard",
     "rota": "Shifts",
-    "audit": "Change log",
+    "audit": "Logs",
     "collapseMenu": "Collapse the menu",
     "expandMenu": "Expand the menu"
   },
@@ -973,6 +973,34 @@
       "ASSIGN_TUTORS": "Assigned the tutors"
     }
   },
+  "logs": {
+    "label": "Logs",
+    "changes": "Changes",
+    "access": "Sign-ins"
+  },
+  "access": {
+    "title": "Sign-in log",
+    "subtitle": "Who signed in to the app, from where, and the failed attempts. It cannot be edited and is kept for 2 years.",
+    "result": "Result",
+    "anyResult": "All",
+    "onlyOk": "Sign-ins",
+    "onlyFailed": "Failed attempts",
+    "onlyLocked": "Lockouts",
+    "who": "Who",
+    "from": "From where",
+    "empty": "No sign-in matches these filters.",
+    "count_one": "{{count}} sign-in attempt",
+    "count_other": "{{count}} sign-in attempts",
+    "unknownEmail": "Not the email of anyone on the staff",
+    "unknownOrigin": "No data",
+    "unknownIp": "Unknown IP",
+    "outcome": {
+      "SUCCESS": "Signed in",
+      "FAILURE": "Wrong email or password",
+      "LOCKED": "Locked after 5 failures",
+      "BLOCKED": "Tried while locked"
+    }
+  },
   "tutorial": {
     "progress": "Step {{current}} of {{total}}",
     "skip": "Skip the tutorial",
@@ -1022,8 +1050,8 @@
         "text": "Today's figures (occupied places, residents without tutors, reports in progress) and upcoming deadlines. Below, each worker's shifts and the notices per week for the month you choose."
       },
       "audit": {
-        "title": "Change log",
-        "text": "Who changed each resident's data, and when. It cannot be modified and is kept for two years."
+        "title": "Logs",
+        "text": "Two logs that cannot be modified and are kept for two years: who changed each resident's data, and who signed in to the app (or tried and failed)."
       },
       "profile": {
         "title": "My profile",

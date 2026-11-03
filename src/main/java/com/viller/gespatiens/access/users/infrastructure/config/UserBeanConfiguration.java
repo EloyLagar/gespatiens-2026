@@ -10,6 +10,7 @@ import com.viller.gespatiens.access.users.application.GetUserUseCase;
 import com.viller.gespatiens.access.users.application.InviteUserUseCase;
 import com.viller.gespatiens.access.users.application.ListUsersUseCase;
 import com.viller.gespatiens.access.users.application.LoginAttempts;
+import com.viller.gespatiens.access.users.application.LoginEvents;
 import com.viller.gespatiens.access.users.application.LoginUseCase;
 import com.viller.gespatiens.access.users.application.MarkOwnTutorialSeenUseCase;
 import com.viller.gespatiens.access.users.application.PasswordSetupLinkSender;
@@ -121,8 +122,9 @@ public class UserBeanConfiguration {
 
     @Bean
     public LoginUseCase loginUseCase(UserRepository userRepository, PasswordHasher passwordHasher,
-                                     AccessTokenIssuer accessTokenIssuer, LoginAttempts loginAttempts, Clock clock) {
-        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer, loginAttempts, clock);
+                                     AccessTokenIssuer accessTokenIssuer, LoginAttempts loginAttempts,
+                                     LoginEvents loginEvents, Clock clock) {
+        return new LoginUseCase(userRepository, passwordHasher, accessTokenIssuer, loginAttempts, loginEvents, clock);
     }
 
     // Decisión del centro: al menos 5 intentos antes de bloquear
