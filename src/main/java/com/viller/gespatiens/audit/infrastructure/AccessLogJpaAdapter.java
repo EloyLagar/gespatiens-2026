@@ -28,6 +28,7 @@ public class AccessLogJpaAdapter implements AccessLog {
         entity.setOccurredAt(entry.getOccurredAt());
         entity.setEmail(entry.getEmail());
         entity.setUserId(entry.getUserId());
+        entity.setActorId(entry.getActorId());
         entity.setOutcome(entry.getOutcome());
         entity.setIpAddress(entry.getIpAddress());
         entity.setUserAgent(entry.getUserAgent());
@@ -70,7 +71,7 @@ public class AccessLogJpaAdapter implements AccessLog {
     }
 
     private static AccessEntry toDomain(AccessEntryJpaEntity e) {
-        return AccessEntry.reconstitute(e.getId(), e.getOccurredAt(), e.getEmail(), e.getUserId(), e.getOutcome(),
+        return AccessEntry.reconstitute(e.getId(), e.getOccurredAt(), e.getEmail(), e.getUserId(), e.getActorId(), e.getOutcome(),
                 e.getIpAddress(), e.getUserAgent());
     }
 }

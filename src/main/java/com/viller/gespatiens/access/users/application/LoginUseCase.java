@@ -1,7 +1,7 @@
 package com.viller.gespatiens.access.users.application;
 
-import com.viller.gespatiens.access.users.application.LoginEvents.LoginAttempted;
-import com.viller.gespatiens.access.users.application.LoginEvents.Outcome;
+import com.viller.gespatiens.access.users.application.AccessEvents.LoginAttempted;
+import com.viller.gespatiens.access.users.application.AccessEvents.Outcome;
 import com.viller.gespatiens.access.users.domain.PasswordHasher;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserRepository;
@@ -15,18 +15,18 @@ import java.util.UUID;
 // RF3: solo los empleados registrados pueden entrar. Devuelve el token y el empleado,
 // para que el frontend sepa quién es y qué apartados mostrarle sin otra petición.
 // Tras varios intentos fallidos seguidos con el mismo email se bloquea un rato (LoginAttempts).
-// Cada intento, bueno o malo, se avisa a LoginEvents para el registro de accesos
+// Cada intento, bueno o malo, se avisa a AccessEvents para el registro de accesos
 public class LoginUseCase {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
     private final AccessTokenIssuer accessTokenIssuer;
     private final LoginAttempts attempts;
-    private final LoginEvents events;
+    private final AccessEvents events;
     private final Clock clock;
 
     public LoginUseCase(UserRepository userRepository, PasswordHasher passwordHasher,
-                        AccessTokenIssuer accessTokenIssuer, LoginAttempts attempts, LoginEvents events,
+                        AccessTokenIssuer accessTokenIssuer, LoginAttempts attempts, AccessEvents events,
                         Clock clock) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
@@ -48,7 +48,7 @@ public class LoginUseCase {
         // Mientras dura el bloqueo ni se comprueba la contraseña: tampoco la correcta abre
         Optional<Instant> blockedUntil = attempts.blockedUntil(key, now);
         if (blockedUntil.isPresent()) {
-            events.attempted(new LoginAttempted(now, key, accountId, Outcome.BLOCKED, from));
+            events.loginAttempted(new LoginAttempted(now, key, accountId, Outcome.BLOCKED, from));
             throw new LoginBlockedException(blockedUntil.get(), now);
         }
         User user = account
@@ -59,12 +59,12 @@ public class LoginUseCase {
         if (user == null) {
             attempts.recordFailure(key, now);
             Outcome outcome = attempts.blockedUntil(key, now).isPresent() ? Outcome.LOCKED : Outcome.FAILURE;
-            events.attempted(new LoginAttempted(now, key, accountId, outcome, from));
+            events.loginAttempted(new LoginAttempted(now, key, accountId, outcome, from));
             throw new InvalidCredentialsException();
         }
         attempts.reset(key);
         Session session = new Session(user, accessTokenIssuer.issueFor(user));
-        events.attempted(new LoginAttempted(now, key, user.getId(), Outcome.SUCCESS, from));
+        events.loginAttempted(new LoginAttempted(now, key, user.getId(), Outcome.SUCCESS, from));
         return session;
     }
 

@@ -27,7 +27,16 @@ rastro.
 - **En la demo publicada la IP se guarda sin su última parte** (`gespatiens.access-log.anonymize-ip`): sirve para
   enseñar la pantalla sin guardar la dirección exacta de cada visitante.
 - **Se conserva 2 años**, como el registro de cambios, y lo borra el mismo trabajo nocturno (`AuditPurgeJob`).
+- **También los cambios de contraseña**: el propio empleado desde Mi perfil (`PASSWORD_CHANGED`), el intento de
+  cambiarla con una contraseña actual equivocada (`PASSWORD_CHANGE_REJECTED`, puede ser alguien en una sesión
+  ajena), la creada desde el enlace del correo (`PASSWORD_SET`) y la provisional que pone la administración
+  (`PASSWORD_RESET`, con `actor_id`: quién la puso). El puerto pasa a llamarse `AccessEvents`.
 - **Solo la administración lo consulta**, en la pestaña «Accesos» de Registros (`/registro/accesos`).
+- **Cada empleado ve su acceso anterior al entrar** (ENS op.acc): un aviso encima de la pantalla con cuándo y desde
+  dónde fue, y cuántos intentos fallidos ha habido con su email desde entonces. Lo pide a `/api/audit/access/mine`,
+  la única ruta del registro abierta a todo el personal, y solo devuelve lo suyo.
+- **El panel de control avisa de los bloqueos de la última semana**, con enlace a los intentos fallidos. Si no hay
+  ninguno, la sección no sale.
 
 ## Alternativas consideradas
 

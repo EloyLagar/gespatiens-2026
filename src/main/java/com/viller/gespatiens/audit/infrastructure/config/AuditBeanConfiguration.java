@@ -1,6 +1,7 @@
 package com.viller.gespatiens.audit.infrastructure.config;
 
 import com.viller.gespatiens.audit.application.AuditDirectory;
+import com.viller.gespatiens.audit.application.MyLastAccessUseCase;
 import com.viller.gespatiens.audit.application.PurgeAccessLogUseCase;
 import com.viller.gespatiens.audit.application.PurgeAuditLogUseCase;
 import com.viller.gespatiens.audit.application.RecordAccessUseCase;
@@ -44,6 +45,11 @@ public class AuditBeanConfiguration {
     @Bean
     public PurgeAccessLogUseCase purgeAccessLogUseCase(AccessLog accessLog, Clock clock) {
         return new PurgeAccessLogUseCase(accessLog, clock);
+    }
+
+    @Bean
+    public MyLastAccessUseCase myLastAccessUseCase(AccessLog accessLog) {
+        return new MyLastAccessUseCase(accessLog);
     }
 
     @Bean

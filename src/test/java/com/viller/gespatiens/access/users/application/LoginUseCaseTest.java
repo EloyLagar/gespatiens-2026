@@ -1,7 +1,7 @@
 package com.viller.gespatiens.access.users.application;
 
-import com.viller.gespatiens.access.users.application.LoginEvents.LoginAttempted;
-import com.viller.gespatiens.access.users.application.LoginEvents.Outcome;
+import com.viller.gespatiens.access.users.application.AccessEvents.LoginAttempted;
+import com.viller.gespatiens.access.users.application.AccessEvents.Outcome;
 import com.viller.gespatiens.access.users.domain.Speciality;
 import com.viller.gespatiens.access.users.domain.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +29,8 @@ class LoginUseCaseTest {
     private final InMemoryUserRepository repository = new InMemoryUserRepository();
     private final FakePasswordHasher hasher = new FakePasswordHasher();
     private final AccessTokenIssuer issuer = user -> new AccessToken("token-de-" + user.getEmail(), Instant.EPOCH);
-    private final List<LoginAttempted> events = new ArrayList<>();
+    private final RecordingAccessEvents recorded = new RecordingAccessEvents();
+    private final List<LoginAttempted> events = recorded.logins;
     private Instant now = Instant.parse("2026-10-21T10:00:00Z");
     private final Clock clock = new Clock() {
         @Override
@@ -49,7 +49,7 @@ class LoginUseCaseTest {
         }
     };
     private final LoginUseCase useCase = new LoginUseCase(repository, hasher, issuer,
-            new InMemoryLoginAttempts(5, Duration.ofMinutes(15)), events::add, clock);
+            new InMemoryLoginAttempts(5, Duration.ofMinutes(15)), recorded, clock);
     private User ana;
 
     @BeforeEach

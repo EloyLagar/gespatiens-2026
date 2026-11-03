@@ -95,9 +95,9 @@ class SearchAccessLogUseCaseTest {
     void namesTheEmployeesThatStillExist() {
         Instant at = Clock.fixed(Instant.parse("2026-10-21T09:00:00Z"), ZoneOffset.UTC).instant();
         stored = List.of(
-                AccessEntry.record(at, "ana@vientos.es", ANA, AccessOutcome.SUCCESS, "10.0.0.5", "Firefox"),
-                AccessEntry.record(at, "ex@vientos.es", GONE, AccessOutcome.FAILURE, "10.0.0.6", null),
-                AccessEntry.record(at, "nadie@vientos.es", null, AccessOutcome.FAILURE, null, null));
+                AccessEntry.record(at, "ana@vientos.es", ANA, null, AccessOutcome.SUCCESS, "10.0.0.5", "Firefox"),
+                AccessEntry.record(at, "ex@vientos.es", GONE, null, AccessOutcome.FAILURE, "10.0.0.6", null),
+                AccessEntry.record(at, "nadie@vientos.es", null, null, AccessOutcome.FAILURE, null, null));
 
         SearchAccessLogUseCase.Result result = useCase.execute(null, null, null, null, 0);
 
@@ -105,6 +105,19 @@ class SearchAccessLogUseCaseTest {
         assertNull(result.lines().get(1).employeeName());
         assertNull(result.lines().get(2).employeeName());
         assertEquals(3, result.totalEntries());
+    }
+
+    // La contraseña provisional: de quién es y quién de la administración la puso
+    @Test
+    void namesWhoResetThePassword() {
+        UUID luis = UUID.randomUUID();
+        stored = List.of(AccessEntry.record(Instant.EPOCH, "luis@vientos.es", luis, ANA, AccessOutcome.PASSWORD_RESET,
+                null, null));
+
+        SearchAccessLogUseCase.Line line = useCase.execute(null, null, null, null, 0).lines().get(0);
+
+        assertNull(line.employeeName());
+        assertEquals("Ana", line.actorName());
     }
 
     @Test
@@ -117,7 +130,7 @@ class SearchAccessLogUseCaseTest {
     // Quien prueba contraseñas puede mandar un email enorme: se guarda recortado, no se rechaza
     @Test
     void longEmailsAndBrowsersAreCut() {
-        AccessEntry entry = AccessEntry.record(Instant.EPOCH, "a".repeat(400), null, AccessOutcome.FAILURE, null,
+        AccessEntry entry = AccessEntry.record(Instant.EPOCH, "a".repeat(400), null, null, AccessOutcome.FAILURE, null,
                 "b".repeat(400));
 
         assertEquals(AccessEntry.MAX_EMAIL, entry.getEmail().length());

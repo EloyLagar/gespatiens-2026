@@ -818,6 +818,13 @@
       "today": "Vence hoy",
       "inDays_one": "Mañana",
       "inDays_other": "En {{count}} días"
+    },
+    "lockouts": {
+      "title_one": "{{count}} bloqueo en la última semana",
+      "title_other": "{{count}} bloqueos en la última semana",
+      "help": "Emails bloqueados 15 minutos tras 5 intentos fallidos seguidos. Puede ser alguien que ha olvidado su contraseña, o alguien probando contraseñas.",
+      "nobody": "Email que no es de nadie",
+      "open": "Ver los intentos fallidos en el registro de accesos"
     }
   },
   "rota": {
@@ -980,7 +987,7 @@
   },
   "access": {
     "title": "Registro de accesos",
-    "subtitle": "Quién ha entrado en la aplicación, desde dónde, y los intentos fallidos. No se puede modificar y se conserva 2 años.",
+    "subtitle": "Quién ha entrado en la aplicación, desde dónde, los intentos fallidos y los cambios de contraseña. No se puede modificar y se conserva 2 años.",
     "result": "Resultado",
     "anyResult": "Todos",
     "onlyOk": "Entradas",
@@ -998,8 +1005,24 @@
       "SUCCESS": "Entró",
       "FAILURE": "Contraseña o email incorrectos",
       "LOCKED": "Bloqueado tras 5 fallos",
-      "BLOCKED": "Intentó entrar bloqueado"
-    }
+      "BLOCKED": "Intentó entrar bloqueado",
+      "PASSWORD_CHANGED": "Cambió su contraseña",
+      "PASSWORD_CHANGE_REJECTED": "Intentó cambiarla sin saber la actual",
+      "PASSWORD_SET": "Creó su contraseña con el enlace",
+      "PASSWORD_RESET": "Le pusieron una provisional"
+    },
+    "onlyPasswords": "Contraseñas",
+    "by": "Por {{name}}"
+  },
+  "lastAccess": {
+    "previous": "Tu último acceso fue el {{when}}.",
+    "first": "Es tu primer acceso registrado.",
+    "from": "Desde {{where}}.",
+    "failed_one": "Desde entonces ha habido {{count}} intento fallido de entrar con tu email. Si no has sido tú, avísalo a la administración.",
+    "failed_other": "Desde entonces ha habido {{count}} intentos fallidos de entrar con tu email. Si no has sido tú, avísalo a la administración.",
+    "infoIcon": "Información",
+    "warningIcon": "Atención",
+    "close": "Cerrar el aviso del último acceso"
   },
   "tutorial": {
     "progress": "Paso {{current}} de {{total}}",

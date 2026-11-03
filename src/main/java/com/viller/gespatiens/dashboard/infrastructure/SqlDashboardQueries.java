@@ -7,6 +7,9 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -135,6 +138,36 @@ public class SqlDashboardQueries implements DashboardQueries {
         return rows.stream()
                 .map(r -> new CourtMeasure(resident(r), date(r[4]), (String) r[5]))
                 .toList();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Lockout> lockoutsSince(Instant since) {
+        // El nombre si el empleado sigue en la plantilla. Como mucho 20: más es un ataque y se mira en el registro
+        List<Object[]> rows = entityManager.createNativeQuery("""
+                        SELECT a.occurred_at, a.email, a.user_id, u.name, a.ip_address
+                        FROM access_log a
+                        LEFT JOIN users u ON u.id = a.user_id
+                        WHERE a.outcome = 'LOCKED' AND a.occurred_at >= :since
+                        ORDER BY a.occurred_at DESC
+                        LIMIT 20
+                        """)
+                .setParameter("since", since)
+                .getResultList();
+        return rows.stream()
+                .map(r -> new Lockout(instant(r[0]), (String) r[1], (UUID) r[2], (String) r[3], (String) r[4]))
+                .toList();
+    }
+
+    // Según el driver, un TIMESTAMPTZ llega como Instant, OffsetDateTime o Timestamp
+    private static Instant instant(Object value) {
+        if (value instanceof Instant i) {
+            return i;
+        }
+        if (value instanceof OffsetDateTime o) {
+            return o.toInstant();
+        }
+        return ((Timestamp) value).toInstant();
     }
 
     private static Deadline.Resident resident(Object[] row) {

@@ -15,6 +15,7 @@ import com.viller.gespatiens.access.users.application.UpdateOwnProfileUseCase;
 import com.viller.gespatiens.access.users.domain.Language;
 import com.viller.gespatiens.access.users.domain.Theme;
 import com.viller.gespatiens.access.users.domain.User;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +47,7 @@ public class UserController {
     private final SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase;
     private final MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase;
     private final ChangeOwnThemeUseCase changeOwnThemeUseCase;
+    private final LoginOriginResolver originResolver;
 
     public UserController(InviteUserUseCase inviteUserUseCase,
                           ListUsersUseCase listUsersUseCase,
@@ -58,7 +60,8 @@ public class UserController {
                           ChangeOwnLanguageUseCase changeOwnLanguageUseCase,
                           SendPasswordSetupLinkUseCase sendPasswordSetupLinkUseCase,
                           MarkOwnTutorialSeenUseCase markOwnTutorialSeenUseCase,
-                          ChangeOwnThemeUseCase changeOwnThemeUseCase) {
+                          ChangeOwnThemeUseCase changeOwnThemeUseCase,
+                          LoginOriginResolver originResolver) {
         this.inviteUserUseCase = inviteUserUseCase;
         this.listUsersUseCase = listUsersUseCase;
         this.getUserUseCase = getUserUseCase;
@@ -71,6 +74,7 @@ public class UserController {
         this.sendPasswordSetupLinkUseCase = sendPasswordSetupLinkUseCase;
         this.markOwnTutorialSeenUseCase = markOwnTutorialSeenUseCase;
         this.changeOwnThemeUseCase = changeOwnThemeUseCase;
+        this.originResolver = originResolver;
     }
 
     @GetMapping
@@ -96,8 +100,10 @@ public class UserController {
     // RF4: y sus credenciales de acceso
     @PutMapping("/me/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeMyPassword(Principal principal, @RequestBody ChangeOwnPasswordRequest request) {
-        changeOwnPasswordUseCase.execute(currentUserId(principal), request.currentPassword(), request.newPassword());
+    public void changeMyPassword(Principal principal, @RequestBody ChangeOwnPasswordRequest request,
+                                 HttpServletRequest http) {
+        changeOwnPasswordUseCase.execute(currentUserId(principal), request.currentPassword(), request.newPassword(),
+                originResolver.resolve(http));
     }
 
     // RNF9: el idioma de la aplicación se guarda en el perfil
@@ -139,8 +145,10 @@ public class UserController {
 
     @PutMapping("/{id}/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void resetPassword(@PathVariable UUID id, @RequestBody ResetPasswordRequest request) {
-        resetUserPasswordUseCase.execute(id, request.newPassword());
+    public void resetPassword(Principal principal, @PathVariable UUID id, @RequestBody ResetPasswordRequest request,
+                              HttpServletRequest http) {
+        resetUserPasswordUseCase.execute(currentUserId(principal), id, request.newPassword(),
+                originResolver.resolve(http));
     }
 
     @DeleteMapping("/{id}")

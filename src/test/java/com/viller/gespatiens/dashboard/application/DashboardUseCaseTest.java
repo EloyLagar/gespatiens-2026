@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DashboardUseCaseTest {
 
     private final List<LocalDate[]> asked = new ArrayList<>();
+    private Instant lockoutsAskedSince;
 
     private final DashboardQueries queries = new DashboardQueries() {
         @Override
@@ -71,6 +72,13 @@ class DashboardUseCaseTest {
         }
 
         @Override
+        public List<Lockout> lockoutsSince(Instant since) {
+            lockoutsAskedSince = since;
+            return List.of(new Lockout(Instant.parse("2026-10-20T03:12:00Z"), "ana@vientos.es", UUID.randomUUID(),
+                    "Ana", "83.45.120.201"));
+        }
+
+        @Override
         public List<CourtMeasure> courtMeasures() {
             return List.of(
                     new CourtMeasure(resident(2, "Mas"), LocalDate.of(2026, 10, 25), "Juzgado de lo Penal nº 3"),
@@ -87,6 +95,15 @@ class DashboardUseCaseTest {
     // Hoy es el 21 de octubre de 2026
     private final DashboardUseCase useCase = new DashboardUseCase(queries,
             Clock.fixed(Instant.parse("2026-10-21T10:00:00Z"), ZoneOffset.UTC), Period.ofDays(30));
+
+    // ENS: los bloqueos por intentos fallidos de la última semana, sea cual sea el mes elegido
+    @Test
+    void lockoutsAreThoseOfTheLastWeek() {
+        DashboardView view = useCase.execute(YearMonth.of(2026, 5));
+
+        assertEquals(Instant.parse("2026-10-14T10:00:00Z"), lockoutsAskedSince);
+        assertEquals("ana@vientos.es", view.lockouts().getFirst().email());
+    }
 
     // Memoria final, 5.1: "la cantidad de turnos que realizan distintos trabajadores durante un mes"
     @Test

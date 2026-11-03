@@ -818,6 +818,13 @@
       "today": "Due today",
       "inDays_one": "Tomorrow",
       "inDays_other": "In {{count}} days"
+    },
+    "lockouts": {
+      "title_one": "{{count}} lockout in the last week",
+      "title_other": "{{count}} lockouts in the last week",
+      "help": "Emails locked for 15 minutes after 5 failed attempts in a row. It may be someone who forgot their password, or someone trying passwords.",
+      "nobody": "Not anyone's email",
+      "open": "See the failed attempts in the sign-in log"
     }
   },
   "rota": {
@@ -980,7 +987,7 @@
   },
   "access": {
     "title": "Sign-in log",
-    "subtitle": "Who signed in to the app, from where, and the failed attempts. It cannot be edited and is kept for 2 years.",
+    "subtitle": "Who signed in to the app, from where, the failed attempts and the password changes. It cannot be edited and is kept for 2 years.",
     "result": "Result",
     "anyResult": "All",
     "onlyOk": "Sign-ins",
@@ -998,8 +1005,24 @@
       "SUCCESS": "Signed in",
       "FAILURE": "Wrong email or password",
       "LOCKED": "Locked after 5 failures",
-      "BLOCKED": "Tried while locked"
-    }
+      "BLOCKED": "Tried while locked",
+      "PASSWORD_CHANGED": "Changed their password",
+      "PASSWORD_CHANGE_REJECTED": "Tried to change it without the current one",
+      "PASSWORD_SET": "Created their password from the link",
+      "PASSWORD_RESET": "Given a temporary password"
+    },
+    "onlyPasswords": "Passwords",
+    "by": "By {{name}}"
+  },
+  "lastAccess": {
+    "previous": "Your last sign-in was on {{when}}.",
+    "first": "This is your first recorded sign-in.",
+    "from": "From {{where}}.",
+    "failed_one": "Since then there has been {{count}} failed attempt to sign in with your email. If it wasn't you, tell the administration.",
+    "failed_other": "Since then there have been {{count}} failed attempts to sign in with your email. If it wasn't you, tell the administration.",
+    "infoIcon": "Information",
+    "warningIcon": "Warning",
+    "close": "Close the last sign-in notice"
   },
   "tutorial": {
     "progress": "Step {{current}} of {{total}}",

@@ -41,6 +41,8 @@ export interface Dashboard {
   noticesByWeek: { monday: IsoDate; notices: number }[]
   // De lo más urgente a lo menos. No depende del mes: es lo pendiente de hoy
   deadlines: DashboardDeadline[]
+  // Emails bloqueados por intentos fallidos en los últimos 7 días, del más reciente. employee null: no es de nadie
+  lockouts: { occurredAt: string; email: string; employee: { id: string; name: string | null } | null; ipAddress: string | null }[]
 }
 
 export function getDashboard(month: string) {

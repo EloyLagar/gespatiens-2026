@@ -1341,6 +1341,40 @@ button:focus-visible,
   overflow-wrap: anywhere;
 }
 
+// El aviso del acceso anterior, encima de cada pantalla hasta que se cierra
+.last-access {
+  margin: 0 0 16px;
+}
+
+.last-access .cds--inline-notification {
+  max-width: none;
+}
+
+// Panel de control: los bloqueos de la última semana, uno por línea
+.lockout-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.lockout-list li {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr auto;
+  gap: 4px 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.lockout-list__ip {
+  color: var(--muted);
+}
+
+@media (max-width: 671px) {
+  .lockout-list li {
+    grid-template-columns: 1fr;
+  }
+}
+
 // Los dos registros (cambios y accesos), como pestañas: son enlaces, cada uno con su URL
 .log-tabs {
   display: flex;

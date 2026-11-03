@@ -29,6 +29,7 @@ class PasswordSetupUseCaseTest {
     private final InMemoryPasswordSetupTokenRepository tokens = new InMemoryPasswordSetupTokenRepository();
     private final RecordingLinkSender sender = new RecordingLinkSender();
     private final FakePasswordHasher hasher = new FakePasswordHasher();
+    private final RecordingAccessEvents events = new RecordingAccessEvents();
     private Clock clock = Clock.fixed(NOW, ZoneOffset.UTC);
 
     private InviteUserUseCase invite() {
@@ -40,7 +41,7 @@ class PasswordSetupUseCaseTest {
     }
 
     private PasswordSetupUseCase setup() {
-        return new PasswordSetupUseCase(tokens, users, hasher, clock);
+        return new PasswordSetupUseCase(tokens, users, hasher, events, clock);
     }
 
     private User inviteAna() {
@@ -98,10 +99,11 @@ class PasswordSetupUseCaseTest {
         User ana = inviteAna();
         String token = sender.lastToken();
 
-        setup().complete(token, "secreto123");
+        setup().complete(token, "secreto123", LoginOrigin.UNKNOWN);
 
         assertEquals("hashed:secreto123", users.findById(ana.getId()).orElseThrow().getPasswordHash());
-        assertThrows(InvalidPasswordSetupTokenException.class, () -> setup().complete(token, "otraclave1"));
+        assertThrows(InvalidPasswordSetupTokenException.class,
+                () -> setup().complete(token, "otraclave1", LoginOrigin.UNKNOWN));
     }
 
     @Test
@@ -109,8 +111,8 @@ class PasswordSetupUseCaseTest {
         inviteAna();
         String token = sender.lastToken();
 
-        assertThrows(IllegalArgumentException.class, () -> setup().complete(token, "corta"));
-        setup().complete(token, "secreto123");
+        assertThrows(IllegalArgumentException.class, () -> setup().complete(token, "corta", LoginOrigin.UNKNOWN));
+        setup().complete(token, "secreto123", LoginOrigin.UNKNOWN);
     }
 
     @Test
@@ -145,7 +147,7 @@ class PasswordSetupUseCaseTest {
                 hasher.hash("antigua123")));
 
         resend().execute(luis.getId());
-        setup().complete(sender.lastToken(), "nueva12345");
+        setup().complete(sender.lastToken(), "nueva12345", LoginOrigin.UNKNOWN);
 
         assertEquals("hashed:nueva12345", users.findById(luis.getId()).orElseThrow().getPasswordHash());
     }
@@ -161,5 +163,18 @@ class PasswordSetupUseCaseTest {
         sender.failing = true;
 
         assertThrows(PasswordSetupDeliveryException.class, () -> resend().execute(ana.getId()));
+    }
+
+    // Registro de accesos: crear la contraseña desde el enlace queda anotado
+    @Test
+    void creatingThePasswordFromTheLinkIsReported() {
+        User ana = inviteAna();
+
+        setup().complete(sender.lastToken(), "secreto123", new LoginOrigin("10.0.0.9", "Firefox"));
+
+        assertEquals(1, events.passwords.size());
+        assertEquals(ana.getId(), events.passwords.get(0).userId());
+        assertEquals(AccessEvents.PasswordChange.SET_FROM_LINK, events.passwords.get(0).kind());
+        assertEquals("10.0.0.9", events.passwords.get(0).origin().ipAddress());
     }
 }

@@ -7,20 +7,25 @@ import { ErrorNotice, LoadingRows, PageHeader } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
 import { LogTabs } from './LogTabs'
 
-// Registro de accesos (ENS op.acc, op.exp.8). Pregunta: ¿quién ha entrado, desde dónde, y quién lo ha intentado
-// sin conseguirlo? Se conserva 2 años. Los filtros van en la URL, como en el registro de cambios
+// Registro de accesos (ENS op.acc, op.exp.8). Pregunta: ¿quién ha entrado, desde dónde, quién lo ha intentado
+// sin conseguirlo y quién ha cambiado una contraseña? Se conserva 2 años. Los filtros van en la URL, como en el registro de cambios
 const RESULTS: Record<string, AccessOutcome[]> = {
   '': [],
   ok: ['SUCCESS'],
   failed: ['FAILURE', 'LOCKED', 'BLOCKED'],
   locked: ['LOCKED'],
+  passwords: ['PASSWORD_CHANGED', 'PASSWORD_CHANGE_REJECTED', 'PASSWORD_SET', 'PASSWORD_RESET'],
 }
 
-const TAG: Record<AccessOutcome, 'green' | 'warm-gray' | 'red' | 'magenta'> = {
+const TAG: Record<AccessOutcome, 'green' | 'warm-gray' | 'red' | 'magenta' | 'blue' | 'cool-gray'> = {
   SUCCESS: 'green',
   FAILURE: 'warm-gray',
   LOCKED: 'red',
   BLOCKED: 'magenta',
+  PASSWORD_CHANGED: 'blue',
+  PASSWORD_SET: 'blue',
+  PASSWORD_RESET: 'cool-gray',
+  PASSWORD_CHANGE_REJECTED: 'red',
 }
 
 export function AccessLogPage() {
@@ -72,6 +77,7 @@ export function AccessLogPage() {
           <SelectItem value="ok" text={t('access.onlyOk')} />
           <SelectItem value="failed" text={t('access.onlyFailed')} />
           <SelectItem value="locked" text={t('access.onlyLocked')} />
+          <SelectItem value="passwords" text={t('access.onlyPasswords')} />
         </Select>
         <TextInput id="access-from" type="date" labelText={t('audit.from')} size="md" value={from} max={to || undefined}
           onChange={(e) => set('desde', e.target.value)} />
@@ -109,13 +115,13 @@ export function AccessLogPage() {
                       <WhoCell entry={e} />
                       {/* En el móvil la fila es de dos líneas: lo que en escritorio son columnas */}
                       <span className="row-sub">
-                        <OutcomeTag outcome={e.outcome} /> <OriginCell entry={e} />
+                        <OutcomeTag entry={e} /> <OriginCell entry={e} />
                       </span>
                       <span className="row-sub">
                         <time dateTime={e.occurredAt}>{when.format(new Date(e.occurredAt))}</time>
                       </span>
                     </td>
-                    <td className="col-wide"><OutcomeTag outcome={e.outcome} /></td>
+                    <td className="col-wide"><OutcomeTag entry={e} /></td>
                     <td className="col-wide"><OriginCell entry={e} /></td>
                   </tr>
                 ))}
@@ -158,9 +164,19 @@ function WhoCell({ entry }: { entry: AccessEntry }) {
   )
 }
 
-function OutcomeTag({ outcome }: { outcome: AccessOutcome }) {
+function OutcomeTag({ entry }: { entry: AccessEntry }) {
   const { t } = useTranslation()
-  return <Tag type={TAG[outcome]} size="sm">{t(`access.outcome.${outcome}`)}</Tag>
+  return (
+    <>
+      <Tag type={TAG[entry.outcome]} size="sm">{t(`access.outcome.${entry.outcome}`)}</Tag>
+      {/* La contraseña provisional: quién de la administración la puso */}
+      {entry.actor && (
+        <span className="row-sub row-sub--always">
+          {t('access.by', { name: entry.actor.name ?? t('audit.formerEmployee') })}
+        </span>
+      )}
+    </>
+  )
 }
 
 function OriginCell({ entry }: { entry: AccessEntry }) {

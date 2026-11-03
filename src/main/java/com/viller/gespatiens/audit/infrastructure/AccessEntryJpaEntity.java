@@ -26,8 +26,10 @@ public class AccessEntryJpaEntity {
 
     private UUID userId;
 
+    private UUID actorId;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 30)
     private AccessOutcome outcome;
 
     @Column(length = 45)
@@ -66,6 +68,14 @@ public class AccessEntryJpaEntity {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public UUID getActorId() {
+        return actorId;
+    }
+
+    public void setActorId(UUID actorId) {
+        this.actorId = actorId;
     }
 
     public AccessOutcome getOutcome() {

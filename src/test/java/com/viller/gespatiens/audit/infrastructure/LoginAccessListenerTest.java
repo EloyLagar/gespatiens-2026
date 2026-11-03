@@ -1,7 +1,9 @@
 package com.viller.gespatiens.audit.infrastructure;
 
-import com.viller.gespatiens.access.users.application.LoginEvents.LoginAttempted;
-import com.viller.gespatiens.access.users.application.LoginEvents.Outcome;
+import com.viller.gespatiens.access.users.application.AccessEvents.LoginAttempted;
+import com.viller.gespatiens.access.users.application.AccessEvents.Outcome;
+import com.viller.gespatiens.access.users.application.AccessEvents.PasswordChange;
+import com.viller.gespatiens.access.users.application.AccessEvents.PasswordChanged;
 import com.viller.gespatiens.access.users.application.LoginOrigin;
 import com.viller.gespatiens.audit.application.RecordAccessUseCase;
 import com.viller.gespatiens.audit.domain.AccessEntry;
@@ -16,6 +18,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class LoginAccessListenerTest {
 
@@ -68,6 +71,28 @@ class LoginAccessListenerTest {
 
         assertDoesNotThrow(() -> listener.on(new LoginAttempted(Instant.EPOCH, "ana@vientos.es", null,
                 Outcome.SUCCESS, LoginOrigin.UNKNOWN)));
+    }
+
+    // La contraseña provisional queda con quién de la administración la puso
+    @Test
+    void aPasswordResetBecomesALineWithTheAdministrator() {
+        UUID luis = UUID.randomUUID();
+        UUID marta = UUID.randomUUID();
+
+        listener.on(new PasswordChanged(Instant.EPOCH, luis, "luis@vientos.es", PasswordChange.RESET_BY_ADMIN, marta,
+                new LoginOrigin("10.0.0.2", "Edge")));
+
+        AccessEntry entry = stored.get(0);
+        assertEquals(luis, entry.getUserId());
+        assertEquals(marta, entry.getActorId());
+        assertEquals(AccessOutcome.PASSWORD_RESET, entry.getOutcome());
+    }
+
+    @Test
+    void everyPasswordChangeHasItsAccessOutcome() {
+        for (PasswordChange kind : PasswordChange.values()) {
+            assertNotNull(LoginAccessListener.outcomeOf(kind));
+        }
     }
 
     // Los dos módulos tienen su propia lista de resultados: tienen que seguir coincidiendo

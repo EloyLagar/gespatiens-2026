@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 // La administración consulta quién ha entrado y quién lo ha intentado sin conseguirlo: las entradas de un
 // empleado, los fallos y los bloqueos, en unas fechas. Una página cada vez, de lo más reciente a lo más antiguo
@@ -39,16 +40,19 @@ public class SearchAccessLogUseCase {
                 to == null ? null : to.plusDays(1).atStartOfDay(CENTER_ZONE).toInstant());
         AccessLog.Page found = accessLog.search(filter, page, PAGE_SIZE);
 
-        Map<UUID, String> names = directory.employeeNames(
-                found.entries().stream().map(AccessEntry::getUserId).filter(Objects::nonNull).distinct().toList());
+        Map<UUID, String> names = directory.employeeNames(found.entries().stream()
+                .flatMap(e -> Stream.of(e.getUserId(), e.getActorId()))
+                .filter(Objects::nonNull).distinct().toList());
         List<Line> lines = found.entries().stream()
-                .map(e -> new Line(e, e.getUserId() == null ? null : names.get(e.getUserId())))
+                .map(e -> new Line(e, e.getUserId() == null ? null : names.get(e.getUserId()),
+                        e.getActorId() == null ? null : names.get(e.getActorId())))
                 .toList();
         return new Result(lines, found.page(), found.totalPages(), found.totalEntries());
     }
 
-    // employeeName null: el email no era de nadie, o el empleado ya no está en la plantilla
-    public record Line(AccessEntry entry, String employeeName) {
+    // employeeName null: el email no era de nadie, o el empleado ya no está en la plantilla. actorName: quién lo
+    // hizo, si no fue él (null si no lo hay o ya no está)
+    public record Line(AccessEntry entry, String employeeName, String actorName) {
     }
 
     public record Result(List<Line> lines, int page, int totalPages, long totalEntries) {

@@ -7,7 +7,7 @@ import com.viller.gespatiens.audit.domain.AccessOutcome;
 import java.time.Instant;
 import java.util.UUID;
 
-// Anota un intento de entrar. Lo llama LoginAccessListener con cada aviso del login
+// Anota un intento de entrar o un cambio de contraseña. Lo llama LoginAccessListener con cada aviso del login
 public class RecordAccessUseCase {
 
     private final AccessLog accessLog;
@@ -16,8 +16,8 @@ public class RecordAccessUseCase {
         this.accessLog = accessLog;
     }
 
-    public void execute(Instant occurredAt, String email, UUID userId, AccessOutcome outcome, String ipAddress,
-                        String userAgent) {
-        accessLog.append(AccessEntry.record(occurredAt, email, userId, outcome, ipAddress, userAgent));
+    public void execute(Instant occurredAt, String email, UUID userId, UUID actorId, AccessOutcome outcome,
+                        String ipAddress, String userAgent) {
+        accessLog.append(AccessEntry.record(occurredAt, email, userId, actorId, outcome, ipAddress, userAgent));
     }
 }

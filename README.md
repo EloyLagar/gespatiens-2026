@@ -70,8 +70,9 @@ avisa.
 - **Permisos por especialidad**: cada empleado edita lo que le corresponde y consulta el resto.
 - **Edición concurrente segura**: un documento abierto por otra persona queda bloqueado hasta que lo libera.
 - **Registro de cambios**: quién modificó los datos de cada residente y cuándo, durante dos años.
-- **Registro de accesos**: quién entró en la aplicación, desde qué IP y navegador, y los intentos fallidos y
-  bloqueos, durante dos años.
+- **Registro de accesos**: quién entró en la aplicación, desde qué IP y navegador, los intentos fallidos y
+  bloqueos, y los cambios de contraseña, durante dos años. Al entrar, cada empleado ve su acceso anterior, y el
+  panel de control avisa de los bloqueos de la última semana.
 - **Interfaz accesible (WCAG 2.1 AA) y bilingüe** (castellano e inglés), con tema claro, oscuro o el del sistema.
 - **Tutorial de bienvenida** distinto para cada especialidad.
 
@@ -243,7 +244,7 @@ se entra con `POST /api/auth/login` y se pega el `accessToken` en **Authorize**.
   `Permissions-Policy`. HSTS lo añade Vercel.
 - Registro de cambios de los datos de los residentes (quién, qué y cuándo) durante dos años.
 - Registro de accesos: cada intento de entrar, con el resultado (entró, falló, se bloqueó), la IP y el navegador,
-  durante dos años ([ADR 0010](docs/adr/0010-registro-de-accesos.md)).
+  y cada cambio de contraseña, durante dos años. Cada empleado ve su acceso anterior al entrar ([ADR 0010](docs/adr/0010-registro-de-accesos.md)).
 
 ## Licencia
 

@@ -2,6 +2,7 @@ import { Archive, Calendar, ChartLine, Close, Dashboard, Collaborate, Document, 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { LastAccessNotice } from '../features/audit/LastAccessNotice'
 import { useAuth } from '../auth/AuthContext'
 import { LanguageSwitch, Wordmark } from '../shared/ui'
 import { ThemeSwitch } from '../features/users/ThemeSwitch'
@@ -167,6 +168,7 @@ export function AppShell() {
       )}
 
       <main id="main" className="canvas" tabIndex={-1}>
+        <LastAccessNotice />
         <Outlet />
       </main>
     </div>

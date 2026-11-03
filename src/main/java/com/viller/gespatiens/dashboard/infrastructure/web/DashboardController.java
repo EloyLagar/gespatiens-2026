@@ -1,5 +1,6 @@
 package com.viller.gespatiens.dashboard.infrastructure.web;
 
+import com.viller.gespatiens.dashboard.application.DashboardQueries.Lockout;
 import com.viller.gespatiens.dashboard.application.DashboardQueries.ShiftCount;
 import com.viller.gespatiens.dashboard.application.DashboardUseCase;
 import com.viller.gespatiens.dashboard.application.DashboardView;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -51,16 +53,28 @@ public class DashboardController {
         }
     }
 
+    // employee null: el email no es de nadie de la plantilla
+    public record LockoutResponse(Instant occurredAt, String email, EmployeeResponse employee, String ipAddress) {
+        static LockoutResponse from(Lockout l) {
+            return new LockoutResponse(l.occurredAt(), l.email(),
+                    l.userId() == null ? null : new EmployeeResponse(l.userId(), l.employeeName()), l.ipAddress());
+        }
+    }
+
+    public record EmployeeResponse(UUID id, String name) {
+    }
+
     public record DashboardResponse(YearMonth month, int occupiedPlaces, int totalPlaces,
                                     int residentsWithoutBothTutors, int reportsInProgress, int interventions,
                                     List<ShiftResponse> shifts, List<WeekResponse> noticesByWeek,
-                                    List<DeadlineResponse> deadlines) {
+                                    List<DeadlineResponse> deadlines, List<LockoutResponse> lockouts) {
         static DashboardResponse from(DashboardView v) {
             return new DashboardResponse(v.month(), v.occupiedPlaces(), v.totalPlaces(),
                     v.residentsWithoutBothTutors(), v.reportsInProgress(), v.interventions(),
                     v.shifts().stream().map(ShiftResponse::from).toList(),
                     v.noticesByWeek().stream().map(w -> new WeekResponse(w.monday(), w.notices())).toList(),
-                    v.deadlines().stream().map(DeadlineResponse::from).toList());
+                    v.deadlines().stream().map(DeadlineResponse::from).toList(),
+                    v.lockouts().stream().map(LockoutResponse::from).toList());
         }
     }
 }

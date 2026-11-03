@@ -48,8 +48,10 @@ export function searchAudit(filter: AuditFilter) {
 // ---------------------------------------------------------------- Registro de accesos (AccessLogController)
 
 // SUCCESS: entró. FAILURE: email o contraseña mal. LOCKED: el fallo que bloqueó el email. BLOCKED: lo intentó
-// con el email bloqueado
-export type AccessOutcome = 'SUCCESS' | 'FAILURE' | 'LOCKED' | 'BLOCKED'
+// con el email bloqueado. PASSWORD_*: qué se hizo con su contraseña
+export type AccessOutcome =
+  | 'SUCCESS' | 'FAILURE' | 'LOCKED' | 'BLOCKED'
+  | 'PASSWORD_CHANGED' | 'PASSWORD_CHANGE_REJECTED' | 'PASSWORD_SET' | 'PASSWORD_RESET'
 
 export interface AccessEntry {
   id: string
@@ -58,6 +60,8 @@ export interface AccessEntry {
   email: string
   // null: el email no es de nadie. name null: ya no está en la plantilla
   employee: { id: string; name: string | null } | null
+  // Quién lo hizo, si no fue el propio empleado: la administración que pone una contraseña provisional
+  actor: { id: string; name: string | null } | null
   outcome: AccessOutcome
   ipAddress: string | null
   userAgent: string | null
@@ -85,4 +89,14 @@ export function searchAccessLog({ outcomes, ...filter }: AccessFilter) {
   })
   outcomes?.forEach((o) => params.append('outcome', o))
   return request<AccessPage>(`/audit/access?${params}`)
+}
+
+// Lo que ve cada empleado al entrar (ENS op.acc). previous null: es su primera entrada registrada
+export interface MyLastAccess {
+  previous: { occurredAt: string; ipAddress: string | null; userAgent: string | null } | null
+  failedAttemptsSince: number
+}
+
+export function getMyLastAccess() {
+  return request<MyLastAccess>('/audit/access/mine')
 }
