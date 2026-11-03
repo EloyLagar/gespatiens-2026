@@ -20,6 +20,7 @@ import com.viller.gespatiens.access.users.domain.Theme;
 import com.viller.gespatiens.access.users.domain.User;
 import com.viller.gespatiens.access.users.domain.UserRepository;
 import com.viller.gespatiens.access.users.infrastructure.web.AuthController;
+import com.viller.gespatiens.access.users.infrastructure.web.LoginOriginResolver;
 import com.viller.gespatiens.access.users.infrastructure.web.UserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // La cadena de seguridad real: tokens emitidos de verdad por JwtAccessTokenIssuer y validados
 // por el JwtDecoder y el CurrentUserJwtConverter de la aplicación. Solo se simulan la BD y los casos de uso
 @WebMvcTest({UserController.class, AuthController.class})
-@Import({SecurityConfig.class, JwtConfig.class, JwtAccessTokenIssuer.class, CurrentUserJwtConverter.class})
+@Import({SecurityConfig.class, JwtConfig.class, JwtAccessTokenIssuer.class, CurrentUserJwtConverter.class,
+        LoginOriginResolver.class})
 @TestPropertySource(properties = {
         "gespatiens.jwt.secret=un-secreto-de-pruebas-de-al-menos-32-caracteres",
-        "gespatiens.jwt.expiration=PT1H"})
+        "gespatiens.jwt.expiration=PT1H",
+        "gespatiens.access-log.anonymize-ip=false"})
 class JwtSecurityTest {
 
     @Autowired
@@ -140,7 +143,7 @@ class JwtSecurityTest {
 
     @Test
     void loginIsPublic() throws Exception {
-        when(loginUseCase.execute(any(), any()))
+        when(loginUseCase.execute(any(), any(), any()))
                 .thenReturn(new LoginUseCase.Session(ana, accessTokenIssuer.issueFor(ana)));
 
         mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)

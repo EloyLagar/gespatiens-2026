@@ -1,5 +1,6 @@
 package com.viller.gespatiens.dashboard.application;
 
+import com.viller.gespatiens.dashboard.application.DashboardQueries.Lockout;
 import com.viller.gespatiens.dashboard.application.DashboardQueries.ShiftCount;
 
 import java.time.LocalDate;
@@ -20,7 +21,9 @@ public record DashboardView(
         // Las semanas que tocan el mes, de lunes a domingo, en orden; las que no tuvieron avisos, a 0
         List<WeekCount> noticesByWeek,
         // Lo que vence pronto o ha vencido, de lo más urgente a lo menos
-        List<Deadline> deadlines) {
+        List<Deadline> deadlines,
+        // Los bloqueos por intentos fallidos de los últimos días (DashboardUseCase.LOCKOUTS_WINDOW), del más reciente
+        List<Lockout> lockouts) {
 
     public record WeekCount(LocalDate monday, int notices) {
     }

@@ -6,6 +6,7 @@ import { listPatients } from '../../api/patients'
 import { listUsers } from '../../api/users'
 import { ErrorNotice, LoadingRows, PageHeader } from '../../shared/ui'
 import { useApi } from '../../shared/useApi'
+import { LogTabs } from './LogTabs'
 
 // Registro de cambios (RNF7, RGPD). Pregunta: ¿quién ha cambiado los datos de este residente, o qué ha
 // cambiado esta persona? Se conserva 2 años. Los filtros van en la URL: la ficha del residente enlaza aquí con el suyo puesto
@@ -47,6 +48,7 @@ export function AuditPage() {
   return (
     <>
       <PageHeader title={t('audit.title')} subtitle={t('audit.subtitle')} />
+      <LogTabs />
 
       <div className="filters filters--four">
         <Select id="audit-resident" labelText={t('audit.resident')} size="md" value={patientId} onChange={(e) => set('residente', e.target.value)}>

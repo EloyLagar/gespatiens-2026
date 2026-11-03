@@ -20,6 +20,7 @@ const SCREENS = [
   '/empleados',
   '/panel',
   '/registro',
+  '/registro/accesos',
   '/perfil',
   '/residentes/nuevo',
 ]

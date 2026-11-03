@@ -38,3 +38,24 @@ export function saveSession(session: Session | null) {
     // Almacenamiento bloqueado (modo privado estricto): la sesión vive solo en memoria
   }
 }
+
+// Tras entrar se enseña una vez el acceso anterior (LastAccessNotice). La marca vive en sessionStorage, como la
+// sesión: si se recarga la página antes de cerrar el aviso, sigue saliendo
+const LAST_ACCESS_KEY = 'gespatiens.lastAccessPending'
+
+export function setLastAccessPending(pending: boolean) {
+  try {
+    if (pending) sessionStorage.setItem(LAST_ACCESS_KEY, '1')
+    else sessionStorage.removeItem(LAST_ACCESS_KEY)
+  } catch {
+    // Sin almacenamiento: el aviso no sale, no pasa nada
+  }
+}
+
+export function isLastAccessPending(): boolean {
+  try {
+    return sessionStorage.getItem(LAST_ACCESS_KEY) === '1'
+  } catch {
+    return false
+  }
+}

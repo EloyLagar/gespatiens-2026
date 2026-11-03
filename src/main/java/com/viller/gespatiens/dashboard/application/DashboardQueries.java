@@ -1,5 +1,6 @@
 package com.viller.gespatiens.dashboard.application;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,14 @@ public interface DashboardQueries {
 
     // Residentes en el centro con medida judicial y fecha de fin
     List<CourtMeasure> courtMeasures();
+
+    // Los emails que se han bloqueado por intentos fallidos desde since (registro de accesos), del más reciente al
+    // más antiguo
+    List<Lockout> lockoutsSince(Instant since);
+
+    // userId y employeeName null: el email no es de nadie de la plantilla
+    record Lockout(Instant occurredAt, String email, UUID userId, String employeeName, String ipAddress) {
+    }
 
     // dueDate: cuándo toca, la que pone el informe (por defecto a mitad del programa, y se puede cambiar)
     record OpenMidStayReport(Deadline.Resident resident, LocalDate dueDate, UUID reportId) {

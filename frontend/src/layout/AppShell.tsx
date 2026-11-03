@@ -2,6 +2,7 @@ import { Archive, Calendar, ChartLine, Close, Dashboard, Collaborate, Document, 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { LastAccessNotice } from '../features/audit/LastAccessNotice'
 import { useAuth } from '../auth/AuthContext'
 import { LanguageSwitch, Wordmark } from '../shared/ui'
 import { ThemeSwitch } from '../features/users/ThemeSwitch'
@@ -78,7 +79,7 @@ export function AppShell() {
     { to: '/empleados', label: t('nav.employees'), icon: <Group size={16} /> },
     // Memoria final, 5.1: el panel de control solo lo ve la administración
     ...(isAdmin ? [{ to: '/panel', label: t('nav.dashboard'), icon: <Dashboard size={16} /> }] : []),
-    // RNF7: quién ha consultado o cambiado los datos de cada residente
+    // RNF7 y ENS: quién ha cambiado los datos de cada residente y quién ha entrado en la aplicación
     ...(isAdmin ? [{ to: '/registro', label: t('nav.audit'), icon: <RecentlyViewed size={16} /> }] : []),
   ]
 
@@ -167,6 +168,7 @@ export function AppShell() {
       )}
 
       <main id="main" className="canvas" tabIndex={-1}>
+        <LastAccessNotice />
         <Outlet />
       </main>
     </div>

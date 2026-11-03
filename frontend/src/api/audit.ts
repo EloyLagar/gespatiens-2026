@@ -44,3 +44,59 @@ export function searchAudit(filter: AuditFilter) {
   })
   return request<AuditPage>(`/audit?${params}`)
 }
+
+// ---------------------------------------------------------------- Registro de accesos (AccessLogController)
+
+// SUCCESS: entró. FAILURE: email o contraseña mal. LOCKED: el fallo que bloqueó el email. BLOCKED: lo intentó
+// con el email bloqueado. PASSWORD_*: qué se hizo con su contraseña
+export type AccessOutcome =
+  | 'SUCCESS' | 'FAILURE' | 'LOCKED' | 'BLOCKED'
+  | 'PASSWORD_CHANGED' | 'PASSWORD_CHANGE_REJECTED' | 'PASSWORD_SET' | 'PASSWORD_RESET'
+
+export interface AccessEntry {
+  id: string
+  occurredAt: string
+  // El que se escribió, exista o no
+  email: string
+  // null: el email no es de nadie. name null: ya no está en la plantilla
+  employee: { id: string; name: string | null } | null
+  // Quién lo hizo, si no fue el propio empleado: la administración que pone una contraseña provisional
+  actor: { id: string; name: string | null } | null
+  outcome: AccessOutcome
+  ipAddress: string | null
+  userAgent: string | null
+}
+
+export interface AccessPage {
+  entries: AccessEntry[]
+  page: number
+  totalPages: number
+  totalEntries: number
+}
+
+export interface AccessFilter {
+  userId?: string
+  outcomes?: AccessOutcome[]
+  from?: IsoDate
+  to?: IsoDate
+  page?: number
+}
+
+export function searchAccessLog({ outcomes, ...filter }: AccessFilter) {
+  const params = new URLSearchParams()
+  Object.entries(filter).forEach(([key, value]) => {
+    if (value !== undefined && value !== '') params.set(key, String(value))
+  })
+  outcomes?.forEach((o) => params.append('outcome', o))
+  return request<AccessPage>(`/audit/access?${params}`)
+}
+
+// Lo que ve cada empleado al entrar (ENS op.acc). previous null: es su primera entrada registrada
+export interface MyLastAccess {
+  previous: { occurredAt: string; ipAddress: string | null; userAgent: string | null } | null
+  failedAttemptsSince: number
+}
+
+export function getMyLastAccess() {
+  return request<MyLastAccess>('/audit/access/mine')
+}
